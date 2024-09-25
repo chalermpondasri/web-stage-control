@@ -1,0 +1,100 @@
+version: '3'
+services:
+  service-auth:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/main
+    restart: always
+
+  nginx-auth:
+    image: nginx:stable-alpine
+    container_name: auth
+    volumes:
+      - ./nginx-auth.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service-auth
+    networks:
+      - app-network
+
+  service-payment:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/payment
+    restart: always
+
+  nginx-payment:
+    image: nginx:stable-alpine
+    container_name: payment
+    volumes:
+      - ./nginx-payment.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service-payment
+    networks:
+      - app-network
+
+  service-playback:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/playback
+    restart: always
+
+  nginx-playback:
+    image: nginx:stable-alpine
+    volumes:
+      - ./nginx-playback.conf:/etc/nginx/conf.d/default.conf
+    container_name: playback
+    depends_on:
+      - service-playback
+    networks:
+      - app-network
+
+  service-search:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/search
+    restart: always
+
+  nginx-search:
+    image: nginx:stable-alpine
+    volumes:
+      - ./nginx-search.conf:/etc/nginx/conf.d/default.conf
+    container_name: search
+    depends_on:
+      - service-search
+    networks:
+      - app-network
+
+  service-pubsub:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/pubsub
+    restart: always
+
+  service-scheduler:
+    image: registry.gitlab.com/ucconnect.devs/doofin/doofin-auth:staging
+    env_file:
+      - ".env-auth.staging"
+    networks:
+      - app-network
+    command: node dist/apps/scheduler
+    restart: always
+
+
+networks:
+  app-network:
+    external: true

@@ -4,7 +4,7 @@ module.exports = {
     testEnvironment: 'node',
     moduleNameMapper: {
         '^@libs(.*)$': '<rootDir>/libs$1',
-        '^@main(.*)$': '<rootDir>/apps/main$',
-        '^@pubsub(.*)$': '<rootDir>/apps/pubsub',
+        '^@auth(.*)$': '<rootDir>/apps/auth$1',
+        '^@pubsub(.*)$': '<rootDir>/apps/pubsub$1',
     },
 }

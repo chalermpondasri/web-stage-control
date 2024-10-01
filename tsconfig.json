@@ -7,13 +7,19 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-        "@libs/*": ["libs/*"],
-        "@main/*": ["main/*"],
+      "@libs/*": [
+        "libs/*"
+      ],
+      "@auth/*": [
+        "auth/*"
+      ]
     },
     "incremental": true,
     "strict": true,

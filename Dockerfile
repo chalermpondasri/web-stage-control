@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
@@ -46,9 +46,9 @@ USER root
 
 WORKDIR /app
 
-COPY --from=build /apps/main/src/dist ./dist
-COPY --from=build /apps/main/src/templates ./templates
-COPY --from=prod-deps /apps/main/src/node_modules ./node_modules
+COPY --from=build /apps/auth/src/dist ./dist
+COPY --from=build /apps/auth/src/templates ./templates
+COPY --from=prod-deps /apps/auth/src/node_modules ./node_modules
 
 USER node
 EXPOSE 3000

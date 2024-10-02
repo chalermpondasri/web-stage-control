@@ -1,3 +1,4 @@
-export class ProfileEntity {
+
+export class Profile {
 
 }

@@ -12,6 +12,7 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger'
+import { LoginRequest } from '@libs/common/models/user/login.request'
 
 @ApiTags('Super Admin')
 @Controller('/admin')
@@ -35,5 +36,17 @@ export class AdminController {
         @Body() body: CreateUserRequest,
     ) {
         return this._authenticationService.createUser(body.username, body.password)
+    }
+
+
+    @ApiBody({
+        type: LoginRequest,
+        description: 'login body',
+    })
+    @Post('/login')
+    public userLogin(
+        @Body() body: LoginRequest,
+    ) {
+        return this._authenticationService.doLogin(body.username, body.password)
     }
 }

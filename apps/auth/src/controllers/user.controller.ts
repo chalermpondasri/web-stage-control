@@ -1,18 +1,19 @@
 import {
-    Body,
     Controller,
+    Get,
     Inject,
-    Post,
+    Param,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { IAuthenticationService } from '../services/interfaces/authentication-service.interface'
-import { LoginRequest } from '@libs/common/models/user/login.request'
 import {
-    ApiBody,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
     ApiTags,
 } from '@nestjs/swagger'
 
-@ApiTags('Admin')
+@ApiTags('user')
 @Controller('/users')
 export class UserController {
     public constructor(
@@ -21,14 +22,27 @@ export class UserController {
     ) {
     }
 
-    @ApiBody({
-        type: LoginRequest,
-        description: 'login body',
+    @ApiOperation({
+        description: 'user login using LINE integration'
     })
-    @Post('/login')
-    public userLogin(
-        @Body() body: LoginRequest,
+    @ApiParam({
+        name: 'code',
+        type: 'string',
+        description: 'line authorization code',
+    })
+    @ApiResponse({
+        description: 'return access and refresh token',
+        example: {
+            accessToken: 'eyJhbGciOiJSUzI1Ni..,.',
+            refreshToken: 'eyJhbGciOiJSUzI1Ni...'
+        }
+    })
+    @Get('/login')
+    public userLoginWithLINE(
+        @Param('code') code: string,
     ) {
-        return this._authenticationService.doLogin(body.username, body.password)
+        return {
+            accessToken:'', refreshToken: '',
+        }
     }
 }

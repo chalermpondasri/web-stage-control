@@ -9,10 +9,10 @@ export class LoginRequest {
 
     @ApiProperty()
     @IsNotEmpty()
+    @IsAlphanumeric()
     public username: string
 
     @ApiProperty()
-    @IsAlphanumeric()
     @MinLength(6)
     public password: string
 

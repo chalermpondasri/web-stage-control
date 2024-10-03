@@ -9,11 +9,10 @@ import { IAuthenticationService } from '../services/interfaces/authentication-se
 import { LoginRequest } from '@libs/common/models/user/login.request'
 import {
     ApiBody,
-    ApiCreatedResponse,
     ApiTags,
 } from '@nestjs/swagger'
 
-@ApiTags('users')
+@ApiTags('Admin')
 @Controller('/users')
 export class UserController {
     public constructor(

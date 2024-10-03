@@ -7,9 +7,13 @@ import {
 import { ProviderName } from '@libs/common/constants/providerName'
 import { IAuthenticationService } from '../services/interfaces/authentication-service.interface'
 import { CreateUserRequest } from '@libs/common/models/user/create-user.request'
-import { ApiTags } from '@nestjs/swagger'
+import {
+    ApiBody,
+    ApiOperation,
+    ApiTags,
+} from '@nestjs/swagger'
 
-@ApiTags('admin')
+@ApiTags('Super Admin')
 @Controller('/admin')
 export class AdminController {
 
@@ -19,8 +23,15 @@ export class AdminController {
     ) {
     }
 
+    @ApiOperation({
+        description: 'Create new community admin',
+    })
+    @ApiBody({
+        type: CreateUserRequest,
+        description: 'Community admin information to be created'
+    })
     @Post('/users')
-    public adminLogin(
+    public createCommunityAdmin(
         @Body() body: CreateUserRequest,
     ) {
         return this._authenticationService.createUser(body.username, body.password)

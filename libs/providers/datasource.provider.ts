@@ -16,7 +16,6 @@ export const ormDatasourceProvider: Provider = {
     provide: ProviderName.ORM_DATASOURCE,
     inject: [ProviderName.ENV_CONFIG, ProviderName.ORM_ENTITY],
     useFactory: async (config: EnvironmentConfig, entities) => {
-        console.log(config.NODE_ENV === 'development')
         return await new DataSource({
             type: 'postgres',
             host: config.RDB_HOST,
@@ -27,8 +26,8 @@ export const ormDatasourceProvider: Provider = {
             migrationsTableName: 'migration_billboard',
             applicationName: 'billboard',
             database: config.RDB_DBNAME,
-            logging: config.NODE_ENV === 'development' ? 'all' : false,
-            synchronize: config.NODE_ENV === 'development',
+            logging: config.NODE_ENV !== 'production' ? 'all' : false,
+            synchronize: config.NODE_ENV !== 'production',
         }).initialize()
     },
 }

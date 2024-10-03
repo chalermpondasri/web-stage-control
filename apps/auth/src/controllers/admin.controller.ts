@@ -7,7 +7,9 @@ import {
 import { ProviderName } from '@libs/common/constants/providerName'
 import { IAuthenticationService } from '../services/interfaces/authentication-service.interface'
 import { CreateUserRequest } from '@libs/common/models/user/create-user.request'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('admin')
 @Controller('/admin')
 export class AdminController {
 

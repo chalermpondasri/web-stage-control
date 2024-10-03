@@ -21,6 +21,13 @@ cache:
   paths:
     - node_modules/
 
+build:
+  stage: build
+  image: node:20-alpine
+  allow_failure: false
+  environment:
+    name: staging
+
 
 deploy:
   stage: deploy

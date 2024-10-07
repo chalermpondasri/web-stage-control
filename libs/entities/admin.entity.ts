@@ -10,18 +10,18 @@ import {
 @Entity({
     comment: 'community admin entity',
 })
-export class User {
+export class Admin {
     @PrimaryGeneratedColumn('uuid')
     public id: string
 
-    @Column()
-    public name: string
+    @Column('varchar', { unique: true })
+    public username: string
 
-    @Column({nullable: true, type: 'text'})
-    public picture: string
+    @Column('varchar')
+    public secret: string
 
-    @Column({nullable: true})
-    public lineId: string
+    @Column('varchar', { nullable: true })
+    public company?: string
 
     @CreateDateColumn()
     public createdAt: Date

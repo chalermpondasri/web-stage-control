@@ -106,4 +106,12 @@ export class EnvironmentConfig {
     public declare readonly ADS_SECRET: string
     @IsNotEmpty()
     public declare readonly ADS_SALT: string
+
+    @IsNotEmpty()
+    public LINE_CLIENT_ID: string
+    @IsNotEmpty()
+    public LINE_CLIENT_SECRET: string
+    @IsNotEmpty()
+    public LINE_REDIRECT_URI: string
+
 }

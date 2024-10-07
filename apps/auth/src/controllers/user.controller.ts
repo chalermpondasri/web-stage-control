@@ -3,6 +3,7 @@ import {
     Get,
     Inject,
     Param,
+    Query,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { IAuthenticationService } from '../services/interfaces/authentication-service.interface'
@@ -39,10 +40,8 @@ export class UserController {
     })
     @Get('/login')
     public userLoginWithLINE(
-        @Param('code') code: string,
+        @Query('code') code: string,
     ) {
-        return {
-            accessToken:'', refreshToken: '',
-        }
+        return this._authenticationService.doLineLogin(code)
     }
 }

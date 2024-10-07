@@ -7,23 +7,32 @@ import { IEncryptionService } from '@libs/providers/encryption.provider'
 import { EnvironmentConfig } from '@libs/common/models'
 import { TokenizationService } from '../services/tokenization.service'
 import { ITokenizationService } from '../services/interfaces/tokenization-service.interface'
+import { Admin } from '@libs/entities/admin.entity'
+import { ILineRepository } from '@libs/repositories/interfaces/line.interface'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
     inject: [
-        ProviderName.USER_REPOSITORY,
+        ProviderName.ADMIN_REPOSITORY,
         ProviderName.ENCRYPTION_SERVICE,
         ProviderName.TOKENIZATION_SERVICE,
+        ProviderName.LINE_REPOSITORY,
+        ProviderName.USER_REPOSITORY,
     ],
     useFactory: (
-        userRepository: Repository<User>,
+        adminRepository: Repository<Admin>,
         encryptionService: IEncryptionService,
         tokenizationService: ITokenizationService,
+        lineRepository: ILineRepository,
+        userRepository: Repository<User>
+
     ) => {
         return new AuthenticationService(
-            userRepository,
+            adminRepository,
             encryptionService,
             tokenizationService,
+            lineRepository,
+            userRepository,
         )
     },
 }

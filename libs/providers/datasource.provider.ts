@@ -3,10 +3,12 @@ import { EnvironmentConfig } from '@libs/common/models'
 import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { User } from '@libs/entities/user'
+import { Admin } from '@libs/entities/admin.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
     useValue: [
+        Admin,
         User,
         // Profile,
     ],

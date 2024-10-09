@@ -3,9 +3,11 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    ManyToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
+import { Community } from '@libs/entities/community.entity'
 
 @Entity({
     comment: 'community admin entity',
@@ -22,6 +24,9 @@ export class Admin {
 
     @Column('varchar', { nullable: true })
     public company?: string
+
+    @ManyToMany(() => Community, community => community.admins)
+    public communities: Community[]
 
     @CreateDateColumn()
     public createdAt: Date

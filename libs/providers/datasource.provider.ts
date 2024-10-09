@@ -2,15 +2,18 @@ import { ProviderName } from '@libs/common/constants/providerName'
 import { EnvironmentConfig } from '@libs/common/models'
 import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
-import { User } from '@libs/entities/user'
 import { Admin } from '@libs/entities/admin.entity'
+import { Community } from '@libs/entities/community.entity'
+import { Content } from '@libs/entities/content.entity'
+import { User } from '@libs/entities/user.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
     useValue: [
         Admin,
         User,
-        // Profile,
+        Community,
+        Content,
     ],
 
 }

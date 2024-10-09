@@ -1,5 +1,4 @@
 import { Repository } from 'typeorm'
-import { User } from '@libs/entities/user'
 import {
     BadRequestException,
     Logger,
@@ -32,6 +31,9 @@ import {
 import { fromPromise } from 'rxjs/internal/observable/innerFrom'
 import { UserDto } from '@libs/common/models/user/user.dto'
 import { AdminUserDto } from '@libs/common/models/user/admin-user.dto'
+import { Community } from '@libs/entities/community.entity'
+import { User } from '@libs/entities/user.entity'
+import dayjs from 'dayjs'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -42,6 +44,7 @@ export class AuthenticationService implements IAuthenticationService {
         private readonly _tokenizationService: ITokenizationService,
         private readonly _lineRepository: ILineRepository,
         private readonly _userRepository: Repository<User>,
+        private readonly _communityRepository: Repository<Community>,
     ) {
         this._logger = new Logger(AuthenticationService.name)
     }
@@ -76,6 +79,14 @@ export class AuthenticationService implements IAuthenticationService {
                     return throwError(() => new BadRequestException('USER_EXISTED'))
                 }
                 return from(this._adminRepository.save(user))
+            }),
+            mergeMap(() => {
+                const model = this._communityRepository.create({
+                    name: `community-${Date.now()}`,
+                    startDate: new Date(),
+                    endDate: dayjs().add(1,'year').toDate(),
+                })
+                return from(this._communityRepository.save(model))
             }),
             map(result => {
                 return {

@@ -2,13 +2,14 @@ import { Provider } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { AuthenticationService } from '../services/authentication.service'
 import { Repository } from 'typeorm'
-import { User } from '@libs/entities/user'
 import { IEncryptionService } from '@libs/providers/encryption.provider'
 import { EnvironmentConfig } from '@libs/common/models'
 import { TokenizationService } from '../services/tokenization.service'
 import { ITokenizationService } from '../services/interfaces/tokenization-service.interface'
 import { Admin } from '@libs/entities/admin.entity'
 import { ILineRepository } from '@libs/repositories/interfaces/line.interface'
+import { Community } from '@libs/entities/community.entity'
+import { User } from '@libs/entities/user.entity'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -18,13 +19,15 @@ export const authenticationServiceProvider: Provider = {
         ProviderName.TOKENIZATION_SERVICE,
         ProviderName.LINE_REPOSITORY,
         ProviderName.USER_REPOSITORY,
+        ProviderName.COMMUNITY_REPOSITORY,
     ],
     useFactory: (
         adminRepository: Repository<Admin>,
         encryptionService: IEncryptionService,
         tokenizationService: ITokenizationService,
         lineRepository: ILineRepository,
-        userRepository: Repository<User>
+        userRepository: Repository<User>,
+        communityRepository: Repository<Community>,
 
     ) => {
         return new AuthenticationService(
@@ -33,6 +36,7 @@ export const authenticationServiceProvider: Provider = {
             tokenizationService,
             lineRepository,
             userRepository,
+            communityRepository,
         )
     },
 }

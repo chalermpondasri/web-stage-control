@@ -11,7 +11,8 @@ import {
 
 async function bootstrap(){
     const app = await NestFactory.create(MainModule, {
-        bufferLogs: true
+        bufferLogs: true,
+        forceCloseConnections: true,
     })
     app.enableCors()
     const config = new DocumentBuilder()
@@ -30,6 +31,8 @@ async function bootstrap(){
     ]
 
     app.useGlobalPipes(...nestValidationPipes)
+    app.enableShutdownHooks()
+
 
     return (await app).listen(3000)
 }

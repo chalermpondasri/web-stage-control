@@ -1,4 +1,7 @@
-import { Provider } from '@nestjs/common'
+import {
+    MessageEvent,
+    Provider,
+} from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { AuthenticationService } from '../services/authentication.service'
 import { Repository } from 'typeorm'
@@ -10,10 +13,12 @@ import { Admin } from '@libs/entities/admin.entity'
 import { ILineRepository } from '@libs/repositories/interfaces/line.interface'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
+import { Subject } from 'rxjs'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
     inject: [
+        ProviderName.SSE_SUBJECT,
         ProviderName.ADMIN_REPOSITORY,
         ProviderName.ENCRYPTION_SERVICE,
         ProviderName.TOKENIZATION_SERVICE,
@@ -22,6 +27,7 @@ export const authenticationServiceProvider: Provider = {
         ProviderName.COMMUNITY_REPOSITORY,
     ],
     useFactory: (
+        sseSubject: Subject<MessageEvent>,
         adminRepository: Repository<Admin>,
         encryptionService: IEncryptionService,
         tokenizationService: ITokenizationService,
@@ -31,6 +37,7 @@ export const authenticationServiceProvider: Provider = {
 
     ) => {
         return new AuthenticationService(
+            sseSubject,
             adminRepository,
             encryptionService,
             tokenizationService,

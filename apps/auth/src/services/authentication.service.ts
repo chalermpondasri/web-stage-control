@@ -3,6 +3,7 @@ import {
     BadRequestException,
     Logger,
     LoggerService,
+    MessageEvent,
 } from '@nestjs/common'
 import {
     catchError,
@@ -11,6 +12,7 @@ import {
     mergeMap,
     Observable,
     of,
+    Subject,
     throwError,
 } from 'rxjs'
 import { IAuthenticationService } from './interfaces/authentication-service.interface'
@@ -34,11 +36,13 @@ import { AdminUserDto } from '@libs/common/models/user/admin-user.dto'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import dayjs from 'dayjs'
+import { ItemUpdateDto } from '@libs/common/models/media/item-update.dto'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
 
     public constructor(
+        private readonly _sseSubject: Subject<MessageEvent>,
         private readonly _adminRepository: Repository<Admin>,
         private readonly _encryptionService: IEncryptionService,
         private readonly _tokenizationService: ITokenizationService,
@@ -55,6 +59,19 @@ export class AuthenticationService implements IAuthenticationService {
                 if (!user || password !== this._encryptionService.decrypt({ encrypted: Buffer.from(user.secret, 'base64') })) {
                     throw new BadRequestException('LOGIN_FAILED')
                 }
+
+                const mediaUpdateDto: ItemUpdateDto = {
+                    mediaId: 1,
+                    artist: 'Loremsum',
+                    title: 'Lorem Ipsum Dolor Sit Amet',
+                    duration: 215,
+                    coverImage: null,
+                    totalPoint: Date.now() %10000,
+                    updatedAt: Date.now(),
+                }
+
+                this._sseSubject.next({type:'ITEM_UPDATE', data: mediaUpdateDto})
+
                 const adminUserDto = plainToInstance(AdminUserDto, instanceToPlain(user), { excludeExtraneousValues: true })
 
                 const accessToken = this._tokenizationService.createAccessToken(instanceToPlain(adminUserDto))
@@ -126,6 +143,10 @@ export class AuthenticationService implements IAuthenticationService {
                 return throwError(() => new BadRequestException('Invalid Token'))
             }),
         )
+    }
+
+    public subscribeSse(): Observable<MessageEvent> {
+        return this._sseSubject
     }
 
 }

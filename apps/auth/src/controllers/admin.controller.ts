@@ -38,7 +38,6 @@ export class AdminController {
         return this._authenticationService.createUser(body.username, body.password)
     }
 
-
     @ApiBody({
         type: LoginRequest,
         description: 'login body',

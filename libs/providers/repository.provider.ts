@@ -5,7 +5,6 @@ import { Admin } from '@libs/entities/admin.entity'
 import { Community } from '@libs/entities/community.entity'
 import { Content } from '@libs/entities/content.entity'
 import { User } from '@libs/entities/user.entity'
-import { ElasticsearchRepository } from '@libs/repositories/elasticsearch/elasticsearch.repository'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { LineRepository } from '@libs/repositories/line.repository'
 import { Provider } from '@nestjs/common'
@@ -43,14 +42,7 @@ export const lineRepositoryProvider: Provider = {
     },
 }
 
-export const searchRepositoryProviders: Provider[] = [
-    {
-        provide: ProviderName.SEARCH_REPOSITORY,
-        inject: [ProviderName.ELASTIC_CLIENT],
-        useFactory: async (client: Client) => {
-            return new ElasticsearchRepository(client)
-        },
-    },
+export const elasticRepositoryProviders: Provider[] = [
     {
         provide: ProviderName.TRACK_REPOSITORY,
         inject: [ProviderName.ELASTIC_CLIENT],

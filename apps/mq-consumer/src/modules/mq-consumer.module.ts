@@ -12,14 +12,12 @@ import { TrackConsumer } from '../domains/cms/track.consumer'
         GlobalModule,
         RabbitMQModule.forRootAsync(RabbitMQModule, {
             useFactory: (envConfig: EnvironmentConfig) => {
-                let uri = `amqp://${envConfig.MESSAGE_BROKER_USERNAME}:${envConfig.MESSAGE_BROKER_PASSWORD}@${
-                    envConfig.MESSAGE_BROKER_HOST
-                }:${envConfig.MESSAGE_BROKER_PORT || '5672'}`
+                let uri = `amqp://${envConfig.MESSAGE_BROKER_USERNAME}:${envConfig.MESSAGE_BROKER_PASSWORD}@${envConfig.MESSAGE_BROKER_HOST}:${envConfig.MESSAGE_BROKER_PORT}`
                 return {
                     exchanges: [
                         {
                             name: EXCHANGES.TRACK,
-                            type: 'fanout',
+                            type: 'topic',
                             options: {
                                 durable: true,
                             },
@@ -28,7 +26,7 @@ import { TrackConsumer } from '../domains/cms/track.consumer'
                         //     name: EXCHANGES.TRACK_DL,
                         //     type: 'fanout',
                         //     options: {
-                        //       durable: true,
+                        //         durable: true,
                         //     },
                         // },
                     ],
@@ -40,6 +38,8 @@ import { TrackConsumer } from '../domains/cms/track.consumer'
         }),
     ],
     controllers: [],
+
+    // TODO:: ลอง set ให้ vscode มันตีบรรทัดลงมาให้
     providers: [envConfigProvider, TrackConsumer],
 })
 export class MqConsumerModule {}

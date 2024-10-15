@@ -21,7 +21,7 @@ export class TrackConsumer {
     }
     @RabbitSubscribe({
         exchange: EXCHANGES.TRACK,
-        routingKey: '',
+        routingKey: 'track.*',
         queue: QUEUES.TRACK,
         queueOptions: {
             durable: true,
@@ -32,6 +32,7 @@ export class TrackConsumer {
     })
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
         this._logger.log(`Received message: ${JSON.stringify(msg)}`)
+
         // TODO:: check track publish before add to elastic search
         if (!msg['payload']) {
             this._logger.error('Invalid message format: no payload')

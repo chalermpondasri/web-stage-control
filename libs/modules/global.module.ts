@@ -2,7 +2,7 @@ import { elasticClientProvider } from '@libs/providers/elastic-client.provider'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import { eventSubjectProvider } from '@libs/providers/event-subject.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
-import { lineRepositoryProvider, searchRepositoryProviders } from '@libs/providers/repository.provider'
+import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
 import { Global, Module } from '@nestjs/common'
 @Global()
 @Module({
@@ -12,7 +12,7 @@ import { Global, Module } from '@nestjs/common'
         lineRepositoryProvider,
         eventSubjectProvider,
         elasticClientProvider,
-        ...searchRepositoryProviders,
+        ...elasticRepositoryProviders,
     ],
     exports: [
         envConfigProvider,
@@ -20,7 +20,7 @@ import { Global, Module } from '@nestjs/common'
         lineRepositoryProvider,
         eventSubjectProvider,
         elasticClientProvider,
-        ...searchRepositoryProviders,
+        ...elasticRepositoryProviders,
     ],
 })
 export class GlobalModule {}

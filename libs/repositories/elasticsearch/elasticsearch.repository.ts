@@ -7,7 +7,7 @@ import {
 } from '@libs/repositories/interfaces/search/search.interface'
 import { Observable, from } from 'rxjs'
 
-export class ElasticsearchRepository implements ISearchRepository {
+export abstract class ElasticsearchRepository implements ISearchRepository {
     public constructor(private readonly _client: Client) {}
 
     public getDocument(index: string, id: string): Observable<GetResponse<any>> {

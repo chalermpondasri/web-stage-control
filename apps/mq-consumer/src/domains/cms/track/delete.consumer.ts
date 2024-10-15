@@ -10,7 +10,7 @@ import { ConsumeMessage } from 'amqplib'
 const rabbitSubscribeConfig = {
     exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
     routingKey: 'track.deleted',
-    queue: QUEUES.TRACK,
+    queue: QUEUES.TRACK_DELETE,
     queueOptions: {
         durable: true,
         autoDelete: false,
@@ -33,8 +33,6 @@ export class TrackDeleteConsumer {
     }
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        this._logger.log(`Received message: ${JSON.stringify(msg)}`)
-
         if (!msg['payload']) {
             this._logger.error('Invalid message format: no payload')
             this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
@@ -50,7 +48,9 @@ export class TrackDeleteConsumer {
         const track: TrackES = {} as TrackES
         Object.assign(track, msg['payload'])
 
-        this.trackRepository.deleteTrack(track.id.toString()).subscribe({
+        this._logger.log(`Received message: ${JSON.stringify(msg, null, 2)}`)
+
+        this.trackRepository.deleteTrack(track).subscribe({
             next: (value) => {
                 this._logger.log(`Document updated: ${JSON.stringify(value)}`)
             },

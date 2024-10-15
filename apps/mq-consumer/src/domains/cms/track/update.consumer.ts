@@ -10,7 +10,7 @@ import { ConsumeMessage } from 'amqplib'
 const rabbitSubscribeConfig = {
     exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
     routingKey: 'track.updated',
-    queue: QUEUES.TRACK,
+    queue: QUEUES.TRACK_UPDATE,
     queueOptions: {
         durable: true,
         autoDelete: false,
@@ -33,8 +33,6 @@ export class TrackUpdateConsumer {
     }
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        this._logger.log(`Received message: ${JSON.stringify(msg)}`)
-
         if (!msg['payload']) {
             this._logger.error('Invalid message format: no payload')
             this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
@@ -50,21 +48,7 @@ export class TrackUpdateConsumer {
         const track: TrackES = {} as TrackES
         Object.assign(track, msg['payload'])
 
-        // ถ้าอัพเดทจาก publish เป็น unpublished ให้ลบออก
-        if (!track.publishedAt) {
-            this.trackRepository.deleteTrack(track.id.toString()).subscribe({
-                next: (value) => {
-                    this._logger.log(`Document deleted: ${JSON.stringify(value)}`)
-                },
-                error: (error) => {
-                    this._logger.error(`Error deleting document: ${error}`)
-                    // add error message to metadata and move to dead letter queue
-                    this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
-                },
-            })
-
-            return
-        }
+        this._logger.log(`Received message: ${JSON.stringify(msg, null, 2)}`)
 
         this.trackRepository.updateTrack(track).subscribe({
             next: (value) => {

@@ -1,5 +1,5 @@
 export enum EXCHANGES {
-    TRACK = 'track_exchange',
+    EVENT_BUS = 'event_bus',
     TRACK_DL = 'track_dead_letter_exchange',
 }
 

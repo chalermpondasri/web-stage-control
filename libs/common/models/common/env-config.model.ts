@@ -44,6 +44,7 @@ export class EnvironmentConfig {
     public declare readonly MESSAGE_BROKER_PASSWORD: string
     @IsNotEmpty()
     public declare readonly MESSAGE_BROKER_HOST: string
+    public declare readonly MESSAGE_BROKER_PORT: string
     @IsNotEmpty()
     public declare readonly MESSAGE_BROKER_QUEUE_NAME: string
 
@@ -113,5 +114,4 @@ export class EnvironmentConfig {
     public LINE_CLIENT_SECRET: string
     @IsNotEmpty()
     public LINE_REDIRECT_URI: string
-
 }

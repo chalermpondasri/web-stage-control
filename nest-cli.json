@@ -17,6 +17,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
+    },
+    "mq-consumer": {
+      "type": "application",
+      "root": "apps/mq-consumer",
+      "entryFile": "main",
+      "sourceRoot": "apps/mq-consumer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/mq-consumer/tsconfig.app.json"
+      }
     }
   }
 }

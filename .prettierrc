@@ -1,5 +1,8 @@
 {
-  "plugins": ["prettier-plugin-organize-imports"],
+  "plugins": [
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-multiline-arrays"
+  ],
   "singleQuote": true,
   "useTabs": false,
   "tabWidth": 4,
@@ -10,5 +13,6 @@
   "arrowParens": "always",
   "endOfLine": "lf",
   "printWidth": 120,
-  "proseWrap": "preserve"
+  "proseWrap": "preserve",
+  "multilineArraysWrapThreshold": 0
 }

@@ -14,7 +14,7 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
         GlobalModule,
         RabbitMQModule.forRootAsync(RabbitMQModule, {
             useFactory: (envConfig: EnvironmentConfig) => {
-                let uri = `amqp://${envConfig.MESSAGE_BROKER_USERNAME}:${envConfig.MESSAGE_BROKER_PASSWORD}@${envConfig.MESSAGE_BROKER_HOST}:${envConfig.MESSAGE_BROKER_PORT}`
+                let uri = `amqp://${envConfig.MESSAGE_BROKER_USERNAME}:${envConfig.MESSAGE_BROKER_PASSWORD}@${envConfig.MESSAGE_BROKER_HOST}:${envConfig.MESSAGE_BROKER_PORT}/${envConfig.MESSAGE_BROKER_VIRTUAL_HOST}`
 
                 return {
                     exchanges: [

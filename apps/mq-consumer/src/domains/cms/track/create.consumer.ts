@@ -64,11 +64,6 @@ export class TrackCreateConsumer {
                 // add error message to metadata and move to dead letter queue
                 this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
 
-                // TODO:: test this
-                amqpMsg.properties.headers = {
-                    ...amqpMsg.properties.headers,
-                    error: error.message,
-                }
                 return new Nack()
             },
         })

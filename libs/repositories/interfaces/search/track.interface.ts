@@ -1,18 +1,23 @@
-import { Media_Plain } from './media.interface'
+import { AlbumES } from './album.interface'
+import { ArtistES } from './artist.interface'
+import { GenreES } from './genre.interface'
+import { MediaES } from './media.interface'
+import { PlaylistES } from './playlist.interface'
 
 export interface TrackES {
     id: number
     createdAt: Date
     updatedAt: Date
     publishedAt?: Date
-    title: string
+    title_th: string
+    title_en: string
+    aliases: string[]
     duration?: number
-    audioFile: Media_Plain
-    album?: string
-    artist?: string
-    genres: string[]
-    playlists?: string[]
-    coverImage?: Media_Plain
-    locale: string
-    localizations?: TrackES[]
+    audioFile: MediaES
+    album?: AlbumES
+    artists?: ArtistES
+    genres: GenreES[]
+    playlists?: PlaylistES[]
+    coverImage?: MediaES
+    locale?: string
 }

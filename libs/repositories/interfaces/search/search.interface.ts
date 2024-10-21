@@ -2,11 +2,13 @@ import { GetResponse, SearchResponse } from '@elastic/elasticsearch/lib/api/type
 // import { MediaContentModel } from '@libs/common/models/media/media-content.model'
 import { Observable } from 'rxjs'
 
+export type fuzziness = 0 | 1 | 2 | 'AUTO'
+
 export interface ISearchOptions {
-    fuzziness?: number
+    fuzziness?: fuzziness
     boost?: number
     page?: number
-    // rating?: ContentRating[]
+    limit?: number
 }
 
 export interface IDocumentIndexOptions {
@@ -19,4 +21,10 @@ export interface ISearchRepository {
     getDocuments(index: string): Observable<SearchResponse>
     indexDocument(index: string, document: Record<string, any>, opts?: IDocumentIndexOptions): Observable<any>
     fuzzySearchDocument(index: string, text: string, fields: string[], opts: ISearchOptions): Observable<SearchResponse>
+    // genericSearchDocument(
+    //     index: string,
+    //     text: string,
+    //     fields: string[],
+    //     opts: ISearchOptions,
+    // ): Observable<SearchResponse>
 }

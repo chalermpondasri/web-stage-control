@@ -26,6 +26,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/mq-consumer/tsconfig.app.json"
       }
+    },
+    "search": {
+      "type": "application",
+      "root": "apps/search",
+      "entryFile": "index",
+      "sourceRoot": "apps/search/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/search/tsconfig.app.json"
+      }
     }
   }
 }

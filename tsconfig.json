@@ -31,12 +31,13 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "watchOptions": {
-    "watchFile": "dynamicPriorityPolling",
-    "watchDirectory": "dynamicPriorityPolling",
-    "excludeDirectories": [
-      "**/node_modules",
-      "dist"
-    ]
-  }
+  // Temporary comment this out because it took so long for watch to detect file changes
+  // "watchOptions": {
+  //   "watchFile": "dynamicPriorityPolling",
+  //   "watchDirectory": "dynamicPriorityPolling",
+  //   "excludeDirectories": [
+  //     "**/node_modules",
+  //     "dist"
+  //   ]
+  // }
 }

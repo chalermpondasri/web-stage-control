@@ -1,4 +1,4 @@
-export interface Media_Plain {
+export interface MediaES {
     id: number
     name: string
     alternativeText: string

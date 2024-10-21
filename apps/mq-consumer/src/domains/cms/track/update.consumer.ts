@@ -48,6 +48,23 @@ export class TrackUpdateConsumer {
         const track: TrackES = {} as TrackES
         Object.assign(track, msg['payload'])
 
+        if (!track.publishedAt) {
+            this.trackRepository.deleteTrack(track).subscribe({
+                next: (value) => {
+                    this._logger.log(`Document deleted: ${JSON.stringify(value)}`)
+                },
+                error: (error) => {
+                    this._logger.error(`Error deleting document: ${error}`)
+                    // add error message to metadata and move to dead letter queue
+                    this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
+
+                    return new Nack()
+                },
+            })
+
+            return
+        }
+
         this._logger.log(`Received message: ${JSON.stringify(msg, null, 2)}`)
 
         this.trackRepository.updateTrack(track).subscribe({
@@ -58,6 +75,14 @@ export class TrackUpdateConsumer {
                 this._logger.error(`Error updating document: ${error}`)
                 // add error message to metadata and move to dead letter queue
                 this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
+
+                // TODO:: test this
+                amqpMsg.properties.headers = {
+                    ...amqpMsg.properties.headers,
+                    error: error.message,
+                }
+
+                return new Nack()
             },
         })
     }

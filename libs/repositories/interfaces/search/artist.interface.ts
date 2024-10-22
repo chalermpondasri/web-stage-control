@@ -7,13 +7,12 @@ export interface ArtistES {
     id: number
     createdAt: Date
     updatedAt: Date
-    publishedAt?: Date
+    publishedAt?: Date | null
     name: string
-    bio?: any
-    albums: AlbumES[]
-    tracks: TrackES[]
+    bio?: string
+    albums?: AlbumES[]
+    tracks?: TrackES[]
     image?: MediaES
-    playlists: PlaylistES[]
-    locale: string
-    localizations?: ArtistES[]
+    playlists?: PlaylistES[]
+    locale?: string
 }

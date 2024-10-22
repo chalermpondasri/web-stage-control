@@ -123,9 +123,9 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             }
         }
 
-        // text ที่มากกว่า 1 ตัวอักษร จะสนใจใช้ multi_match
+        // text ที่มากกว่า 1 ตัวอักษร จะสนใจใช้อีกแบบ (ไม่ใช้ wildcard)
         if (text.length > 1) {
-            return this.multiMatchSearch(index, text, fields, opts)
+            return this.multipleCharacterSearch(index, text, fields, opts)
         }
 
         // text ที่มีเพียง 1 ตัวอักษร จะใช้ singleCharacterSearch
@@ -134,7 +134,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         }
     }
 
-    public multiMatchSearch(
+    public multipleCharacterSearch(
         index: string,
         text: string,
         fields: string[],

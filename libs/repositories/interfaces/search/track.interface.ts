@@ -6,18 +6,18 @@ import { PlaylistES } from './playlist.interface'
 
 export interface TrackES {
     id: number
-    createdAt: Date
-    updatedAt: Date
-    publishedAt?: Date
+    publishedAt?: Date | null
     title_th: string
     title_en: string
     aliases: string[]
     duration?: number
     audioFile: MediaES
     album?: AlbumES
-    artists?: ArtistES
+    artist?: ArtistES
     genres: GenreES[]
     playlists?: PlaylistES[]
     coverImage?: MediaES
     locale?: string
+    createdAt: Date
+    updatedAt: Date
 }

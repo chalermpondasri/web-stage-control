@@ -6,12 +6,11 @@ export interface AlbumES {
     id: number
     createdAt: Date
     updatedAt: Date
-    publishedAt?: Date
+    publishedAt?: Date | null
     title: string
     releaseDate?: Date
     coverImage?: MediaES
     artist?: ArtistES
-    tracks: TrackES[]
-    locale: string
-    localizations?: AlbumES[]
+    tracks?: TrackES[]
+    locale?: string
 }

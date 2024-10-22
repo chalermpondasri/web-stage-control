@@ -1,6 +1,6 @@
 version: '3'
 services:
-  service-auth:
+  billboard-service-api:
     image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
     container_name: billboard-api
     env_file:

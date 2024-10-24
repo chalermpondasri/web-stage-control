@@ -30,13 +30,13 @@ import {
     decode,
     JwtPayload,
 } from 'jsonwebtoken'
-import { fromPromise } from 'rxjs/internal/observable/innerFrom'
 import { UserDto } from '@libs/common/models/user/user.dto'
 import { AdminUserDto } from '@libs/common/models/user/admin-user.dto'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import dayjs from 'dayjs'
 import { ItemUpdateDto } from '@libs/common/models/media/item-update.dto'
+import { ErrorEnum } from '@libs/common/constants/error.enum'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -57,7 +57,7 @@ export class AuthenticationService implements IAuthenticationService {
         return from(this._adminRepository.findOneBy({ username })).pipe(
             map(user => {
                 if (!user || password !== this._encryptionService.decrypt({ encrypted: Buffer.from(user.secret, 'base64') })) {
-                    throw new BadRequestException('LOGIN_FAILED')
+                    throw new BadRequestException(ErrorEnum.LOGIN_LOGIN_FAILED)
                 }
 
                 const mediaUpdateDto: ItemUpdateDto = {
@@ -93,7 +93,7 @@ export class AuthenticationService implements IAuthenticationService {
         return from(this._adminRepository.findOneBy({ username })).pipe(
             mergeMap(result => {
                 if (!!result) {
-                    return throwError(() => new BadRequestException('USER_EXISTED'))
+                    return throwError(() => new BadRequestException(ErrorEnum.CREATE_USER_USER_EXISTED))
                 }
                 return from(this._adminRepository.save(user))
             }),
@@ -117,13 +117,11 @@ export class AuthenticationService implements IAuthenticationService {
         return from(this._lineRepository.verifyToken({ code })).pipe(
             mergeMap(response => {
                 const decoded = <JwtPayload> decode(response.id_token)
-                const { sub, name, picture } = decoded
-                return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
+                return from(this._userRepository.findOneBy({ lineId: decoded.sub, isConsentAccepted: true })).pipe(
                     mergeMap(user => {
-                        // if user not existed, create new user
+                        // if user not existed, or consent not accepted
                         if (!user) {
-                            const entity = this._userRepository.create({ lineId: sub, name, picture })
-                            return fromPromise(this._userRepository.save(entity))
+                            return throwError(() => new BadRequestException(ErrorEnum.LOGIN_CONSENT_REQUIRED))
                         }
                         // return founded user
                         return of(user)
@@ -140,7 +138,7 @@ export class AuthenticationService implements IAuthenticationService {
             }),
             catchError(err => {
                 this._logger.error(err)
-                return throwError(() => new BadRequestException('Invalid Token'))
+                return throwError(() => new BadRequestException(ErrorEnum.LOGIN_INVALID_TOKEN))
             }),
         )
     }

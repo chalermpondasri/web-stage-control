@@ -1,18 +1,22 @@
 import {
+    Body,
     Controller,
-    Get,
     Inject,
-    Param,
-    Query,
+    Post,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { IAuthenticationService } from '../services/interfaces/authentication-service.interface'
 import {
+    ApiBody,
     ApiOperation,
-    ApiParam,
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger'
+import { LineLoginRequest } from '@libs/common/models/user/line-login.request'
+import { LoginRequest } from '@libs/common/models/user/login.request'
+import { UpdateConsentRequest } from '@libs/common/models/user/update-consent.request'
+import { IUserService } from '../services/interfaces/user-service.interface'
+import { TokenDto } from '@libs/common/models/common/token.dto'
 
 @ApiTags('user')
 @Controller('/users')
@@ -20,28 +24,46 @@ export class UserController {
     public constructor(
         @Inject(ProviderName.AUTHENTICATION_SERVICE)
         private readonly _authenticationService: IAuthenticationService,
+        @Inject(ProviderName.USER_SERVICE)
+        private readonly _userService: IUserService,
     ) {
     }
 
     @ApiOperation({
         description: 'user login using LINE integration'
     })
-    @ApiParam({
-        name: 'code',
-        type: 'string',
-        description: 'line authorization code',
+    @ApiBody({
+        type: LoginRequest,
+        description: 'user login using LINE integration',
+        required: true,
     })
     @ApiResponse({
         description: 'return access and refresh token',
+        type: TokenDto,
         example: {
             accessToken: 'eyJhbGciOiJSUzI1Ni..,.',
             refreshToken: 'eyJhbGciOiJSUzI1Ni...'
         }
     })
-    @Get('/login')
+    @Post('/login')
     public userLoginWithLINE(
-        @Query('code') code: string,
+        @Body() body: LineLoginRequest,
     ) {
-        return this._authenticationService.doLineLogin(code)
+        return this._authenticationService.doLineLogin(body.authorizationCode)
+    }
+
+    @ApiBody({
+        type: UpdateConsentRequest,
+        description: 'user update usage consent response',
+        required: true,
+    })
+    @ApiResponse({
+        type: TokenDto
+    })
+    @Post('/consent')
+    public updateConsent(
+        @Body() body:  UpdateConsentRequest,
+    ) {
+        return this._userService.updateUserConsent(body)
     }
 }

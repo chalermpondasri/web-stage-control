@@ -17,11 +17,17 @@ export class User {
     @Column()
     public name: string
 
-    @Column({nullable: true, type: 'text'})
+    @Column({ nullable: true, type: 'text' })
     public picture: string
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     public lineId: string
+
+    @Column({ default: false, type: 'boolean'})
+    public isConsentAccepted: boolean
+
+    @Column({ nullable: true, type: 'text', comment: 'base64 encoded content' })
+    public acceptedConsent: string
 
     @CreateDateColumn()
     public createdAt: Date

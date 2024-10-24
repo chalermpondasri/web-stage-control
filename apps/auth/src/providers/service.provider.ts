@@ -14,6 +14,7 @@ import { ILineRepository } from '@libs/repositories/interfaces/line.interface'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import { Subject } from 'rxjs'
+import { UserService } from '../services/user.service'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -34,7 +35,6 @@ export const authenticationServiceProvider: Provider = {
         lineRepository: ILineRepository,
         userRepository: Repository<User>,
         communityRepository: Repository<Community>,
-
     ) => {
         return new AuthenticationService(
             sseSubject,
@@ -55,4 +55,18 @@ export const tokenizationServiceProvider: Provider = {
         const { JWT_ACCESS_SECRET, JWT_ACCESS_TTL, JWT_REFRESH_SECRET, JWT_REFRESH_TTL } = config
         return new TokenizationService(JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_ACCESS_TTL, JWT_REFRESH_TTL)
     },
+}
+
+export const userServiceProvider: Provider = {
+    provide: ProviderName.USER_SERVICE,
+    inject: [
+        ProviderName.USER_REPOSITORY,
+        ProviderName.LINE_REPOSITORY,
+        ProviderName.TOKENIZATION_SERVICE,
+    ],
+    useFactory: (
+        userRepository: Repository<User>,
+        lineRepository: ILineRepository,
+        tokenizationService: ITokenizationService,
+    ) => new UserService(userRepository, lineRepository, tokenizationService),
 }

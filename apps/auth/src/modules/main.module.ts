@@ -4,6 +4,7 @@ import { GlobalModule } from '@libs/modules/global.module'
 import {
     authenticationServiceProvider,
     tokenizationServiceProvider,
+    userServiceProvider,
 } from '../providers/service.provider'
 import { encryptionServiceProvider } from '@libs/providers/encryption.provider'
 import { AdminController } from '../controllers/admin.controller'
@@ -19,6 +20,7 @@ import { SseController } from '../controllers/sse.controller'
         encryptionServiceProvider,
         authenticationServiceProvider,
         tokenizationServiceProvider,
+        userServiceProvider,
     ],
     controllers: [
         AdminController,

@@ -265,14 +265,23 @@ export class SearchTrackService implements ITrackService {
     }
 
     private getTrackDto(hit: SearchHit<TrackES>): TrackDto {
-        return TrackDto.toDto(hit._source)
+        return TrackDto.toDto({
+            ...hit._source,
+            // highlights: hit.highlight,
+        })
     }
 
     private getArtistDto(hit: SearchHit<TrackES>): ArtistDto {
-        return ArtistDto.toDto(hit._source.artist)
+        return ArtistDto.toDto({
+            ...hit._source.artist,
+            // highlights: hit.highlight,
+        })
     }
 
     private getAlbumDto(hit: SearchHit<TrackES>): AlbumDto {
-        return AlbumDto.toDto(hit._source.album)
+        return AlbumDto.toDto({
+            ...hit._source.album,
+            // highlights: hit.highlight,
+        })
     }
 }

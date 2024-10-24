@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "build": "nest build auth",
+    "build": "nest build auth && nest build search && nest build mq-consumer",
     "build:auth": "nest build auth",
     "build:migration": "nest build migration",
     "build:mq": "nest build mq",

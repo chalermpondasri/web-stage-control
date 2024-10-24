@@ -26,9 +26,7 @@ FROM base AS build
 WORKDIR /src
 USER root
 RUN npm install
-RUN npm run build:auth
-RUN npm run build:mq
-RUN npm run build:search
+RUN npm run build
 
 USER node
 EXPOSE 3000

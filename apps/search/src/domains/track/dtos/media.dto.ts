@@ -1,5 +1,5 @@
 import { MediaES, MediaFormat } from '@libs/repositories/interfaces/search/media.interface'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Expose, Type, plainToInstance } from 'class-transformer'
 
 export class MediaFormatDto implements MediaFormat {
@@ -164,3 +164,10 @@ export class MediaDto implements MediaES {
         return plainToInstance(MediaDto, media)
     }
 }
+
+export class MediaSearchDto extends PickType(MediaDto, [
+    'id',
+    'width',
+    'height',
+    'url',
+]) {}

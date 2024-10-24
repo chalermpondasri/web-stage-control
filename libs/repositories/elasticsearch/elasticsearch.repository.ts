@@ -7,6 +7,7 @@ import {
 } from '@libs/repositories/interfaces/search/search.interface'
 import { Logger } from '@nestjs/common'
 import { Observable, from } from 'rxjs'
+import { catchError } from 'rxjs/operators'
 import { TrackES } from '../interfaces/search/track.interface'
 
 export abstract class ElasticsearchRepository implements ISearchRepository {
@@ -18,7 +19,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             index,
             id,
         })
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error getting document: ${err}`)
+                throw err
+            }),
+        )
     }
 
     public getDocuments(index: string): Observable<SearchResponse> {
@@ -26,7 +32,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             index,
             sort: { _doc: { order: 'desc' } },
         })
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error getting documents: ${err}`)
+                throw err
+            }),
+        )
     }
 
     public indexDocument(
@@ -40,7 +51,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             ...opts,
         })
 
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error indexing document: ${err}`)
+                throw err
+            }),
+        )
     }
 
     public fuzzySearchDocument(
@@ -87,7 +103,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 },
             },
         })
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error in fuzzy search: ${err}`)
+                throw err
+            }),
+        )
     }
 
     public genericSearchDocument(
@@ -186,7 +207,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             },
         })
 
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error in multiple character search: ${err}`)
+                throw err
+            }),
+        )
     }
 
     public singleCharacterSearch(
@@ -239,6 +265,11 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             },
         })
 
-        return from(promise)
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error in single character search: ${err}`)
+                throw err
+            }),
+        )
     }
 }

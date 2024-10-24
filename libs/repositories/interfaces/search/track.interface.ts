@@ -16,7 +16,7 @@ export interface TrackES {
     artist?: ArtistES
     genres: GenreES[]
     playlists?: PlaylistES[]
-    coverImage?: MediaES
+    image?: MediaES
     locale?: string
     createdAt: Date
     updatedAt: Date

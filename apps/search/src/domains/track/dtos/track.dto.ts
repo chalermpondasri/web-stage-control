@@ -4,10 +4,12 @@ import { GenreES } from '@libs/repositories/interfaces/search/genre.interface'
 import { MediaES } from '@libs/repositories/interfaces/search/media.interface'
 import { PlaylistES } from '@libs/repositories/interfaces/search/playlist.interface'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Expose, plainToInstance, Transform } from 'class-transformer'
 import { IsDefined, IsNumber, IsString, MaxLength, Min, MinLength } from 'class-validator'
-import { MediaDto } from './media.dto'
+import { AlbumSearchDto } from './album.dto'
+import { ArtistSearchDto } from './artist.dto'
+import { MediaDto, MediaSearchDto } from './media.dto'
 
 type trackType = 'track'
 export class TrackDto implements TrackES {
@@ -59,7 +61,7 @@ export class TrackDto implements TrackES {
     @ApiProperty({
         type: MediaDto,
     })
-    public coverImage?: MediaES
+    public image?: MediaES
 
     @Expose()
     @ApiProperty()
@@ -73,6 +75,21 @@ export class TrackDto implements TrackES {
     @ApiProperty()
     public updatedAt: Date
 
+    public static toDto(track: TrackES): TrackDto {
+        return plainToInstance(TrackDto, {
+            ...track,
+            type: 'track',
+        })
+    }
+}
+
+export class TrackSearchDto extends PickType(TrackDto, [
+    'id',
+]) {
+    @Expose()
+    @ApiProperty()
+    public title: string
+
     @Expose()
     @ApiProperty({
         enum: [
@@ -81,11 +98,32 @@ export class TrackDto implements TrackES {
     })
     public type: trackType
 
-    public static toDto(track: TrackES): TrackDto {
-        return plainToInstance(TrackDto, {
-            ...track,
-            type: 'track',
-        })
+    @Expose()
+    @ApiProperty()
+    @Transform(({ value }) => plainToInstance(MediaSearchDto, value, { excludeExtraneousValues: true }))
+    public image: MediaSearchDto
+
+    @Expose()
+    @ApiProperty()
+    @Transform(({ value }) => plainToInstance(ArtistSearchDto, value, { excludeExtraneousValues: true }))
+    public artist: ArtistSearchDto
+
+    @Expose()
+    @ApiProperty()
+    @Transform(({ value }) => plainToInstance(AlbumSearchDto, value, { excludeExtraneousValues: true }))
+    public album: AlbumSearchDto
+
+    public static toDto(track: TrackES): TrackSearchDto {
+        return plainToInstance(
+            TrackSearchDto,
+            {
+                ...track,
+                type: 'track',
+            },
+            {
+                excludeExtraneousValues: true,
+            },
+        )
     }
 }
 

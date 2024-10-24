@@ -9,7 +9,7 @@ export interface AlbumES {
     publishedAt?: Date | null
     title: string
     releaseDate?: Date
-    coverImage?: MediaES
+    image?: MediaES
     artist?: ArtistES
     tracks?: TrackES[]
     locale?: string

@@ -7,7 +7,7 @@ services:
       - ".env-service-api.staging"
     networks:
       - billboard-network
-    command: node dist/apps/main
+    command: node dist/apps/auth
     ports:
       - 3301:3000
     restart: always

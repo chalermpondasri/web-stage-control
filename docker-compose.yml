@@ -1,11 +1,12 @@
 version: '3'
 services:
-  service-auth:
+  billboard-service-api:
     image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
+    container_name: billboard-api
     env_file:
-      - ".env-auth.staging"
+      - ".env-service-api.staging"
     networks:
-      - app-network
+      - billboard-network
     command: node dist/apps/main
     restart: always
 
@@ -17,14 +18,14 @@ services:
     depends_on:
       - service-auth
     networks:
-      - app-network
+      - billboard-network
 
   # service-payment:
   #   image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
   #   env_file:
   #     - ".env-auth.staging"
   #   networks:
-  #     - app-network
+  #     - billboard-network
   #   command: node dist/apps/payment
   #   restart: always
 
@@ -36,14 +37,14 @@ services:
   #   depends_on:
   #     - service-payment
   #   networks:
-  #     - app-network
+  #     - billboard-network
 
   # service-playback:
   #   image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
   #   env_file:
   #     - ".env-auth.staging"
   #   networks:
-  #     - app-network
+  #     - billboard-network
   #   command: node dist/apps/playback
   #   restart: always
 
@@ -55,14 +56,15 @@ services:
   #   depends_on:
   #     - service-playback
   #   networks:
-  #     - app-network
+  #     - billboard-network
 
   service-search:
     image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
+    container_name: search-api
     env_file:
       - ".env-auth.staging"
     networks:
-      - app-network
+      - billboard-network
     command: node dist/apps/search
     restart: always
 
@@ -74,14 +76,15 @@ services:
     depends_on:
       - service-search
     networks:
-      - app-network
+      - billboard-network
 
   service-mq-consumer:
     image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
+    container_name: mq-consumer-service
     env_file:
       - ".env-auth.staging"
     networks:
-      - app-network
+      - billboard-network
     command: node dist/apps/mq-consumer
     restart: always
 
@@ -90,11 +93,11 @@ services:
   #   env_file:
   #     - ".env-auth.staging"
   #   networks:
-  #     - app-network
+  #     - billboard-network
   #   command: node dist/apps/scheduler
   #   restart: always
 
 
 networks:
-  app-network:
+  billboard-network:
     external: true

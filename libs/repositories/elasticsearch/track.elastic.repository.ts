@@ -36,7 +36,6 @@ export class TrackElasticRepository extends ElasticsearchRepository {
             switchMap((response) => {
                 const id = response.hits.hits[0]?._id
                 if (!id) {
-                    // If not found, create instead and return id
                     return this.addTrack(track as TrackES).pipe(
                         map((addResponse) => {
                             const newId = addResponse._id
@@ -187,11 +186,11 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                         },
                     },
                     collapse: {
-                        field: 'album.id', // Collapse by album ID for distinct albums
+                        field: 'album.id',
                     },
                     _source: [
                         'album.*',
-                    ], // Retrieve album and artist fields
+                    ],
                 },
             }),
         ).pipe(

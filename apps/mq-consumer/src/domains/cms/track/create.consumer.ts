@@ -48,7 +48,6 @@ export class TrackCreateConsumer {
         const track: TrackES = {} as TrackES
         Object.assign(track, msg['payload'])
 
-        // ถ้ายังไม่ publish ให้ข้ามไปก่อน
         if (!track.publishedAt) {
             return
         }
@@ -61,7 +60,6 @@ export class TrackCreateConsumer {
             },
             error: (error) => {
                 this._logger.error(`Error indexing document: ${error}`)
-                // add error message to metadata and move to dead letter queue
                 this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
 
                 return new Nack()

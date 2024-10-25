@@ -11,7 +11,6 @@ import { IArtistService } from './interfaces/service.interface'
 export class SearchArtistService implements IArtistService {
     private readonly logger = new Logger(SearchArtistService.name)
     constructor(
-        // ใช้ชื่อ track ไปก่อน
         // TODO:: เก็บไว้คุยว่าควรออกแบบยังไงดี ตั้งชื่อยังไงดี เพราะทุกอย่างอยู่ใน indice เดียวกัน
         @Inject(ProviderName.TRACK_REPOSITORY)
         private trackRepository: TrackElasticRepository,

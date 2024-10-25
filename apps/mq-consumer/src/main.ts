@@ -1,6 +1,6 @@
 // Fix for RabbitSubscriber can not access env in decorator.
 import { config } from 'dotenv'
-config() // Load environment variables as early as possible
+config()
 
 import { NestFactory } from '@nestjs/core'
 import { MainModule } from './modules/main.module'

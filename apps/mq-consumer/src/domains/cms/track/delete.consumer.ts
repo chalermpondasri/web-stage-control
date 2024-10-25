@@ -56,7 +56,6 @@ export class TrackDeleteConsumer {
             },
             error: (error) => {
                 this._logger.error(`Error deleting document: ${error}`)
-                // add error message to metadata and move to dead letter queue
                 this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
 
                 return new Nack()

@@ -117,26 +117,22 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         fields: string[],
         opts?: ISearchOptions,
     ): Observable<SearchResponse<TrackES>> {
-        // validate text
         if (!text) {
             return new Observable((observer) => {
                 observer.error('Text is required')
             })
         }
-        // validate index
         if (!index) {
             return new Observable((observer) => {
                 observer.error('Index is required')
             })
         }
-        // validate fields
         if (!fields || fields.length === 0) {
             return new Observable((observer) => {
                 observer.error('Fields is required')
             })
         }
 
-        // set default options
         if (!opts) {
             opts = {
                 page: 1,
@@ -144,12 +140,10 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             }
         }
 
-        // text ที่มากกว่า 1 ตัวอักษร จะสนใจใช้อีกแบบ (ไม่ใช้ wildcard)
         if (text.length > 1) {
             return this.multipleCharacterSearch(index, text, fields, opts)
         }
 
-        // text ที่มีเพียง 1 ตัวอักษร จะใช้ singleCharacterSearch
         if (text.length === 1) {
             return this.singleCharacterSearch(index, text, fields, opts)
         }
@@ -193,21 +187,21 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                                 },
                             },
                         })),
-                        tie_breaker: 0.3, // Optional: to slightly consider other fields
+                        tie_breaker: 0.3,
                     },
                 },
                 ...pagination,
                 highlight: {
                     fields: fields.reduce(
                         (acc, field) => {
-                            acc[field] = {} // Add highlighting for each field
+                            acc[field] = {}
                             return acc
                         },
                         {} as Record<string, {}>,
                     ),
                     pre_tags: [
                         '<strong>',
-                    ], // Customize pre and post tags for highlighting
+                    ],
                     post_tags: [
                         '</strong>',
                     ],
@@ -255,7 +249,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                                 [field]: {
                                     value: `${text}*`,
                                     boost: 1.0,
-                                    _name: `${field.replace('.', '_')}`, // Name for wildcard title query
+                                    _name: `${field.replace('.', '_')}`,
                                 },
                             },
                         })),
@@ -266,14 +260,14 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 highlight: {
                     fields: fields.reduce(
                         (acc, field) => {
-                            acc[field] = {} // Add highlighting for each field
+                            acc[field] = {}
                             return acc
                         },
                         {} as Record<string, {}>,
                     ),
                     pre_tags: [
                         '<strong>',
-                    ], // Customize pre and post tags for highlighting
+                    ],
                     post_tags: [
                         '</strong>',
                     ],

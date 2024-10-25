@@ -36,8 +36,6 @@ export class SearchTrackService implements ITrackService {
             'aliases',
             'artist.name',
             'album.title',
-            // 'genres.name',
-            // 'playlists.name',
         ]
 
         return this.trackRepository
@@ -47,7 +45,6 @@ export class SearchTrackService implements ITrackService {
             })
             .pipe(
                 map((response) => {
-                    // Get hits from elastic response
                     const hits = response.hits.hits
 
                     this.logger.log(`Found ${hits.length} hits`)
@@ -58,8 +55,6 @@ export class SearchTrackService implements ITrackService {
                         aliases: 'aliases',
                         artist: 'artist_name',
                         album: 'album_title',
-                        // genre: 'genres_name',
-                        // playlist: 'playlists_name',
                     }
 
                     const found: (TrackSearchDto | ArtistSearchDto | AlbumSearchDto)[] = hits
@@ -123,7 +118,6 @@ export class SearchTrackService implements ITrackService {
             })
             .pipe(
                 map((response) => {
-                    // Get hits from elastic response
                     const hits = response.hits.hits
 
                     this.logger.log(`Found ${hits.length} hits`)
@@ -207,7 +201,6 @@ export class SearchTrackService implements ITrackService {
         const title = foundLang === 'th' ? hit._source.title_th : hit._source.title_en
         const trackDto = TrackSearchDto.toDto({
             ...hit._source,
-            // highlights: hit.highlight,
         })
 
         trackDto.title = title
@@ -217,14 +210,12 @@ export class SearchTrackService implements ITrackService {
     private getArtistDto(hit: SearchHit<TrackES>): ArtistSearchDto {
         return ArtistSearchDto.toDto({
             ...hit._source.artist,
-            // highlights: hit.highlight,
         })
     }
 
     private getAlbumDto(hit: SearchHit<TrackES>): AlbumSearchDto {
         return AlbumSearchDto.toDto({
             ...hit._source.album,
-            // highlights: hit.highlight,
         })
     }
 }

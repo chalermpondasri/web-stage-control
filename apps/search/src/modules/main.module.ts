@@ -9,8 +9,3 @@ import { SearchModule } from './search.module'
     ],
 })
 export class MainModule {}
-// export class MainModule implements NestModule {
-//     public configure(consumer: MiddlewareConsumer): any {
-//         consumer.apply(HeaderValidationMiddleware, RequestContextMiddleware, ElasticHttpLoggerMiddleware).forRoutes('*')
-//     }
-// }

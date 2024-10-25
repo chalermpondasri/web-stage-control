@@ -23,11 +23,6 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
                             type: 'topic',
                             options: { durable: true },
                         },
-                        // {
-                        //     name: EXCHANGES.TRACK_DL,
-                        //     type: 'fanout',
-                        //     options: {durable: true},
-                        // },
                     ],
                     uri,
                     connectionInitOptions: { wait: true },

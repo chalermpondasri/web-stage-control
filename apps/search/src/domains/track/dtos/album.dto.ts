@@ -1,6 +1,6 @@
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { MediaES } from '@libs/repositories/interfaces/search/media.interface'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Expose, plainToInstance } from 'class-transformer'
 
 type AlbumType = 'album'
@@ -32,7 +32,7 @@ export class AlbumDto implements AlbumES {
 
     @Expose()
     @ApiProperty()
-    coverImage?: MediaES
+    image?: MediaES
 
     @Expose()
     @ApiProperty()
@@ -53,3 +53,8 @@ export class AlbumDto implements AlbumES {
         })
     }
 }
+
+export class AlbumSearchDto extends PickType(AlbumDto, [
+    'id',
+    'title',
+]) {}

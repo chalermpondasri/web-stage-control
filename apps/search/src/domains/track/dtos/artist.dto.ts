@@ -1,6 +1,6 @@
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
 import { MediaES } from '@libs/repositories/interfaces/search/media.interface'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Expose, plainToInstance } from 'class-transformer'
 
 type ArtistType = 'artist'
@@ -53,3 +53,8 @@ export class ArtistDto implements ArtistES {
         })
     }
 }
+
+export class ArtistSearchDto extends PickType(ArtistDto, [
+    'id',
+    'name',
+]) {}

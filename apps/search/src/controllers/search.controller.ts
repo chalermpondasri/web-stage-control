@@ -3,7 +3,7 @@ import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiProperty, getSchemaPath
 import { AlbumDto } from '../domains/track/dtos/album.dto'
 import { ArtistDto } from '../domains/track/dtos/artist.dto'
 import { SearchSuggestionRequest } from '../domains/track/dtos/search-all.dto'
-import { SearchTracksRequest, TrackDto } from '../domains/track/dtos/track.dto'
+import { SearchTracksRequest, TrackSearchDto } from '../domains/track/dtos/track.dto'
 import { SearchTrackService } from '../domains/track/track-search.service'
 
 @Controller('/search')
@@ -31,7 +31,7 @@ export class SearchController {
         type: SearchTracksRequest,
         description: 'Search track by keyword',
     })
-    @ApiExtraModels(TrackDto)
+    @ApiExtraModels(TrackSearchDto)
     @ApiExtraModels(AlbumDto)
     @ApiExtraModels(ArtistDto)
     @ApiOkResponse({
@@ -45,7 +45,7 @@ export class SearchController {
                     type: 'array',
                     items: {
                         oneOf: [
-                            { $ref: getSchemaPath(TrackDto) },
+                            { $ref: getSchemaPath(TrackSearchDto) },
                             { $ref: getSchemaPath(AlbumDto) },
                             { $ref: getSchemaPath(ArtistDto) },
                         ],
@@ -56,12 +56,7 @@ export class SearchController {
         description: 'Search track by keyword',
     })
     @Get('/track')
-    public getTracksByKeyword(
-        // @Query('keyword') keyword: string,
-        // @Query('page') page: number,
-        // @Query('limit') limit: number,
-        @Query() searchTracksRequest: SearchTracksRequest,
-    ) {
+    public getTracksByKeyword(@Query() searchTracksRequest: SearchTracksRequest) {
         return this._trackSearchService.searchTracksByKeyword(
             searchTracksRequest.keyword,
             searchTracksRequest.page,

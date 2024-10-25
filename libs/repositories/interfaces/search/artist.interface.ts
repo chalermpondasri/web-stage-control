@@ -13,6 +13,7 @@ export interface ArtistES {
     albums?: AlbumES[]
     tracks?: TrackES[]
     image?: MediaES
+    coverImage?: MediaES
     playlists?: PlaylistES[]
     locale?: string
 }

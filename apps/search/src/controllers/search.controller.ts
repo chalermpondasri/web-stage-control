@@ -1,7 +1,8 @@
-import { Controller, Get, Logger, Query } from '@nestjs/common'
+import { Controller, Get, Logger, Param, Query } from '@nestjs/common'
 import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiProperty, getSchemaPath } from '@nestjs/swagger'
+import { SearchArtistService } from '../domains/artist/artist-search.service'
+import { ArtistDto } from '../domains/artist/dtos/artist.dto'
 import { AlbumDto } from '../domains/track/dtos/album.dto'
-import { ArtistDto } from '../domains/track/dtos/artist.dto'
 import { SearchSuggestionRequest } from '../domains/track/dtos/search-all.dto'
 import { SearchTracksRequest, TrackSearchDto } from '../domains/track/dtos/track.dto'
 import { SearchTrackService } from '../domains/track/track-search.service'
@@ -10,7 +11,10 @@ import { SearchTrackService } from '../domains/track/track-search.service'
 export class SearchController {
     private readonly _logger: Logger = new Logger(SearchController.name)
 
-    public constructor(private readonly _trackSearchService: SearchTrackService) {}
+    public constructor(
+        private readonly _trackSearchService: SearchTrackService,
+        private readonly _artistSearchService: SearchArtistService,
+    ) {}
 
     @ApiOperation({
         description: 'Search suggestions by keyword',
@@ -62,5 +66,43 @@ export class SearchController {
             searchTracksRequest.page,
             searchTracksRequest.limit,
         )
+    }
+
+    @ApiOperation({
+        description: 'Get artist by id',
+    })
+    @ApiProperty({
+        description: 'The id of the artist',
+        default: '1',
+    })
+    @ApiExtraModels(ArtistDto)
+    @ApiOkResponse({
+        schema: {
+            type: 'object',
+            properties: {
+                total: { type: 'number' },
+                limit: { type: 'number' },
+                page: { type: 'number' },
+                data: { $ref: getSchemaPath(ArtistDto) },
+            },
+        },
+        description: 'Search track by keyword',
+    })
+    @Get('/artist/:id')
+    public getArtistById(@Param('id') id: string) {
+        // TODO:: update fields ที่จะ return เช็คกับหน้าบ้าน
+        return this._artistSearchService.searchArtistById(Number(id))
+    }
+
+    @ApiOperation({
+        description: 'Get album by artist id',
+    })
+    @ApiProperty({
+        description: 'The id of the artist',
+        default: '1',
+    })
+    @Get('/artist/:id/albums')
+    public getAlbumByArtistId(@Param('id') id: string) {
+        return this._artistSearchService.searchAlbumsByArtistId(Number(id))
     }
 }

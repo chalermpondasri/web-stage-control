@@ -4,6 +4,7 @@ import { SearchResponse } from '@elastic/elasticsearch/lib/api/typesWithBodyKey'
 import { ElasticConstant } from '@libs/common/constants/elastic.constant'
 import { Logger } from '@nestjs/common'
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs'
+import { AlbumES } from '../interfaces/search/album.interface'
 import { ISearchOptions } from '../interfaces/search/search.interface'
 import { TrackES } from '../interfaces/search/track.interface'
 import { ElasticsearchRepository } from './elasticsearch.repository'
@@ -153,5 +154,57 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         }
 
         return this.genericSearchDocument(ElasticConstant.INDICE.TRACK, keyword, fields, opts)
+    }
+
+    public searchArtistById(artistId: number): Observable<SearchResponse<TrackES>> {
+        if (!artistId) {
+            throw new Error('searchArtistById: artistId is required')
+        }
+
+        return this.searchDocument(ElasticConstant.INDICE.TRACK, {
+            'artist.id': artistId,
+        })
+    }
+
+    public searchAlbumsByArtistId(artistId: number): Observable<
+        SearchResponse<{
+            album: AlbumES
+        }>
+    > {
+        if (!artistId) {
+            throw new Error('searchAlbumsByArtistId: artistId is required')
+        }
+
+        return from(
+            this.client.search<{
+                album: AlbumES
+            }>({
+                index: ElasticConstant.INDICE.TRACK,
+                body: {
+                    query: {
+                        term: {
+                            'artist.id': artistId,
+                        },
+                    },
+                    collapse: {
+                        field: 'album.id', // Collapse by album ID for distinct albums
+                    },
+                    _source: [
+                        'album.*',
+                    ], // Retrieve album and artist fields
+                },
+            }),
+        ).pipe(
+            map((response) => {
+                if (response.hits.hits.length === 0) {
+                    throw new Error('No albums found for this artist')
+                }
+                return response
+            }),
+            catchError((error) => {
+                this.logger.error(`Error searching albums for artist by id: ${error.message}`)
+                throw error
+            }),
+        )
     }
 }

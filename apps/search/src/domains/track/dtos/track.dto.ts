@@ -7,8 +7,8 @@ import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Expose, plainToInstance, Transform } from 'class-transformer'
 import { IsDefined, IsNumber, IsString, MaxLength, Min, MinLength } from 'class-validator'
+import { ArtistSearchDto } from '../../artist/dtos/artist.dto'
 import { AlbumSearchDto } from './album.dto'
-import { ArtistSearchDto } from './artist.dto'
 import { MediaDto, MediaSearchDto } from './media.dto'
 
 type trackType = 'track'
@@ -75,6 +75,14 @@ export class TrackDto implements TrackES {
     @ApiProperty()
     public updatedAt: Date
 
+    @Expose()
+    @ApiProperty({
+        enum: [
+            'track',
+        ],
+    })
+    public type: trackType
+
     public static toDto(track: TrackES): TrackDto {
         return plainToInstance(TrackDto, {
             ...track,
@@ -85,18 +93,11 @@ export class TrackDto implements TrackES {
 
 export class TrackSearchDto extends PickType(TrackDto, [
     'id',
+    'type',
 ]) {
     @Expose()
     @ApiProperty()
     public title: string
-
-    @Expose()
-    @ApiProperty({
-        enum: [
-            'track',
-        ],
-    })
-    public type: trackType
 
     @Expose()
     @ApiProperty()

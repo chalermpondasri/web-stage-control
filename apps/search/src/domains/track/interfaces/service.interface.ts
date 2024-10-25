@@ -1,7 +1,7 @@
 import { ListResponse } from '@libs/common/models'
 import { Observable } from 'rxjs'
+import { ArtistSearchDto } from '../../artist/dtos/artist.dto'
 import { AlbumSearchDto } from '../dtos/album.dto'
-import { ArtistSearchDto } from '../dtos/artist.dto'
 import { TrackSearchDto } from '../dtos/track.dto'
 import { SearchSuggestionResponse } from './search-all.interface'
 

@@ -155,6 +155,14 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         }
     }
 
+    /**
+     * Used when search suggestion is more than one character
+     * @param index index name
+     * @param text keyword to search
+     * @param fields fields to search
+     * @param opts search options
+     * @returns
+     */
     public multipleCharacterSearch(
         index: string,
         text: string,
@@ -215,6 +223,14 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         )
     }
 
+    /**
+     * Used when search suggestion is a single character
+     * @param index index name
+     * @param text keyword to search
+     * @param fields fields to search
+     * @param opts search options
+     * @returns
+     */
     public singleCharacterSearch(
         index: string,
         text: string,
@@ -268,6 +284,30 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         return from(promise).pipe(
             catchError((err) => {
                 this._logger.error(`Error in single character search: ${err}`)
+                throw err
+            }),
+        )
+    }
+
+    /**
+     * searh one document by fields
+     * @param index index name
+     * @param fields fields to search, for example { 'artist.id': 1 }
+     * @returns
+     */
+    public searchDocument(index: string, fields: Record<string, any>): Observable<SearchResponse<any>> {
+        const promise = this._client.search({
+            index,
+            body: {
+                query: {
+                    term: fields,
+                },
+                size: 1,
+            },
+        })
+        return from(promise).pipe(
+            catchError((err) => {
+                this._logger.error(`Error getting document: ${err}`)
                 throw err
             }),
         )

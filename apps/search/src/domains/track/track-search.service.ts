@@ -5,8 +5,8 @@ import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.e
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { Inject, Logger } from '@nestjs/common'
 import { catchError, map, Observable } from 'rxjs'
-import { AlbumDto, AlbumSearchDto } from './dtos/album.dto'
-import { ArtistDto, ArtistSearchDto } from './dtos/artist.dto'
+import { ArtistSearchDto } from '../artist/dtos/artist.dto'
+import { AlbumSearchDto } from './dtos/album.dto'
 import { TrackSearchDto } from './dtos/track.dto'
 import { SearchSuggestionResponse } from './interfaces/search-all.interface'
 import { ITrackService } from './interfaces/service.interface'
@@ -70,9 +70,11 @@ export class SearchTrackService implements ITrackService {
                                 hit.matched_queries.forEach((matched) => {
                                     switch (matched) {
                                         case matchQueries.titleTh:
-                                        case matchQueries.titleEn:
                                         case matchQueries.aliases:
-                                            _found.push(this.getTrackDto(hit))
+                                            _found.push(this.getTrackDto(hit, 'th'))
+                                            break
+                                        case matchQueries.titleEn:
+                                            _found.push(this.getTrackDto(hit, 'en'))
                                             break
                                         case matchQueries.artist:
                                             _found.push(this.getArtistDto(hit))
@@ -212,15 +214,15 @@ export class SearchTrackService implements ITrackService {
         return trackDto
     }
 
-    private getArtistDto(hit: SearchHit<TrackES>): ArtistDto {
-        return ArtistDto.toDto({
+    private getArtistDto(hit: SearchHit<TrackES>): ArtistSearchDto {
+        return ArtistSearchDto.toDto({
             ...hit._source.artist,
             // highlights: hit.highlight,
         })
     }
 
-    private getAlbumDto(hit: SearchHit<TrackES>): AlbumDto {
-        return AlbumDto.toDto({
+    private getAlbumDto(hit: SearchHit<TrackES>): AlbumSearchDto {
+        return AlbumSearchDto.toDto({
             ...hit._source.album,
             // highlights: hit.highlight,
         })

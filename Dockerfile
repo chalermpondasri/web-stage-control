@@ -15,7 +15,7 @@ WORKDIR /src
 
 COPY tsconfig.build.json .
 COPY nest-cli.json .
-COPY package.json .
+COPY package*.json .
 
 COPY tsconfig.json .
 COPY apps ./apps

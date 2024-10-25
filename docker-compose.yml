@@ -86,7 +86,7 @@ services:
     image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
     container_name: billboard-service-consumer
     env_file:
-      - ".env-auth.staging"
+      - ".env-service-api.staging"
     networks:
       - billboard-network
     command: node dist/apps/mq-consumer

@@ -1,15 +1,26 @@
-import { SearchHit, SearchTotalHits } from '@elastic/elasticsearch/lib/api/types'
+import {
+    SearchHit,
+    SearchTotalHits,
+} from '@elastic/elasticsearch/lib/api/types'
 import { ProviderName } from '@libs/common/constants'
 import { ListResponse } from '@libs/common/models'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
-import { Inject, Logger } from '@nestjs/common'
-import { catchError, map, Observable } from 'rxjs'
-import { ArtistSearchDto } from '../artist/dtos/artist.dto'
-import { AlbumSearchDto } from './dtos/album.dto'
+import {
+    Inject,
+    Logger,
+} from '@nestjs/common'
+import {
+    catchError,
+    map,
+    Observable,
+} from 'rxjs'
+
 import { TrackSearchDto } from './dtos/track.dto'
 import { SearchSuggestionResponse } from './interfaces/search-all.interface'
 import { ITrackService } from './interfaces/service.interface'
+import { ArtistSearchDto } from '../artist/dtos/artist.dto'
+import { AlbumSearchDto } from './dtos/album.dto'
 
 export class SearchTrackService implements ITrackService {
     private readonly logger = new Logger(SearchTrackService.name)
@@ -146,7 +157,7 @@ export class SearchTrackService implements ITrackService {
                                             _found.push(hit.highlight.title_en || '')
                                             break
                                         case matchQueries.aliases:
-                                            _found.push(this.gethighlightedTitles(hit))
+                                            _found.push(this.getHighlightedTitles(hit))
                                             break
                                         case matchQueries.artist:
                                             _found.push(hit.highlight['artists.name'] || '')
@@ -155,10 +166,10 @@ export class SearchTrackService implements ITrackService {
                                             _found.push(hit.highlight['album.title'] || '')
                                             break
                                         case matchQueries.genre:
-                                            _found.push(this.gethighlightedTitles(hit))
+                                            _found.push(this.getHighlightedTitles(hit))
                                             break
                                         case matchQueries.playlist:
-                                            _found.push(this.gethighlightedTitles(hit))
+                                            _found.push(this.getHighlightedTitles(hit))
                                             break
                                     }
                                 })
@@ -193,7 +204,7 @@ export class SearchTrackService implements ITrackService {
         return hit._source.title_th || hit._source.title_en || ''
     }
 
-    private gethighlightedTitles(hit: SearchHit<TrackES>): string | string[] {
+    private getHighlightedTitles(hit: SearchHit<TrackES>): string | string[] {
         return hit.highlight.title_th || hit.highlight.title_en || ''
     }
 

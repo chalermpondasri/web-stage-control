@@ -18,6 +18,15 @@
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
     },
+      "migration": {
+          "type": "application",
+          "root": "apps/migration",
+          "entryFile": "index",
+          "sourceRoot": "apps/migration/src",
+          "compilerOptions": {
+              "tsConfigPath": "apps/migration/tsconfig.app.json"
+          }
+      },
     "mq-consumer": {
       "type": "application",
       "root": "apps/mq-consumer",

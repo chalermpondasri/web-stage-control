@@ -13,7 +13,6 @@ import {
     ApiTags,
 } from '@nestjs/swagger'
 import { LineLoginRequest } from '@libs/common/models/user/line-login.request'
-import { LoginRequest } from '@libs/common/models/user/login.request'
 import { UpdateConsentRequest } from '@libs/common/models/user/update-consent.request'
 import { IUserService } from '../services/interfaces/user-service.interface'
 import { TokenDto } from '@libs/common/models/common/token.dto'
@@ -33,7 +32,7 @@ export class UserController {
         description: 'user login using LINE integration'
     })
     @ApiBody({
-        type: LoginRequest,
+        type: LineLoginRequest,
         description: 'user login using LINE integration',
         required: true,
     })

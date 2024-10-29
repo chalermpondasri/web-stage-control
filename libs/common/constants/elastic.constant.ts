@@ -1,5 +1,6 @@
 export const ElasticConstant = {
     INDICE: {
-        TRACK: 'tracks',
+        TRACK: 'track', // Deprecated, will be removed after the first release
+        MUSIC: 'music',
     },
 }

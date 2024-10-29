@@ -6,6 +6,8 @@ import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.e
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConsumeMessage } from 'amqplib'
+import { TrackEsDto } from 'apps/search/src/domains/track/dtos/track.dto'
+import { catchError, firstValueFrom } from 'rxjs'
 
 const rabbitSubscribeConfig = {
     exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
@@ -28,9 +30,8 @@ export class TrackCreateConsumer {
 
         @Inject(ProviderName.TRACK_REPOSITORY)
         private trackRepository: TrackElasticRepository,
-    ) {
-        this._logger.log(this._envConfig.MESSAGE_BROKER_HOST)
-    }
+    ) {}
+
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
         if (!msg['payload']) {
@@ -45,8 +46,7 @@ export class TrackCreateConsumer {
             return new Nack()
         }
 
-        const track: TrackES = {} as TrackES
-        Object.assign(track, msg['payload'])
+        const track = TrackEsDto.toDto(msg['payload'] as TrackES)
 
         if (!track.publishedAt) {
             return
@@ -54,16 +54,20 @@ export class TrackCreateConsumer {
 
         this._logger.log(`Received message: ${JSON.stringify(msg, null, 2)}`)
 
-        this.trackRepository.addTrack(track).subscribe({
-            next: (value) => {
-                this._logger.log(`Document indexed: ${JSON.stringify(value)}`)
-            },
-            error: (error) => {
-                this._logger.error(`Error indexing document: ${error}`)
-                this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
+        try {
+            await firstValueFrom(
+                this.trackRepository.addTrack(track).pipe(
+                    catchError((error) => {
+                        this._logger.error(`Error indexing document: ${error}`)
+                        this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+                        throw error
+                    }),
+                ),
+            )
 
-                return new Nack()
-            },
-        })
+            this._logger.log(`Document created successfully`)
+        } catch (error) {
+            return new Nack()
+        }
     }
 }

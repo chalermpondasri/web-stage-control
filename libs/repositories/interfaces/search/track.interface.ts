@@ -1,23 +1,24 @@
 import { AlbumES } from './album.interface'
-import { ArtistES } from './artist.interface'
-import { GenreES } from './genre.interface'
 import { MediaES } from './media.interface'
-import { PlaylistES } from './playlist.interface'
 
 export interface TrackES {
     id: number
-    publishedAt?: Date | null
-    title_th: string
-    title_en: string
+    name_th: string
+    name_en: string
     aliases: string[]
+    type: string
+    description?: string
+    releaseDate?: Date
     duration?: number
     audioFile: MediaES
     album?: AlbumES
-    artist?: ArtistES
-    genres: GenreES[]
-    playlists?: PlaylistES[]
+    album_id: number
+    artist_ids: number[]
+    genres: string[]
+    playlist_ids: number[]
     image?: MediaES
-    locale?: string
+    hitCounts: number
     createdAt: Date
     updatedAt: Date
+    publishedAt?: Date | null
 }

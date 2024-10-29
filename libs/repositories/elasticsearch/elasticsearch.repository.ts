@@ -1,13 +1,17 @@
 import { Client } from '@elastic/elasticsearch'
-import { GetResponse, SearchResponse } from '@elastic/elasticsearch/lib/api/types'
+import { GetResponse, SearchResponse, SearchTotalHits, WriteResponseBase } from '@elastic/elasticsearch/lib/api/types'
+import { ElasticConstant } from '@libs/common/constants'
 import {
     IDocumentIndexOptions,
     ISearchOptions,
     ISearchRepository,
+    RelatedData,
 } from '@libs/repositories/interfaces/search/search.interface'
 import { Logger } from '@nestjs/common'
-import { Observable, from } from 'rxjs'
-import { catchError } from 'rxjs/operators'
+import { Observable, forkJoin, from, of } from 'rxjs'
+import { catchError, map } from 'rxjs/operators'
+import { AlbumES } from '../interfaces/search/album.interface'
+import { ArtistES } from '../interfaces/search/artist.interface'
 import { TrackES } from '../interfaces/search/track.interface'
 
 export abstract class ElasticsearchRepository implements ISearchRepository {
@@ -44,7 +48,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         index: string,
         document: Record<string, any>,
         opts: IDocumentIndexOptions = {},
-    ): Observable<any> {
+    ): Observable<WriteResponseBase> {
         const promise = this._client.index({
             index,
             document,
@@ -111,198 +115,148 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         )
     }
 
-    public genericSearchDocument(
-        index: string,
-        text: string,
-        fields: string[],
-        opts?: ISearchOptions,
-    ): Observable<SearchResponse<TrackES>> {
-        if (!text) {
-            return new Observable((observer) => {
-                observer.error('Text is required')
-            })
-        }
-        if (!index) {
-            return new Observable((observer) => {
-                observer.error('Index is required')
-            })
-        }
-        if (!fields || fields.length === 0) {
-            return new Observable((observer) => {
-                observer.error('Fields is required')
-            })
-        }
-
-        if (!opts) {
-            opts = {
-                page: 1,
-                limit: 20,
-            }
-        }
-
-        if (text.length > 1) {
-            return this.multipleCharacterSearch(index, text, fields, opts)
-        }
-
-        if (text.length === 1) {
-            return this.singleCharacterSearch(index, text, fields, opts)
-        }
-    }
-
-    /**
-     * Used when search suggestion is more than one character
-     * @param index index name
-     * @param text keyword to search
-     * @param fields fields to search
-     * @param opts search options
-     * @returns
-     */
-    public multipleCharacterSearch(
-        index: string,
-        text: string,
-        fields: string[],
-        opts?: ISearchOptions,
-    ): Observable<SearchResponse<TrackES>> {
-        let pagination = {}
-        if (opts && opts.page && opts.limit) {
-            pagination = {
-                from: (opts.page - 1) * opts.limit,
-                size: opts.limit,
-            }
-        }
-
-        this._logger.log(`Searching for ${text} in ${fields.join(', ')}`)
-        const promise: Promise<SearchResponse<TrackES>> = this._client.search({
-            index,
-            body: {
-                query: {
-                    dis_max: {
-                        queries: fields.map((field) => ({
-                            match: {
-                                [field]: {
-                                    query: text,
-                                    fuzziness: 'AUTO',
-                                    boost: 1.0,
-                                    _name: field.replace('.', '_'),
-                                },
-                            },
-                        })),
-                        tie_breaker: 0.3,
-                    },
-                },
-                ...pagination,
-                highlight: {
-                    fields: fields.reduce(
-                        (acc, field) => {
-                            acc[field] = {}
-                            return acc
-                        },
-                        {} as Record<string, {}>,
-                    ),
-                    pre_tags: [
-                        '<strong>',
-                    ],
-                    post_tags: [
-                        '</strong>',
-                    ],
-                },
-            },
-        })
-
-        return from(promise).pipe(
-            catchError((err) => {
-                this._logger.error(`Error in multiple character search: ${err}`)
-                throw err
-            }),
-        )
-    }
-
-    /**
-     * Used when search suggestion is a single character
-     * @param index index name
-     * @param text keyword to search
-     * @param fields fields to search
-     * @param opts search options
-     * @returns
-     */
-    public singleCharacterSearch(
-        index: string,
-        text: string,
-        fields: string[],
-        opts?: ISearchOptions,
-    ): Observable<SearchResponse<TrackES>> {
-        let pagination = {}
-        if (opts && opts.page && opts.limit) {
-            pagination = {
-                from: (opts.page - 1) * opts.limit,
-                size: opts.limit,
-            }
-        }
-
-        const promise: Promise<SearchResponse<TrackES>> = this._client.search({
-            index,
-            body: {
-                query: {
-                    bool: {
-                        should: fields.map((field) => ({
-                            wildcard: {
-                                [field]: {
-                                    value: `${text}*`,
-                                    boost: 1.0,
-                                    _name: `${field.replace('.', '_')}`,
-                                },
-                            },
-                        })),
-                        minimum_should_match: 1,
-                    },
-                },
-                ...pagination,
-                highlight: {
-                    fields: fields.reduce(
-                        (acc, field) => {
-                            acc[field] = {}
-                            return acc
-                        },
-                        {} as Record<string, {}>,
-                    ),
-                    pre_tags: [
-                        '<strong>',
-                    ],
-                    post_tags: [
-                        '</strong>',
-                    ],
-                },
-            },
-        })
-
-        return from(promise).pipe(
-            catchError((err) => {
-                this._logger.error(`Error in single character search: ${err}`)
-                throw err
-            }),
-        )
-    }
-
-    /**
-     * searh one document by fields
-     * @param index index name
-     * @param fields fields to search, for example { 'artist.id': 1 }
-     * @returns
-     */
     public searchDocument(index: string, fields: Record<string, any>): Observable<SearchResponse<any>> {
         const promise = this._client.search({
             index,
-            body: {
-                query: {
-                    term: fields,
+            query: {
+                bool: {
+                    filter: Object.keys(fields).map((key) => ({
+                        term: {
+                            [key]: fields[key],
+                        },
+                    })),
                 },
-                size: 1,
             },
         })
         return from(promise).pipe(
             catchError((err) => {
                 this._logger.error(`Error getting document: ${err}`)
                 throw err
+            }),
+        )
+    }
+
+    public getRelatedData(searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>): Observable<RelatedData> {
+        const hits = searchResponse.hits.hits
+        const trackIds: number[] = []
+        const albumIds: number[] = []
+        const artistIds: number[] = []
+
+        hits.forEach((hit) => {
+            if (hit._source.type === 'track') {
+                albumIds.push((hit._source as TrackES).album_id)
+                artistIds.push(...(hit._source as TrackES).artist_ids)
+            } else if (hit._source.type === 'album') {
+                artistIds.push(...(hit._source as AlbumES).artist_ids)
+                trackIds.push(...(hit._source as AlbumES).track_ids)
+            } else if (hit._source.type === 'artist') {
+                albumIds.push(...(hit._source as ArtistES).album_ids)
+                trackIds.push(...(hit._source as ArtistES).track_ids)
+            }
+        })
+
+        const trackObservables = trackIds.map((id) =>
+            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: id.toString(),
+                type: 'track',
+            }),
+        )
+        const albumObservables = albumIds.map((id) =>
+            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: id.toString(),
+                type: 'album',
+            }),
+        )
+        const artistObservables = artistIds.map((id) =>
+            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: id.toString(),
+                type: 'artist',
+            }),
+        )
+
+        if (trackObservables.length === 0 && albumObservables.length === 0 && artistObservables.length === 0) {
+            return of({
+                tracks: [],
+                albums: [],
+                artists: [],
+            })
+        }
+
+        return forkJoin([
+            ...trackObservables,
+            ...albumObservables,
+            ...artistObservables,
+        ]).pipe(
+            map((relatedDocs) => {
+                const relatedData = relatedDocs.reduce(
+                    (acc, doc) => {
+                        if ((doc.hits.total as SearchTotalHits).value === 0) {
+                            return acc
+                        }
+
+                        const data = doc.hits.hits[0]._source
+
+                        if (data.type === 'track') {
+                            acc.tracks.push(data)
+                        } else if (data.type === 'album') {
+                            acc.albums.push(data)
+                        } else if (data.type === 'artist') {
+                            acc.artists.push(data)
+                        }
+                        return acc
+                    },
+                    { tracks: [], albums: [], artists: [] },
+                )
+                return relatedData
+            }),
+        )
+    }
+
+    public getTrackRelatedData(track: TrackES): Observable<RelatedData> {
+        const albumObservables = this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+            id: track.album_id.toString(),
+            type: 'album',
+        })
+
+        const artistObservables = track.artist_ids.map((id) =>
+            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: id.toString(),
+                type: 'artist',
+            }),
+        )
+
+        if (albumObservables && artistObservables.length === 0) {
+            return of({
+                tracks: [],
+                albums: [],
+                artists: [],
+            })
+        }
+
+        return forkJoin([
+            albumObservables,
+            ...artistObservables,
+        ]).pipe(
+            map((relatedDocs) => {
+                const relatedData = relatedDocs.reduce(
+                    (acc, doc) => {
+                        if ((doc.hits.total as SearchTotalHits).value === 0) {
+                            return acc
+                        }
+
+                        const data = doc.hits.hits[0]._source
+
+                        if (data.type === 'album') {
+                            acc.albums.push(data)
+                        } else if (data.type === 'artist') {
+                            acc.artists.push(data)
+                        }
+                        return acc
+                    },
+                    { tracks: [], albums: [], artists: [] },
+                )
+
+                return relatedData
             }),
         )
     }

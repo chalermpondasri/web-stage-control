@@ -1,10 +1,8 @@
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common'
-import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiProperty, getSchemaPath } from '@nestjs/swagger'
+import { ApiOperation, ApiProperty } from '@nestjs/swagger'
+import { SearchAlbumService } from '../domains/album/album-search.service'
 import { SearchArtistService } from '../domains/artist/artist-search.service'
-import { ArtistDto } from '../domains/artist/dtos/artist.dto'
-import { AlbumDto } from '../domains/track/dtos/album.dto'
-import { SearchSuggestionRequest } from '../domains/track/dtos/search-all.dto'
-import { SearchTracksRequest, TrackSearchDto } from '../domains/track/dtos/track.dto'
+import { SearchTracksRequest } from '../domains/track/dtos/track.dto'
 import { SearchTrackService } from '../domains/track/track-search.service'
 
 @Controller('/search')
@@ -14,49 +12,13 @@ export class SearchController {
     public constructor(
         private readonly _trackSearchService: SearchTrackService,
         private readonly _artistSearchService: SearchArtistService,
+        private readonly _albumSearchService: SearchAlbumService,
     ) {}
-
-    @ApiOperation({
-        description: 'Search suggestions by keyword',
-    })
-    @ApiProperty({
-        type: SearchSuggestionRequest,
-        description: 'Search suggestions by keyword',
-    })
-    @Get('/suggestions')
-    public getSuggestionsByKeyword(@Query('keyword') keyword: string) {
-        return this._trackSearchService.getSuggestion(keyword)
-    }
-
     @ApiOperation({
         description: 'Search track by keyword',
     })
     @ApiProperty({
         type: SearchTracksRequest,
-        description: 'Search track by keyword',
-    })
-    @ApiExtraModels(TrackSearchDto)
-    @ApiExtraModels(AlbumDto)
-    @ApiExtraModels(ArtistDto)
-    @ApiOkResponse({
-        schema: {
-            type: 'object',
-            properties: {
-                total: { type: 'number' },
-                limit: { type: 'number' },
-                page: { type: 'number' },
-                data: {
-                    type: 'array',
-                    items: {
-                        oneOf: [
-                            { $ref: getSchemaPath(TrackSearchDto) },
-                            { $ref: getSchemaPath(AlbumDto) },
-                            { $ref: getSchemaPath(ArtistDto) },
-                        ],
-                    },
-                },
-            },
-        },
         description: 'Search track by keyword',
     })
     @Get('/track')
@@ -69,40 +31,64 @@ export class SearchController {
     }
 
     @ApiOperation({
+        description: 'Get Top Artist',
+    })
+    @Get('/artist/top')
+    public getTopArtist() {
+        return this._artistSearchService.getTopArtist()
+    }
+
+    @ApiOperation({
+        description: 'Get new tracks sorted by releaseDate',
+    })
+    @ApiProperty({
+        description: 'New Tracks',
+    })
+    @Get('/track/new')
+    public getNewTracks() {
+        return this._trackSearchService.getNewTracks()
+    }
+
+    @ApiOperation({
+        description: 'Get Top tracks',
+    })
+    @ApiProperty({
+        description: 'Top Tracks',
+    })
+    @Get('/track/top')
+    public getTopTracks() {
+        return this._trackSearchService.getTopTracks()
+    }
+
+    @ApiOperation({
+        description: "Get top albums based on sum of track's hitCounts",
+    })
+    @Get('/album/top')
+    public getTopAlbums() {
+        return this._albumSearchService.getTopAlbums()
+    }
+
+    @ApiOperation({
+        description: 'Get album by id',
+    })
+    @ApiProperty({
+        description: 'The id of the album',
+        default: '1',
+    })
+    @Get('/album/:id')
+    public getAlbumById(@Param('id') id: string) {
+        return this._albumSearchService.searchAlbumById(Number(id))
+    }
+
+    @ApiOperation({
         description: 'Get artist by id',
     })
     @ApiProperty({
         description: 'The id of the artist',
         default: '1',
     })
-    @ApiExtraModels(ArtistDto)
-    @ApiOkResponse({
-        schema: {
-            type: 'object',
-            properties: {
-                total: { type: 'number' },
-                limit: { type: 'number' },
-                page: { type: 'number' },
-                data: { $ref: getSchemaPath(ArtistDto) },
-            },
-        },
-        description: 'Search track by keyword',
-    })
     @Get('/artist/:id')
     public getArtistById(@Param('id') id: string) {
-        // TODO:: update fields ที่จะ return เช็คกับหน้าบ้าน
         return this._artistSearchService.searchArtistById(Number(id))
-    }
-
-    @ApiOperation({
-        description: 'Get album by artist id',
-    })
-    @ApiProperty({
-        description: 'The id of the artist',
-        default: '1',
-    })
-    @Get('/artist/:id/albums')
-    public getAlbumByArtistId(@Param('id') id: string) {
-        return this._artistSearchService.searchAlbumsByArtistId(Number(id))
     }
 }

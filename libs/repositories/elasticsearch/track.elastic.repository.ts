@@ -5,7 +5,8 @@ import { ElasticConstant } from '@libs/common/constants/elastic.constant'
 import { Logger } from '@nestjs/common'
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs'
 import { AlbumES } from '../interfaces/search/album.interface'
-import { ISearchOptions } from '../interfaces/search/search.interface'
+import { ArtistES } from '../interfaces/search/artist.interface'
+import { ISearchOptions, RelatedData } from '../interfaces/search/search.interface'
 import { TrackES } from '../interfaces/search/track.interface'
 import { ElasticsearchRepository } from './elasticsearch.repository'
 
@@ -16,31 +17,39 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         super(client)
     }
 
-    public addTrack(track: TrackES): Observable<WriteResponseBase> {
-        return this.indexDocument(ElasticConstant.INDICE.TRACK, track)
+    public addTrack(track: Partial<TrackES>): Observable<WriteResponseBase> {
+        track.hitCounts = 0
+        return this.indexDocument(ElasticConstant.INDICE.MUSIC, track)
     }
 
     public updateTrack(track: Partial<TrackES>): Observable<WriteResponseBase> {
         return from(
             this.client.search({
-                index: ElasticConstant.INDICE.TRACK,
+                index: ElasticConstant.INDICE.MUSIC,
                 body: {
                     query: {
-                        match: {
-                            id: track.id,
+                        bool: {
+                            must: [
+                                { match: { id: track.id } },
+                                { match: { type: 'track' } },
+                            ],
                         },
                     },
                 },
-            }),
+            }) as Promise<SearchResponse<TrackES>>,
         ).pipe(
-            switchMap((response) => {
+            switchMap((response: SearchResponse<TrackES>) => {
                 const id = response.hits.hits[0]?._id
                 if (!id) {
+                    track.hitCounts = 0
                     return this.addTrack(track as TrackES).pipe(
                         map((addResponse) => {
                             const newId = addResponse._id
                             this.logger.log(`Track added with ID: ${newId}`)
-                            return newId
+                            return {
+                                _id: newId,
+                                response,
+                            }
                         }),
                         catchError((error) => {
                             this.logger.error(`Error adding track: ${error.message}`)
@@ -49,15 +58,19 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                     )
                 }
                 this.logger.log(`Track found: ${id}`)
-                return of(id)
+                return of({
+                    _id: id,
+                    response,
+                })
             }),
-            switchMap((id) => {
-                console.log('Updating track: ' + id)
+            switchMap((data) => {
+                console.log('Updating track: ' + data._id)
+                track.hitCounts = data.response.hits.hits[0]._source.hitCounts || 0
                 return from(
                     this.client
                         .update({
-                            index: ElasticConstant.INDICE.TRACK,
-                            id: id.toString(),
+                            index: ElasticConstant.INDICE.MUSIC,
+                            id: data._id.toString(),
                             body: {
                                 doc: track,
                             },
@@ -77,11 +90,14 @@ export class TrackElasticRepository extends ElasticsearchRepository {
     public deleteTrack(track: Partial<TrackES>): Observable<WriteResponseBase> {
         return from(
             this.client.search({
-                index: ElasticConstant.INDICE.TRACK,
+                index: ElasticConstant.INDICE.MUSIC,
                 body: {
                     query: {
-                        match: {
-                            id: track.id,
+                        bool: {
+                            must: [
+                                { match: { id: track.id } },
+                                { match: { type: 'track' } },
+                            ],
                         },
                     },
                 },
@@ -98,7 +114,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
             switchMap((id) =>
                 from(
                     this.client.delete({
-                        index: ElasticConstant.INDICE.TRACK,
+                        index: ElasticConstant.INDICE.MUSIC,
                         id: id.toString(),
                     }),
                 ),
@@ -110,25 +126,15 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         )
     }
 
-    public fuzzySearch(keyword: string, fields: string[], opts?: ISearchOptions): Observable<SearchResponse> {
-        if (!opts.page) {
-            opts.page = 1
+    public search(
+        keyword: string,
+        fields?: string[],
+        opts?: ISearchOptions,
+    ): Observable<
+        SearchResponse<TrackES | AlbumES | ArtistES> & {
+            relatedData: RelatedData
         }
-
-        if (!opts.fuzziness) {
-            opts.fuzziness = 'AUTO'
-        }
-
-        if (fields.length === 0) {
-            fields = [
-                'title',
-            ]
-        }
-
-        return this.fuzzySearchDocument(ElasticConstant.INDICE.TRACK, keyword, fields, opts)
-    }
-
-    public search(keyword: string, fields?: string[], opts?: ISearchOptions): Observable<SearchResponse<TrackES>> {
+    > {
         if (!opts) {
             opts = {}
             if (!opts.page) {
@@ -142,67 +148,245 @@ export class TrackElasticRepository extends ElasticsearchRepository {
 
         if (!fields || (fields && fields.length === 0)) {
             fields = [
-                'title_th',
-                'title_en',
+                'name_th',
+                'name_en',
                 'aliases',
-                'artist.name',
-                'album.title',
-                'genres.name',
-                'playlists.name',
             ]
         }
 
-        return this.genericSearchDocument(ElasticConstant.INDICE.TRACK, keyword, fields, opts)
+        return this.genericSearchDocument(ElasticConstant.INDICE.MUSIC, keyword, fields, opts)
     }
 
-    public searchArtistById(artistId: number): Observable<SearchResponse<TrackES>> {
-        if (!artistId) {
-            throw new Error('searchArtistById: artistId is required')
+    public genericSearchDocument(
+        index: string,
+        text: string,
+        fields: string[],
+        opts?: ISearchOptions,
+    ): Observable<
+        SearchResponse<TrackES | ArtistES | AlbumES> & {
+            relatedData: RelatedData
         }
-
-        return this.searchDocument(ElasticConstant.INDICE.TRACK, {
-            'artist.id': artistId,
-        })
-    }
-
-    public searchAlbumsByArtistId(artistId: number): Observable<
-        SearchResponse<{
-            album: AlbumES
-        }>
     > {
-        if (!artistId) {
-            throw new Error('searchAlbumsByArtistId: artistId is required')
+        if (!text) {
+            return new Observable((observer) => {
+                observer.error('Text is required')
+            })
+        }
+        if (!index) {
+            return new Observable((observer) => {
+                observer.error('Index is required')
+            })
+        }
+        if (!fields || fields.length === 0) {
+            return new Observable((observer) => {
+                observer.error('Fields is required')
+            })
         }
 
-        return from(
-            this.client.search<{
-                album: AlbumES
-            }>({
-                index: ElasticConstant.INDICE.TRACK,
-                body: {
-                    query: {
-                        term: {
-                            'artist.id': artistId,
-                        },
+        if (!opts) {
+            opts = {
+                page: 1,
+                limit: 20,
+            }
+        }
+
+        if (text.length > 2) {
+            return this.multipleCharacterSearch(index, text, fields, opts)
+        }
+
+        if (text.length <= 2) {
+            return this.singleCharacterSearch(index, text, fields, opts)
+        }
+    }
+
+    public multipleCharacterSearch(
+        index: string,
+        text: string,
+        fields: string[],
+        opts?: ISearchOptions,
+    ): Observable<
+        SearchResponse<TrackES | ArtistES | AlbumES> & {
+            relatedData: RelatedData
+        }
+    > {
+        let pagination = {}
+        if (opts && opts.page && opts.limit) {
+            pagination = {
+                from: (opts.page - 1) * opts.limit,
+                size: opts.limit,
+            }
+        }
+
+        if (opts && !opts.sort) {
+            opts.sort = []
+        }
+
+        this.logger.log(`Searching for ${text} in ${fields.join(', ')}`)
+        const promise: Promise<SearchResponse<TrackES | ArtistES | AlbumES>> = this.client.search({
+            index,
+            body: {
+                query: {
+                    multi_match: {
+                        query: text,
+                        fields: fields.map((field) => (field.includes('^') ? field : `${field}^1`)),
+                        type: 'best_fields',
+                        fuzziness: 'AUTO',
+                        tie_breaker: 0.3,
                     },
-                    collapse: {
-                        field: 'album.id',
+                },
+                ...pagination,
+                sort: opts.sort,
+                highlight: {
+                    fields: {
+                        name_en: {},
+                        name_th: {},
+                        genres: {},
                     },
-                    _source: [
-                        'album.*',
+                    pre_tags: [
+                        '<strong>',
+                    ],
+                    post_tags: [
+                        '</strong>',
                     ],
                 },
+            },
+        })
+
+        return from(promise).pipe(
+            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) =>
+                this.getRelatedData(response).pipe(
+                    map((relatedData) => ({
+                        ...response,
+                        relatedData,
+                    })),
+                    catchError((err) => {
+                        this.logger.error(`Error getting related data: ${err}`)
+                        throw err
+                    }),
+                ),
+            ),
+            catchError((err) => {
+                this.logger.error(`Error in multiple character search: ${err}`)
+                throw err
             }),
-        ).pipe(
-            map((response) => {
-                if (response.hits.hits.length === 0) {
-                    throw new Error('No albums found for this artist')
-                }
-                return response
+        )
+    }
+
+    public singleCharacterSearch(
+        index: string,
+        text: string,
+        fields: string[],
+        opts?: ISearchOptions,
+    ): Observable<
+        SearchResponse<TrackES | ArtistES | AlbumES> & {
+            relatedData: RelatedData
+        }
+    > {
+        let pagination = {}
+        if (opts && opts.page && opts.limit) {
+            pagination = {
+                from: (opts.page - 1) * opts.limit,
+                size: opts.limit,
+            }
+        }
+
+        const promise: Promise<SearchResponse<TrackES | ArtistES | AlbumES>> = this.client.search({
+            index,
+            body: {
+                query: {
+                    bool: {
+                        should: fields.map((field) => ({
+                            wildcard: {
+                                [field]: {
+                                    value: `${text.toLowerCase()}*`,
+                                    boost: field === 'aliases' ? 1 : 2,
+                                    _name: `${field.replace('.', '_')}`,
+                                },
+                            },
+                        })),
+                        minimum_should_match: 1,
+                    },
+                },
+                ...pagination,
+                highlight: {
+                    fields: fields.reduce(
+                        (acc, field) => {
+                            acc[field] = {}
+                            return acc
+                        },
+                        {} as Record<string, {}>,
+                    ),
+                    pre_tags: [
+                        '<strong>',
+                    ],
+                    post_tags: [
+                        '</strong>',
+                    ],
+                },
+            },
+        })
+
+        return from(promise).pipe(
+            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) =>
+                this.getRelatedData(response).pipe(
+                    map((relatedData) => ({
+                        ...response,
+                        relatedData,
+                    })),
+                    catchError((err) => {
+                        this.logger.error(`Error getting related data: ${err}`)
+                        throw err
+                    }),
+                ),
+            ),
+            catchError((err) => {
+                this.logger.error(`Error in single character search: ${err}`)
+                throw err
             }),
-            catchError((error) => {
-                this.logger.error(`Error searching albums for artist by id: ${error.message}`)
-                throw error
+        )
+    }
+
+    public getNewTracks(): Observable<SearchResponse<TrackES>> {
+        const promise: Promise<SearchResponse<TrackES>> = this.client.search({
+            index: ElasticConstant.INDICE.MUSIC,
+            body: {
+                size: 20,
+                query: {
+                    term: { type: 'track' },
+                },
+                sort: [
+                    { releaseDate: { order: 'desc' } },
+                ],
+            },
+        })
+
+        return from(promise).pipe(
+            catchError((err) => {
+                this.logger.error(`Error getting new tracks: ${err}`)
+                throw err
+            }),
+        )
+    }
+
+    public getTopTracks(): Observable<SearchResponse<TrackES>> {
+        const promise: Promise<SearchResponse<TrackES>> = this.client.search({
+            index: ElasticConstant.INDICE.MUSIC,
+            body: {
+                size: 20,
+                query: {
+                    term: { type: 'track' },
+                },
+                sort: [
+                    { hitCounts: { order: 'desc' } },
+                    { releaseDate: { order: 'desc' } },
+                ],
+            },
+        })
+
+        return from(promise).pipe(
+            catchError((err) => {
+                this.logger.error(`Error getting top tracks: ${err}`)
+                throw err
             }),
         )
     }

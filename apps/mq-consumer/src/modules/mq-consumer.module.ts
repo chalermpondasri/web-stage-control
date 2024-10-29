@@ -5,6 +5,12 @@ import { EnvironmentConfig } from '@libs/common/models'
 import { GlobalModule } from '@libs/modules/global.module'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import { Module } from '@nestjs/common'
+import { AlbumCreateConsumer } from '../domains/cms/album/create.consumer'
+import { AlbumDeleteConsumer } from '../domains/cms/album/delete.consumer'
+import { AlbumUpdateConsumer } from '../domains/cms/album/update.consumer'
+import { ArtistCreateConsumer } from '../domains/cms/artist/create.consumer'
+import { ArtistDeleteConsumer } from '../domains/cms/artist/delete.consumer'
+import { ArtistUpdateConsumer } from '../domains/cms/artist/update.consumer'
 import { TrackCreateConsumer } from '../domains/cms/track/create.consumer'
 import { TrackDeleteConsumer } from '../domains/cms/track/delete.consumer'
 import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
@@ -39,6 +45,12 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
         TrackCreateConsumer,
         TrackUpdateConsumer,
         TrackDeleteConsumer,
+        AlbumCreateConsumer,
+        AlbumUpdateConsumer,
+        AlbumDeleteConsumer,
+        ArtistCreateConsumer,
+        ArtistUpdateConsumer,
+        ArtistDeleteConsumer,
     ],
 })
 export class MqConsumerModule {}

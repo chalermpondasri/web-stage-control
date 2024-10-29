@@ -1,5 +1,8 @@
-import { GetResponse, SearchResponse } from '@elastic/elasticsearch/lib/api/types'
+import { GetResponse, SearchResponse, Sort } from '@elastic/elasticsearch/lib/api/types'
 import { Observable } from 'rxjs'
+import { AlbumES } from './album.interface'
+import { ArtistES } from './artist.interface'
+import { TrackES } from './track.interface'
 
 export type fuzziness = 0 | 1 | 2 | 'AUTO'
 
@@ -8,6 +11,7 @@ export interface ISearchOptions {
     boost?: number
     page?: number
     limit?: number
+    sort?: Sort
 }
 
 export interface IDocumentIndexOptions {
@@ -21,6 +25,7 @@ export interface ISearchRepository {
     indexDocument(index: string, document: Record<string, any>, opts?: IDocumentIndexOptions): Observable<any>
     fuzzySearchDocument(index: string, text: string, fields: string[], opts: ISearchOptions): Observable<SearchResponse>
     searchDocument(index: string, fields: Record<string, any>): Observable<SearchResponse<any>>
+    getRelatedData(searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>): Observable<RelatedData>
 }
 
 export interface GenericAggResponse {
@@ -59,4 +64,10 @@ export interface TopHitsAggregationResponse {
             buckets: TopHitsBucket[]
         }
     }
+}
+
+export interface RelatedData {
+    tracks: TrackES[]
+    artists: ArtistES[]
+    albums: AlbumES[]
 }

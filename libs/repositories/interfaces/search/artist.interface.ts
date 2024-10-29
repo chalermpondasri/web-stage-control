@@ -1,19 +1,19 @@
-import { AlbumES } from './album.interface'
 import { MediaES } from './media.interface'
-import { PlaylistES } from './playlist.interface'
-import { TrackES } from './track.interface'
 
 export interface ArtistES {
     id: number
+    name_th: string
+    name_en: string
+    description?: string
+    type: string
+    aliases?: string[]
+    album_ids: number[]
+    track_ids: number[]
+    image?: MediaES
+    coverImage?: MediaES
+    playlist_ids: number[]
+    locale?: string
     createdAt: Date
     updatedAt: Date
     publishedAt?: Date | null
-    name: string
-    bio?: string
-    albums?: AlbumES[]
-    tracks?: TrackES[]
-    image?: MediaES
-    coverImage?: MediaES
-    playlists?: PlaylistES[]
-    locale?: string
 }

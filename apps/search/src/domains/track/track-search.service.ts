@@ -97,7 +97,6 @@ export class SearchTrackService implements ITrackService {
         relatedData: RelatedData,
     ): TrackSearchDto {
         const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
-
         const trackDto = TrackSearchDto.toDto(
             {
                 ...hit._source,
@@ -109,10 +108,12 @@ export class SearchTrackService implements ITrackService {
                         name: foundLang === Lang.Thai ? artist.name_th : artist.name_en,
                     }
                 }),
-                album: {
-                    ...relatedData.albums[0],
-                    name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
-                },
+                album: relatedData.albums[0]
+                    ? {
+                          ...relatedData.albums[0],
+                          name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
+                      }
+                    : null,
             },
         )
 

@@ -99,10 +99,12 @@ export class SearchAlbumService {
                         name: foundLang === Lang.Thai ? artist.name_th : artist.name_en,
                     }
                 }),
-                album: {
-                    ...relatedData.albums[0],
-                    name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
-                },
+                album: relatedData.albums[0]
+                    ? {
+                          ...relatedData.albums[0],
+                          name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
+                      }
+                    : null,
             },
         )
 

@@ -35,12 +35,12 @@ export class UserController {
         @Inject(ProviderName.USER_SERVICE)
         private readonly _userService: IUserService,
         @Inject(ProviderName.REQUEST_CONTEXT)
-        private readonly _requestContext: RequestContext
+        private readonly _requestContext: RequestContext,
     ) {
     }
 
     @ApiOperation({
-        description: 'user login using LINE integration'
+        description: 'user login using LINE integration',
     })
     @ApiBody({
         type: LineLoginRequest,
@@ -52,8 +52,8 @@ export class UserController {
         type: TokenDto,
         example: {
             accessToken: 'eyJhbGciOiJSUzI1Ni..,.',
-            refreshToken: 'eyJhbGciOiJSUzI1Ni...'
-        }
+            refreshToken: 'eyJhbGciOiJSUzI1Ni...',
+        },
     })
     @Post('/login')
     public userLoginWithLINE(
@@ -62,31 +62,34 @@ export class UserController {
         return this._authenticationService.doLineLogin(body.authorizationCode)
     }
 
+    @ApiOperation({
+        description: 'update consent usage agreement',
+    })
     @ApiBody({
         type: UpdateConsentRequest,
-        description: 'user update usage consent response',
         required: true,
     })
     @ApiResponse({
-        type: TokenDto
+        type: TokenDto,
     })
 
-    @ApiBearerAuth()
+    @ApiBearerAuth(UpdateConsentRequest.name)
     @Post('/consent')
     @UseGuards(UnacceptedConsentGuard)
     public updateConsent(
-        @Body() body:  UpdateConsentRequest,
+        @Body() body: UpdateConsentRequest,
     ) {
         return this._userService.updateUserConsent(body)
     }
 
+    @ApiTags(...['user', 'resource'])
     @Get('/me/image/static/:filename')
     public getUserImage(
-        @Param('filename') filename: string
+        @Param('filename') filename: string,
     ) {
         return new StreamableFile(
             createReadStream(path.resolve(`./static/${filename}`)),
-            {type: 'image/jpg'}
+            { type: 'image/jpg' },
         )
     }
 }

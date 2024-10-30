@@ -2,16 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
     IsBase64,
     IsBoolean,
-    IsNotEmpty,
 } from 'class-validator'
 
 export class UpdateConsentRequest {
-
-    @ApiProperty({
-        description: 'Line Authorization Code'
-    })
-    @IsNotEmpty()
-    public authorizationCode: string
 
     @ApiProperty({
         description: 'indicate whether user accept or reject consent'

@@ -15,6 +15,7 @@ import { AdminController } from '../controllers/admin.controller'
 import { UserController } from '../controllers/user.controller'
 import { SseController } from '../controllers/sse.controller'
 import { RequestContextMiddleware } from '@libs/providers/request-context.provider'
+import { MeController } from '../controllers/me.controller'
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { RequestContextMiddleware } from '@libs/providers/request-context.provid
     controllers: [
         AdminController,
         UserController,
+        MeController,
         SseController,
     ],
 })

@@ -40,8 +40,10 @@ import { ItemUpdateDto } from '@libs/common/models/media/item-update.dto'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { fromPromise } from 'rxjs/internal/observable/innerFrom'
 import axios from 'axios'
+import _ from 'lodash'
 import fs from 'node:fs'
 import path from 'path'
+import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -71,11 +73,11 @@ export class AuthenticationService implements IAuthenticationService {
                     title: 'Lorem Ipsum Dolor Sit Amet',
                     duration: 215,
                     coverImage: null,
-                    totalPoint: Date.now() %10000,
+                    totalPoint: Date.now() % 10000,
                     updatedAt: Date.now(),
                 }
 
-                this._sseSubject.next({type:'ITEM_UPDATE', data: mediaUpdateDto})
+                this._sseSubject.next({ type: 'ITEM_UPDATE', data: mediaUpdateDto })
 
                 const adminUserDto = plainToInstance(AdminUserDto, instanceToPlain(user), { excludeExtraneousValues: true })
 
@@ -106,7 +108,7 @@ export class AuthenticationService implements IAuthenticationService {
                 const model = this._communityRepository.create({
                     name: `community-${Date.now()}`,
                     startDate: new Date(),
-                    endDate: dayjs().add(1,'year').toDate(),
+                    endDate: dayjs().add(1, 'year').toDate(),
                 })
                 return from(this._communityRepository.save(model))
             }),
@@ -117,7 +119,6 @@ export class AuthenticationService implements IAuthenticationService {
             }),
         )
     }
-
 
     private async _downloadImage(filename: string, imageUrl: string): Promise<string> {
 
@@ -137,11 +138,11 @@ export class AuthenticationService implements IAuthenticationService {
     public doLineLogin(code: string): Observable<TokenDto> {
         return from(this._lineRepository.verifyToken({ code })).pipe(
             mergeMap(response => {
-                const decoded = <JwtPayload> decode(response.id_token)
+                const decoded = <JwtPayload>decode(response.id_token)
                 const { sub, name, picture } = decoded
                 return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
-                        if(!!user) {
+                        if (!!user) {
                             return of(user)
                         }
                         const entity = this._userRepository.create({
@@ -150,7 +151,7 @@ export class AuthenticationService implements IAuthenticationService {
                             picture: null,
                             isConsentAccepted: false,
                             acceptedConsent: null,
-                            setting: {showProfile: true, showName: true}
+                            setting: { showProfile: true, showName: true },
                         })
                         return fromPromise(this._userRepository.save(entity)).pipe(
                             mergeMap(user => {
@@ -158,22 +159,14 @@ export class AuthenticationService implements IAuthenticationService {
                                     mergeMap(() => {
                                         user.picture = `/static/${user.id}`
                                         return this._userRepository.save(user)
-                                    })
+                                    }),
                                 )
-                            })
-
+                            }),
                         )
                     }),
                 )
             }),
-            map((user: User) => {
-
-                const userDto = plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
-                const accessToken = this._tokenizationService.createAccessToken(instanceToPlain(userDto))
-                const refreshToken = this._tokenizationService.createRefreshToken(instanceToPlain(userDto))
-
-                return plainToInstance(TokenDto, {accessToken, refreshToken})
-            }),
+            map((user: User) => this._generateUserToken(user)),
             catchError(err => {
                 this._logger.error(err)
                 return throwError(() => new UnauthorizedException())
@@ -181,8 +174,29 @@ export class AuthenticationService implements IAuthenticationService {
         )
     }
 
+    private _generateUserToken(user: User): TokenDto {
+
+        const userDto = plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+        const accessToken = this._tokenizationService.createAccessToken(instanceToPlain(userDto))
+        const refreshToken = this._tokenizationService.createRefreshToken(instanceToPlain(userDto))
+
+        return plainToInstance(TokenDto, { accessToken, refreshToken })
+    }
+
     public subscribeSse(): Observable<MessageEvent> {
         return this._sseSubject
+    }
+
+    public refreshToken(request: RefreshTokenRequest): Observable<TokenDto> {
+        return of(this._tokenizationService.verifyRefreshToken(request.refreshToken)).pipe(
+            mergeMap((data) => {
+                if (!data) {
+                    return throwError(() => new BadRequestException(ErrorEnum.LOGIN_INVALID_TOKEN))
+                }
+                return this._userRepository.findOneBy({ id: _.get('payload.id', data) })
+            }),
+            map((model) => this._generateUserToken(model)),
+        )
     }
 
 }

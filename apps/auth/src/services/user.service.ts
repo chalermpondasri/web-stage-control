@@ -21,6 +21,7 @@ import {
 import { UserDto } from '@libs/common/models/user/user.dto'
 import { ITokenizationService } from './interfaces/tokenization-service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
+import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 
 export class UserService implements IUserService {
     public constructor(
@@ -52,10 +53,12 @@ export class UserService implements IUserService {
 
     }
 
-    public getUser(): Observable<UserDto> {
+    public getUserProfile(): Observable<UserProfileDto> {
         return from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId})).pipe(
             map((user: User) => {
-                return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+                const dto =plainToInstance(UserProfileDto, instanceToPlain(user), { excludeExtraneousValues: true })
+                dto.totalVouchers = 0
+                return dto
             }),
         )
     }

@@ -1,11 +1,8 @@
 import {
     Body,
     Controller,
-    Get,
     Inject,
-    Param,
     Post,
-    StreamableFile,
     UseGuards,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
@@ -21,10 +18,9 @@ import { LineLoginRequest } from '@libs/common/models/user/line-login.request'
 import { UpdateConsentRequest } from '@libs/common/models/user/update-consent.request'
 import { IUserService } from '../services/interfaces/user-service.interface'
 import { TokenDto } from '@libs/common/models/common/token.dto'
-import { createReadStream } from 'fs'
-import path from 'path'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { UnacceptedConsentGuard } from '@libs/guards/unaccepted-consent.guard'
+import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
 
 @ApiTags('user')
 @Controller('/users')
@@ -55,11 +51,35 @@ export class UserController {
             refreshToken: 'eyJhbGciOiJSUzI1Ni...',
         },
     })
+
+    @ApiTags(...['authentication'])
     @Post('/login')
     public userLoginWithLINE(
         @Body() body: LineLoginRequest,
     ) {
         return this._authenticationService.doLineLogin(body.authorizationCode)
+    }
+
+    @ApiTags(...['authentication'])
+    @ApiOperation({
+        description: 'generate new user tokens from refresh token',
+    })
+    @ApiBody({
+        type: RefreshTokenRequest,
+    })
+    @ApiResponse({
+        description: 'return access and refresh token',
+        type: TokenDto,
+        example: {
+            accessToken: 'eyJhbGciOiJSUzI1Ni..,.',
+            refreshToken: 'eyJhbGciOiJSUzI1Ni...',
+        },
+    })
+    @Post('/refreshToken')
+    public refreshToken(
+        @Body() request: RefreshTokenRequest,
+    ){
+        return this._authenticationService.refreshToken(request)
     }
 
     @ApiOperation({
@@ -80,16 +100,5 @@ export class UserController {
         @Body() body: UpdateConsentRequest,
     ) {
         return this._userService.updateUserConsent(body)
-    }
-
-    @ApiTags(...['user', 'resource'])
-    @Get('/me/image/static/:filename')
-    public getUserImage(
-        @Param('filename') filename: string,
-    ) {
-        return new StreamableFile(
-            createReadStream(path.resolve(`./static/${filename}`)),
-            { type: 'image/jpg' },
-        )
     }
 }

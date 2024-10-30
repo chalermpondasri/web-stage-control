@@ -1,0 +1,90 @@
+PUT /music
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,   // Minimum number of characters in each edge n-gram
+          "max_gram": 20   // Maximum number of characters in each edge n-gram
+        },
+        "shingle_filter": {
+          "type": "shingle",
+          "min_shingle_size": 2,  // Minimum number of words in the shingle
+          "max_shingle_size": 4, // Maximum number of words in the shingle
+          "output_unigrams": true,
+          "token_separator": ""
+        }
+      },
+      "analyzer": {
+        "th_analyzer": {
+          "type": "custom",
+          "tokenizer": "icu_tokenizer",  // Use ICU tokenizer
+          "filter": [
+            "shingle_filter"
+            ]
+        },
+        "en_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "edge_ngram_filter" 
+            ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": false, 
+    "properties": {
+      "type": {
+        "type": "keyword"
+      },
+      "id": {
+        "type": "long"
+      },
+      "name_th": {
+        "type": "text",
+        "analyzer": "th_analyzer",
+        "search_analyzer": "th_analyzer"
+      },
+      "name_en": {
+        "type": "text",
+        "analyzer": "en_analyzer",
+        "search_analyzer": "en_analyzer"
+      },
+      "aliases": {
+        "type": "text",
+        "analyzer": "th_analyzer",
+        "search_analyzer": "th_analyzer"
+      },
+      "artist_ids": {
+        "type": "long"
+      },
+      "track_ids": {
+        "type": "long"
+      },
+      "album_id": {
+        "type": "long"
+      },
+      "genres": {
+        "type": "keyword"
+      },
+      "playlists": {
+        "type": "long"
+      },
+      "hitCounts": {
+        "type": "long"
+      },
+      "releaseDate": {
+        "type": "date"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "th_analyzer",
+        "search_analyzer": "th_analyzer"
+      }
+    }
+  }
+}

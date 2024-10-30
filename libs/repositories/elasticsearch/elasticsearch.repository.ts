@@ -155,24 +155,30 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             }
         })
 
-        const trackObservables = trackIds.map((id) =>
-            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: id.toString(),
-                type: 'track',
-            }),
-        )
-        const albumObservables = albumIds.map((id) =>
-            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: id.toString(),
-                type: 'album',
-            }),
-        )
-        const artistObservables = artistIds.map((id) =>
-            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: id.toString(),
-                type: 'artist',
-            }),
-        )
+        const trackObservables = trackIds
+            .filter((id) => id)
+            .map((id) =>
+                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                    id: id.toString(),
+                    type: 'track',
+                }),
+            )
+        const albumObservables = albumIds
+            .filter((id) => id)
+            .map((id) => {
+                return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                    id: id.toString(),
+                    type: 'album',
+                })
+            })
+        const artistObservables = artistIds
+            .filter((id) => id)
+            .map((id) =>
+                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                    id: id.toString(),
+                    type: 'artist',
+                }),
+            )
 
         if (trackObservables.length === 0 && albumObservables.length === 0 && artistObservables.length === 0) {
             return of({
@@ -218,12 +224,14 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             type: 'album',
         })
 
-        const artistObservables = track.artist_ids.map((id) =>
-            this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: id.toString(),
-                type: 'artist',
-            }),
-        )
+        const artistObservables = track.artist_ids
+            .filter((id) => id)
+            .map((id) =>
+                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                    id: id.toString(),
+                    type: 'artist',
+                }),
+            )
 
         if (albumObservables && artistObservables.length === 0) {
             return of({

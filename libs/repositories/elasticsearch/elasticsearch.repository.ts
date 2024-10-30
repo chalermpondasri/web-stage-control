@@ -219,10 +219,12 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
     }
 
     public getTrackRelatedData(track: TrackES): Observable<RelatedData> {
-        const albumObservables = this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-            id: track.album_id.toString(),
-            type: 'album',
-        })
+        const albumObservables = track.album_id
+            ? this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                  id: track.album_id.toString(),
+                  type: 'album',
+              })
+            : of(null)
 
         const artistObservables = track.artist_ids
             .filter((id) => id)
@@ -248,7 +250,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             map((relatedDocs) => {
                 const relatedData = relatedDocs.reduce(
                     (acc, doc) => {
-                        if ((doc.hits.total as SearchTotalHits).value === 0) {
+                        if (doc === null || (doc.hits.total as SearchTotalHits).value === 0) {
                             return acc
                         }
 

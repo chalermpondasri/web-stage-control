@@ -78,7 +78,8 @@ export class SearchArtistService {
                 )
             }),
             catchError((err) => {
-                this.logger.error(`Error searching artist by id: ${err}`)
+                this.logger.error(`Error searching artist by id:`)
+                this.logger.error(err)
                 throw new HttpException(err.message, HttpStatus.NOT_FOUND)
             }),
         )

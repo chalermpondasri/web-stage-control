@@ -15,6 +15,7 @@ import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import { Subject } from 'rxjs'
 import { UserService } from '../services/user.service'
+import { RequestContext } from '@libs/providers/request-context.provider'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -61,12 +62,12 @@ export const userServiceProvider: Provider = {
     provide: ProviderName.USER_SERVICE,
     inject: [
         ProviderName.USER_REPOSITORY,
-        ProviderName.LINE_REPOSITORY,
         ProviderName.TOKENIZATION_SERVICE,
+        ProviderName.REQUEST_CONTEXT,
     ],
     useFactory: (
         userRepository: Repository<User>,
-        lineRepository: ILineRepository,
         tokenizationService: ITokenizationService,
-    ) => new UserService(userRepository, lineRepository, tokenizationService),
+        requestContext: RequestContext,
+    ) => new UserService(userRepository,  tokenizationService, requestContext),
 }

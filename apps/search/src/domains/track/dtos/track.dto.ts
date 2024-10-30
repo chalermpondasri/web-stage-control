@@ -39,6 +39,10 @@ export class TrackDto implements TrackES {
 
     @Expose()
     @ApiProperty()
+    public mvFile: MediaES
+
+    @Expose()
+    @ApiProperty()
     public album_id: number
 
     @Expose()
@@ -142,6 +146,20 @@ export class TrackSearchDto extends PickType(TrackDto, [
     @ApiProperty()
     @Transform(({ value }) => value && AlbumSearchDto.toDto(value, { type: 'album' }))
     public album: AlbumSearchDto[]
+
+    @Expose()
+    @ApiProperty()
+    public duration: number
+
+    @Expose()
+    @ApiProperty()
+    @Transform(({ value }) => plainToInstance(MediaSearchDto, value, { excludeExtraneousValues: true }))
+    public audioFile: MediaSearchDto
+
+    @Expose()
+    @ApiProperty()
+    @Transform(({ value }) => plainToInstance(MediaSearchDto, value, { excludeExtraneousValues: true }))
+    public mvFile: MediaSearchDto
 
     public static toDto(track: TrackES, params?): TrackSearchDto {
         return plainToInstance(

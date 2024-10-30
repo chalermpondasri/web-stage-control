@@ -11,6 +11,7 @@ export interface TrackES {
     releaseDate?: Date
     duration?: number
     audioFile: MediaES
+    mvFile: MediaES
     album?: AlbumES
     album_id: number
     artist_ids: number[]

@@ -3,6 +3,7 @@ import {
     Controller,
     Get,
     Inject,
+    Param,
     Post,
     StreamableFile,
     UseGuards,
@@ -79,8 +80,13 @@ export class UserController {
         return this._userService.updateUserConsent(body)
     }
 
-    @Get('/me/image')
-    public getUserImage(): StreamableFile {
-        return new StreamableFile(createReadStream(path.resolve(`./static/${this._requestContext.identityInfo.userId}`)))
+    @Get('/me/image/static/:filename')
+    public getUserImage(
+        @Param('filename') filename: string
+    ) {
+        return new StreamableFile(
+            createReadStream(path.resolve(`./static/${filename}`)),
+            {type: 'image/jpg'}
+        )
     }
 }

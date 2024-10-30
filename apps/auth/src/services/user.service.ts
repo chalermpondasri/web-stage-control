@@ -52,4 +52,12 @@ export class UserService implements IUserService {
 
     }
 
+    public getUser(): Observable<UserDto> {
+        return from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId})).pipe(
+            map((user: User) => {
+                return plainToInstance(UserDto, instanceToPlain(user), { excludeExtraneousValues: true })
+            }),
+        )
+    }
+
 }

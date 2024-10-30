@@ -122,12 +122,12 @@ export class AuthenticationService implements IAuthenticationService {
     private async _downloadImage(filename: string, imageUrl: string): Promise<string> {
 
         const imagePath = `./static/${filename}`
-        let response1 = await axios.request({
+        const response = await axios.request({
             url: imageUrl,
             responseType: 'stream',
         })
         return await new Promise((resolve, reject) => {
-            response1.data
+            response.data
                 .pipe(fs.createWriteStream(path.resolve(`./static/${filename}`)))
                 .on('finish', () => resolve(imagePath))
                 .on('error', e => reject(e))
@@ -141,25 +141,28 @@ export class AuthenticationService implements IAuthenticationService {
                 const { sub, name, picture } = decoded
                 return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
-                        // if user not existed
-                        if (!user) {
-                            return fromPromise(this._downloadImage(decoded.sub, picture)).pipe(
-                                mergeMap(imgPath => {
-                                    const entity = this._userRepository.create({
-                                        lineId: sub,
-                                        name,
-                                        picture: imgPath,
-                                        isConsentAccepted: false,
-                                        acceptedConsent: null,
-                                        setting: {showProfile: true, showName: true}
-                                    })
-                                    return fromPromise(this._userRepository.save(entity))
-                                })
-                            )
-
+                        if(!!user) {
+                            return of(user)
                         }
-                        // return founded user
-                        return of(user)
+                        const entity = this._userRepository.create({
+                            lineId: sub,
+                            name,
+                            picture: null,
+                            isConsentAccepted: false,
+                            acceptedConsent: null,
+                            setting: {showProfile: true, showName: true}
+                        })
+                        return fromPromise(this._userRepository.save(entity)).pipe(
+                            mergeMap(user => {
+                                return fromPromise(this._downloadImage(user.id, picture)).pipe(
+                                    mergeMap(() => {
+                                        user.picture = `/static/${user.id}`
+                                        return this._userRepository.save(user)
+                                    })
+                                )
+                            })
+
+                        )
                     }),
                 )
             }),

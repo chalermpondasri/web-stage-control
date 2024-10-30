@@ -38,6 +38,9 @@ export class User {
     @Column({type: 'json', nullable: true})
     public setting: {showProfile: boolean, showName: boolean} = {showName: true, showProfile: true}
 
+    @Column({default: 0, type: 'int'})
+    public remainCoins: number
+    
     @CreateDateColumn()
     public createdAt: Date
 

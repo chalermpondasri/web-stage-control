@@ -14,6 +14,7 @@ COPY package*.json .
 COPY tsconfig.json .
 COPY apps ./apps
 COPY libs ./libs
+COPY static ./static
 
 USER root
 RUN npm install

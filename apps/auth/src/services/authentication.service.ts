@@ -4,6 +4,7 @@ import {
     Logger,
     LoggerService,
     MessageEvent,
+    UnauthorizedException,
 } from '@nestjs/common'
 import {
     catchError,
@@ -37,6 +38,10 @@ import { User } from '@libs/entities/user.entity'
 import dayjs from 'dayjs'
 import { ItemUpdateDto } from '@libs/common/models/media/item-update.dto'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import { fromPromise } from 'rxjs/internal/observable/innerFrom'
+import axios from 'axios'
+import fs from 'node:fs'
+import path from 'path'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -113,18 +118,51 @@ export class AuthenticationService implements IAuthenticationService {
         )
     }
 
+
+    private async _downloadImage(filename: string, imageUrl: string): Promise<string> {
+
+        const imagePath = `./static/${filename}`
+        const response = await axios.request({
+            url: imageUrl,
+            responseType: 'stream',
+        })
+        return await new Promise((resolve, reject) => {
+            response.data
+                .pipe(fs.createWriteStream(path.resolve(`./static/${filename}`)))
+                .on('finish', () => resolve(imagePath))
+                .on('error', e => reject(e))
+        })
+    }
+
     public doLineLogin(code: string): Observable<TokenDto> {
         return from(this._lineRepository.verifyToken({ code })).pipe(
             mergeMap(response => {
                 const decoded = <JwtPayload> decode(response.id_token)
-                return from(this._userRepository.findOneBy({ lineId: decoded.sub, isConsentAccepted: true })).pipe(
+                const { sub, name, picture } = decoded
+                return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
-                        // if user not existed, or consent not accepted
-                        if (!user) {
-                            return throwError(() => new BadRequestException(ErrorEnum.LOGIN_CONSENT_REQUIRED))
+                        if(!!user) {
+                            return of(user)
                         }
-                        // return founded user
-                        return of(user)
+                        const entity = this._userRepository.create({
+                            lineId: sub,
+                            name,
+                            picture: null,
+                            isConsentAccepted: false,
+                            acceptedConsent: null,
+                            setting: {showProfile: true, showName: true}
+                        })
+                        return fromPromise(this._userRepository.save(entity)).pipe(
+                            mergeMap(user => {
+                                return fromPromise(this._downloadImage(user.id, picture)).pipe(
+                                    mergeMap(() => {
+                                        user.picture = `/static/${user.id}`
+                                        return this._userRepository.save(user)
+                                    })
+                                )
+                            })
+
+                        )
                     }),
                 )
             }),
@@ -138,7 +176,7 @@ export class AuthenticationService implements IAuthenticationService {
             }),
             catchError(err => {
                 this._logger.error(err)
-                return throwError(() => new BadRequestException(ErrorEnum.LOGIN_INVALID_TOKEN))
+                return throwError(() => new UnauthorizedException())
             }),
         )
     }

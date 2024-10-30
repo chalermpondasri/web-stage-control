@@ -8,7 +8,7 @@ import {
 } from 'typeorm'
 
 @Entity({
-    comment: 'community admin entity',
+    comment: 'general user entity',
 })
 export class User {
     @PrimaryGeneratedColumn('uuid')
@@ -28,6 +28,15 @@ export class User {
 
     @Column({ nullable: true, type: 'text', comment: 'base64 encoded content' })
     public acceptedConsent: string
+
+    @Column({type: 'text', nullable: true})
+    public phoneNumber: string
+
+    @Column({type: 'text', nullable: true})
+    public email: string
+
+    @Column({type: 'json', nullable: true})
+    public setting: {showProfile: boolean, showName: boolean} = {showName: true, showProfile: true}
 
     @CreateDateColumn()
     public createdAt: Date

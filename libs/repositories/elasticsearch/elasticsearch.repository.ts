@@ -138,9 +138,9 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
     public getRelatedData(searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>): Observable<RelatedData> {
         const hits = searchResponse.hits.hits
-        const trackIds: number[] = []
-        const albumIds: number[] = []
-        const artistIds: number[] = []
+        let trackIds: number[] = []
+        let albumIds: number[] = []
+        let artistIds: number[] = []
 
         hits.forEach((hit) => {
             if (hit._source.type === 'track') {
@@ -154,6 +154,10 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 trackIds.push(...(hit._source as ArtistES).track_ids)
             }
         })
+
+        trackIds = Array.from(new Set(trackIds))
+        albumIds = Array.from(new Set(albumIds))
+        artistIds = Array.from(new Set(artistIds))
 
         const trackObservables = trackIds
             .filter((id) => id)

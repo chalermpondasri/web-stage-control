@@ -1,12 +1,22 @@
 PUT /music
 {
   "settings": {
+    "index": {
+      "max_ngram_diff": 4
+    },
     "analysis": {
       "filter": {
         "edge_ngram_filter": {
           "type": "edge_ngram",
           "min_gram": 1,   // Minimum number of characters in each edge n-gram
-          "max_gram": 20   // Maximum number of characters in each edge n-gram
+          "max_gram": 20,   // Maximum number of characters in each edge n-gram
+          "preserve_original": true
+        },
+        "edge_ngram_filter_th": {
+          "type": "edge_ngram",
+          "min_gram": 3,   // Minimum number of characters in each edge n-gram
+          "max_gram": 20,   // Maximum number of characters in each edge n-gram
+          "preserve_original": true
         },
         "shingle_filter": {
           "type": "shingle",
@@ -21,7 +31,8 @@ PUT /music
           "type": "custom",
           "tokenizer": "icu_tokenizer",  // Use ICU tokenizer
           "filter": [
-            "shingle_filter"
+            "shingle_filter",
+            "edge_ngram_filter_th"
             ]
         },
         "en_analyzer": {
@@ -47,17 +58,35 @@ PUT /music
       "name_th": {
         "type": "text",
         "analyzer": "th_analyzer",
-        "search_analyzer": "th_analyzer"
+        "search_analyzer": "th_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
       },
       "name_en": {
         "type": "text",
         "analyzer": "en_analyzer",
-        "search_analyzer": "en_analyzer"
+        "search_analyzer": "en_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
       },
       "aliases": {
         "type": "text",
         "analyzer": "th_analyzer",
-        "search_analyzer": "th_analyzer"
+        "search_analyzer": "th_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
       },
       "artist_ids": {
         "type": "long"

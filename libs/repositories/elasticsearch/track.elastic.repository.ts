@@ -1,5 +1,10 @@
 import { Client } from '@elastic/elasticsearch'
-import { UpdateResponse, WriteResponseBase } from '@elastic/elasticsearch/lib/api/types'
+import {
+    QueryDslQueryContainer,
+    SearchTotalHits,
+    UpdateResponse,
+    WriteResponseBase,
+} from '@elastic/elasticsearch/lib/api/types'
 import { SearchResponse } from '@elastic/elasticsearch/lib/api/typesWithBodyKey'
 import { ElasticConstant } from '@libs/common/constants/elastic.constant'
 import { Logger } from '@nestjs/common'
@@ -64,8 +69,10 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                 })
             }),
             switchMap((data) => {
-                console.log('Updating track: ' + data._id)
-                track.hitCounts = data.response.hits.hits[0]._source.hitCounts || 0
+                if (!track.hitCounts) {
+                    track.hitCounts = data.response.hits.hits[0]._source.hitCounts || 0
+                }
+
                 return from(
                     this.client
                         .update({
@@ -74,6 +81,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                             body: {
                                 doc: track,
                             },
+                            refresh: 'wait_for', // wait for index to finish
                         })
                         .then((response: UpdateResponse<unknown>) => {
                             return response as WriteResponseBase
@@ -182,16 +190,10 @@ export class TrackElasticRepository extends ElasticsearchRepository {
             }
         }
 
-        if (text.length > 2) {
-            return this.multipleCharacterSearch(index, text, fields, opts)
-        }
-
-        if (text.length <= 2) {
-            return this.singleCharacterSearch(index, text, fields, opts)
-        }
+        return this.searchThaiOrEnglishNameAndAliases(index, text, fields, opts)
     }
 
-    public multipleCharacterSearch(
+    public searchThaiOrEnglishNameAndAliases(
         index: string,
         text: string,
         fields: string[],
@@ -209,40 +211,62 @@ export class TrackElasticRepository extends ElasticsearchRepository {
             opts.sort = []
         }
 
-        this.logger.log(`Searching for ${text} in ${fields.join(', ')}`)
-        const promise: Promise<SearchResponse<TrackES | ArtistES | AlbumES>> = this.client.search({
+        this.logger.log(`Searching for exact and fuzzy match of ${text} in ${fields.join(', ')}`)
+        let should: QueryDslQueryContainer[] = []
+
+        const wildcards = fields.map((field) => ({
+            wildcard: {
+                [`${field.split('^')[0]}.keyword`]: {
+                    value: `${text}*`,
+                    boost: field.includes('^') ? parseFloat(field.split('^')[1]) * 5 : 1,
+                },
+            },
+        }))
+        should.push(...wildcards)
+
+        if (text.length > 2) {
+            should.push(
+                ...fields.map((field) => ({
+                    term: {
+                        [`${field.split('^')[0]}.keyword`]: {
+                            value: text,
+                            boost: field.includes('^') ? parseFloat(field.split('^')[1]) * 3 : 1,
+                        },
+                    },
+                })),
+            )
+
+            should.push({
+                multi_match: {
+                    query: text,
+                    fields: fields.map((field) => (field.includes('^') ? field : `${field}^1`)),
+                    type: 'best_fields',
+                    fuzziness: 'AUTO',
+                },
+            })
+        }
+
+        const searchPromise: Promise<SearchResponse<TrackES | ArtistES | AlbumES>> = this.client.search({
             index,
             body: {
                 query: {
-                    multi_match: {
-                        query: text,
-                        fields: fields.map((field) => (field.includes('^') ? field : `${field}^1`)),
-                        type: 'best_fields',
-                        fuzziness: 'AUTO',
-                        tie_breaker: 0.3,
+                    bool: {
+                        should,
+                        minimum_should_match: 1,
                     },
                 },
                 ...pagination,
                 sort: opts.sort,
-                highlight: {
-                    fields: {
-                        name_en: {},
-                        name_th: {},
-                        genres: {},
-                    },
-                    pre_tags: [
-                        '<strong>',
-                    ],
-                    post_tags: [
-                        '</strong>',
-                    ],
-                },
             },
         })
 
-        return from(promise).pipe(
-            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) =>
-                this.getRelatedData(response).pipe(
+        return from(searchPromise).pipe(
+            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) => {
+                if ((response.hits.total as SearchTotalHits).value === 0) {
+                    this.logger.log(`No exact or fuzzy match found for ${text}`)
+                    return of(response)
+                }
+                return this.getRelatedData(response).pipe(
                     map((updatedResponse: SearchResponse<TrackES | ArtistES | AlbumES>) => ({
                         ...updatedResponse,
                     })),
@@ -250,80 +274,10 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                         this.logger.error(`Error getting related data: ${err}`)
                         throw err
                     }),
-                ),
-            ),
-            catchError((err) => {
-                this.logger.error(`Error in multiple character search: ${err}`)
-                throw err
+                )
             }),
-        )
-    }
-
-    public singleCharacterSearch(
-        index: string,
-        text: string,
-        fields: string[],
-        opts?: ISearchOptions,
-    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
-        let pagination = {}
-        if (opts && opts.page && opts.limit) {
-            pagination = {
-                from: (opts.page - 1) * opts.limit,
-                size: opts.limit,
-            }
-        }
-
-        const promise: Promise<SearchResponse<TrackES | ArtistES | AlbumES>> = this.client.search({
-            index,
-            body: {
-                query: {
-                    bool: {
-                        should: fields.map((field) => ({
-                            wildcard: {
-                                [field]: {
-                                    value: `${text.toLowerCase()}*`,
-                                    boost: field === 'aliases' ? 1 : 2,
-                                    _name: `${field.replace('.', '_')}`,
-                                },
-                            },
-                        })),
-                        minimum_should_match: 1,
-                    },
-                },
-                ...pagination,
-                highlight: {
-                    fields: fields.reduce(
-                        (acc, field) => {
-                            acc[field] = {}
-                            return acc
-                        },
-                        {} as Record<string, {}>,
-                    ),
-                    pre_tags: [
-                        '<strong>',
-                    ],
-                    post_tags: [
-                        '</strong>',
-                    ],
-                },
-            },
-        })
-
-        return from(promise).pipe(
-            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) =>
-                this.getRelatedData(response).pipe(
-                    map((relatedData) => ({
-                        ...response,
-                        relatedData,
-                    })),
-                    catchError((err) => {
-                        this.logger.error(`Error getting related data: ${err}`)
-                        throw err
-                    }),
-                ),
-            ),
             catchError((err) => {
-                this.logger.error(`Error in single character search: ${err}`)
+                this.logger.error(`Error in combined exact and fuzzy search: ${err}`)
                 throw err
             }),
         )
@@ -372,5 +326,22 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                 throw err
             }),
         )
+    }
+
+    public searchTrackById(trackId: number): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
+        if (!trackId) {
+            throw new Error('searchTrackById: trackId is required')
+        }
+
+        return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+            id: trackId,
+            type: 'track',
+        })
+    }
+
+    public addHitCounts(searchResponse: SearchResponse<TrackES | ArtistES | AlbumES>): Observable<WriteResponseBase> {
+        const track = searchResponse.hits.hits[0]._source as TrackES
+        track.hitCounts = track.hitCounts ? track.hitCounts + 1 : 1
+        return this.updateTrack(track)
     }
 }

@@ -55,7 +55,6 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
                 return of(id)
             }),
             switchMap((id) => {
-                console.log('Updating album: ' + id)
                 return from(
                     this.client
                         .update({

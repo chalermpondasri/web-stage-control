@@ -1,4 +1,4 @@
-import { SearchHit, SearchTotalHits } from '@elastic/elasticsearch/lib/api/types'
+import { SearchHit, SearchResponse, SearchTotalHits, WriteResponseBase } from '@elastic/elasticsearch/lib/api/types'
 import { ProviderName } from '@libs/common/constants'
 import { ListResponse } from '@libs/common/models'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
@@ -6,8 +6,8 @@ import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
-import { Inject, Logger } from '@nestjs/common'
-import { catchError, map, Observable } from 'rxjs'
+import { HttpException, HttpStatus, Inject, Logger } from '@nestjs/common'
+import { catchError, map, Observable, switchMap } from 'rxjs'
 import { AlbumSearchDto } from '../album/dtos/album.dto'
 import { ArtistSearchDto } from '../artist/dtos/artist.dto'
 import { TrackSearchDto } from './dtos/track.dto'
@@ -33,8 +33,8 @@ export class SearchTrackService implements ITrackService {
         }
 
         const fields = [
-            'name_th',
-            'name_en',
+            'name_th^2',
+            'name_en^2',
             'aliases',
         ]
 
@@ -46,8 +46,6 @@ export class SearchTrackService implements ITrackService {
             .pipe(
                 map((response) => {
                     const hits = response.hits.hits
-
-                    this.logger.log(`Found ${hits.length} hits`)
 
                     const found: (TrackSearchDto | ArtistSearchDto | AlbumSearchDto)[] = hits
                         .map((hit): TrackSearchDto | ArtistSearchDto | AlbumSearchDto => {
@@ -158,6 +156,71 @@ export class SearchTrackService implements ITrackService {
             catchError((err) => {
                 this.logger.error(`Error getting top tracks: ${err}`)
                 throw err
+            }),
+        )
+    }
+
+    public searchTrackById(id: number): Observable<ListResponse<TrackSearchDto>> {
+        if (!id) {
+            throw new Error('id is required')
+        }
+
+        return this.trackRepository.searchTrackById(id).pipe(
+            map((response) => {
+                if ((response.hits.total as SearchTotalHits).value === 0) {
+                    throw new Error('Track not found')
+                }
+
+                return response
+            }),
+            switchMap((response: SearchResponse<TrackES | TrackES | AlbumES>) => {
+                return this.trackRepository.getRelatedData(response).pipe(
+                    map((updatedResponse) => {
+                        return {
+                            ...updatedResponse,
+                        }
+                    }),
+                )
+            }),
+            map((response) => {
+                const hit = response.hits.hits[0] as SearchHit<TrackES>
+                const foundLang = Lang.Thai
+                return this.getTrackSearchDto(hit, foundLang)
+            }),
+            map((track) => {
+                const listResponse = new ListResponse<TrackSearchDto>()
+                listResponse.data = [
+                    track,
+                ]
+                listResponse.total = 1
+                listResponse.page = 1
+                listResponse.limit = 1
+                return listResponse
+            }),
+            catchError((err) => {
+                this.logger.error(`Error searching track by id:`)
+                this.logger.error(err)
+                throw new HttpException(err.message, HttpStatus.NOT_FOUND)
+            }),
+        )
+    }
+
+    public addHitCountsToTrack(trackId: number): Observable<WriteResponseBase> {
+        return this.trackRepository.searchTrackById(trackId).pipe(
+            map((response) => {
+                if ((response.hits.total as SearchTotalHits).value === 0) {
+                    throw new Error('Track not found')
+                }
+
+                return response
+            }),
+            switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) => {
+                return this.trackRepository.addHitCounts(response)
+            }),
+            catchError((err) => {
+                this.logger.error(`Error adding hit counts to track:`)
+                this.logger.error(err)
+                throw new HttpException(err.message, HttpStatus.NOT_FOUND)
             }),
         )
     }

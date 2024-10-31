@@ -91,4 +91,16 @@ export class SearchController {
     public getArtistById(@Param('id') id: string) {
         return this._artistSearchService.searchArtistById(Number(id))
     }
+
+    @ApiOperation({
+        description: 'add hitCounts to track',
+    })
+    @ApiProperty({
+        description: 'The id of the track',
+        default: '1',
+    })
+    @Get('/track/:id/hit')
+    public addHitCountsToTrack(@Param('id') id: string) {
+        return this._trackSearchService.addHitCountsToTrack(Number(id))
+    }
 }

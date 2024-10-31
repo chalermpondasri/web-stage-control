@@ -217,7 +217,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         const wildcards = fields.map((field) => ({
             wildcard: {
                 [`${field.split('^')[0]}.keyword`]: {
-                    value: `${text}*`,
+                    value: `${text.toLowerCase()}*`,
                     boost: field.includes('^') ? parseFloat(field.split('^')[1]) * 5 : 1,
                 },
             },

@@ -81,8 +81,6 @@ export class AlbumDto implements AlbumES {
 
 export class AlbumSearchDto extends PickType(AlbumDto, [
     'id',
-    'name_th',
-    'name_en',
     'releaseDate',
     'type',
 ]) {
@@ -97,7 +95,7 @@ export class AlbumSearchDto extends PickType(AlbumDto, [
 
     @Expose()
     @ApiProperty()
-    @Transform(({ value }) => value && value.map((artist) => TrackSearchDto.toDto(artist, { type: 'artist' })))
+    @Transform(({ value }) => value && value.map((track) => TrackSearchDto.toDto(track, { type: 'track' })))
     public tracks: TrackSearchDto[]
 
     @Expose()
@@ -106,12 +104,15 @@ export class AlbumSearchDto extends PickType(AlbumDto, [
     public artists: ArtistSearchDto[]
 
     public static toDto(album: AlbumES, params?): AlbumSearchDto {
+        const name = album.name_th || album.name_en
+
         return plainToInstance(
             AlbumSearchDto,
             {
                 ...album,
                 ...params,
                 type: 'album',
+                name,
             },
             {
                 excludeExtraneousValues: true,

@@ -126,7 +126,6 @@ export class TrackSearchDto extends PickType(TrackDto, [
     'type',
     'releaseDate',
     'genres',
-    'hitCounts',
 ]) {
     @Expose()
     @ApiProperty()
@@ -162,12 +161,15 @@ export class TrackSearchDto extends PickType(TrackDto, [
     public mvFile: MediaSearchDto
 
     public static toDto(track: TrackES, params?): TrackSearchDto {
+        const name = track.name_th || track.name_en
+
         return plainToInstance(
             TrackSearchDto,
             {
                 ...track,
                 ...params,
                 type: 'track',
+                name,
             },
             {
                 excludeExtraneousValues: true,

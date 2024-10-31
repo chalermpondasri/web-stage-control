@@ -5,7 +5,6 @@ import {
     IDocumentIndexOptions,
     ISearchOptions,
     ISearchRepository,
-    RelatedData,
 } from '@libs/repositories/interfaces/search/search.interface'
 import { Logger } from '@nestjs/common'
 import { Observable, forkJoin, from, of } from 'rxjs'
@@ -136,93 +135,188 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         )
     }
 
-    public getRelatedData(searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>): Observable<RelatedData> {
+    public getRelatedData(
+        searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>,
+    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
         const hits = searchResponse.hits.hits
-        let trackIds: number[] = []
-        let albumIds: number[] = []
-        let artistIds: number[] = []
 
-        hits.forEach((hit) => {
-            if (hit._source.type === 'track') {
-                albumIds.push((hit._source as TrackES).album_id)
-                artistIds.push(...(hit._source as TrackES).artist_ids)
-            } else if (hit._source.type === 'album') {
-                artistIds.push(...(hit._source as AlbumES).artist_ids)
-                trackIds.push(...(hit._source as AlbumES).track_ids)
-            } else if (hit._source.type === 'artist') {
-                albumIds.push(...(hit._source as ArtistES).album_ids)
-                trackIds.push(...(hit._source as ArtistES).track_ids)
+        const albumCache = new Map<string, AlbumES | null>()
+        const artistCache = new Map<string, ArtistES | null>()
+        const trackCache = new Map<string, TrackES | null>()
+
+        const getAlbum = (albumId: string): Observable<AlbumES | null> => {
+            if (albumCache.has(albumId)) {
+                return of(albumCache.get(albumId))
             }
-        })
 
-        trackIds = Array.from(new Set(trackIds))
-        albumIds = Array.from(new Set(albumIds))
-        artistIds = Array.from(new Set(artistIds))
-
-        const trackObservables = trackIds
-            .filter((id) => id)
-            .map((id) =>
-                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                    id: id.toString(),
-                    type: 'track',
+            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: albumId,
+                type: 'album',
+            }).pipe(
+                map((doc) => {
+                    const album =
+                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as AlbumES)
+                    albumCache.set(albumId, album)
+                    return album
                 }),
             )
-        const albumObservables = albumIds
-            .filter((id) => id)
-            .map((id) => {
-                return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                    id: id.toString(),
-                    type: 'album',
-                })
-            })
-        const artistObservables = artistIds
-            .filter((id) => id)
-            .map((id) =>
-                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                    id: id.toString(),
-                    type: 'artist',
-                }),
-            )
-
-        if (trackObservables.length === 0 && albumObservables.length === 0 && artistObservables.length === 0) {
-            return of({
-                tracks: [],
-                albums: [],
-                artists: [],
-            })
         }
 
-        return forkJoin([
-            ...trackObservables,
-            ...albumObservables,
-            ...artistObservables,
-        ]).pipe(
-            map((relatedDocs) => {
-                const relatedData = relatedDocs.reduce(
-                    (acc, doc) => {
-                        if ((doc.hits.total as SearchTotalHits).value === 0) {
-                            return acc
-                        }
+        const getArtist = (artistId: string): Observable<ArtistES | null> => {
+            if (artistCache.has(artistId)) {
+                return of(artistCache.get(artistId))
+            }
 
-                        const data = doc.hits.hits[0]._source
+            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: artistId,
+                type: 'artist',
+            }).pipe(
+                map((doc) => {
+                    const artist =
+                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as ArtistES)
+                    artistCache.set(artistId, artist)
+                    return artist
+                }),
+            )
+        }
 
-                        if (data.type === 'track') {
-                            acc.tracks.push(data)
-                        } else if (data.type === 'album') {
-                            acc.albums.push(data)
-                        } else if (data.type === 'artist') {
-                            acc.artists.push(data)
-                        }
-                        return acc
-                    },
-                    { tracks: [], albums: [], artists: [] },
-                )
-                return relatedData
+        const getTrack = (trackId: string): Observable<TrackES | null> => {
+            if (trackCache.has(trackId)) {
+                return of(trackCache.get(trackId))
+            }
+
+            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: trackId,
+                type: 'track',
+            }).pipe(
+                map((doc) => {
+                    const track =
+                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as TrackES)
+                    trackCache.set(trackId, track)
+                    return track
+                }),
+            )
+        }
+
+        const observables = hits.map((hit) => {
+            if (hit._source.type === 'track') {
+                const source = hit._source as TrackES
+                source.artists = []
+                source.album = null
+
+                const albumObservable = source.album_id
+                    ? getAlbum(source.album_id.toString()).pipe(
+                          map((album) => {
+                              source.album = album
+                              return source
+                          }),
+                      )
+                    : of(source)
+
+                const artistObservables = source.artist_ids
+                    ? source.artist_ids.map((artistId) =>
+                          getArtist(artistId.toString()).pipe(
+                              map((artist) => {
+                                  source.artists.push(artist)
+                                  return source
+                              }),
+                          ),
+                      )
+                    : [
+                          of(source),
+                      ]
+
+                return forkJoin([
+                    albumObservable,
+                    ...artistObservables,
+                ]).pipe(map(() => source))
+            }
+
+            if (hit._source.type === 'album') {
+                const source = hit._source as AlbumES
+                source.artists = []
+                source.tracks = []
+
+                const artistObservables = source.artist_ids
+                    ? source.artist_ids.map((artistId) =>
+                          getArtist(artistId.toString()).pipe(
+                              map((artist) => {
+                                  source.artists.push(artist)
+                                  return source
+                              }),
+                          ),
+                      )
+                    : [
+                          of(source),
+                      ]
+
+                const trackObservables = source.track_ids
+                    ? source.track_ids.map((trackId) =>
+                          getTrack(trackId.toString()).pipe(
+                              map((track) => {
+                                  source.tracks.push(track)
+                                  return source
+                              }),
+                          ),
+                      )
+                    : [
+                          of(source),
+                      ]
+
+                return forkJoin([
+                    ...artistObservables,
+                    ...trackObservables,
+                ]).pipe(map(() => source))
+            }
+
+            if (hit._source.type === 'artist') {
+                const source = hit._source as ArtistES
+                source.albums = []
+                source.tracks = []
+
+                const albumObservables = source.album_ids
+                    ? source.album_ids.map((albumId) =>
+                          getAlbum(albumId.toString()).pipe(
+                              map((album) => {
+                                  source.albums.push(album)
+                                  return source
+                              }),
+                          ),
+                      )
+                    : [
+                          of(source),
+                      ]
+
+                const trackObservables = source.track_ids
+                    ? source.track_ids.map((trackId) =>
+                          getTrack(trackId.toString()).pipe(
+                              map((track) => {
+                                  source.tracks.push(track)
+                                  return source
+                              }),
+                          ),
+                      )
+                    : [
+                          of(source),
+                      ]
+
+                return forkJoin([
+                    ...albumObservables,
+                    ...trackObservables,
+                ]).pipe(map(() => source))
+            }
+
+            return of(hit._source)
+        })
+
+        return forkJoin(observables).pipe(
+            map(() => {
+                return searchResponse
             }),
         )
     }
 
-    public getTrackRelatedData(track: TrackES): Observable<RelatedData> {
+    public getTrackRelatedData(track: TrackES): Observable<any> {
         const albumObservables = track.album_id
             ? this.searchDocument(ElasticConstant.INDICE.MUSIC, {
                   id: track.album_id.toString(),

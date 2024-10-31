@@ -93,8 +93,6 @@ export class ArtistDto implements ArtistES {
 
 export class ArtistSearchDto extends PickType(ArtistDto, [
     'id',
-    'name_th',
-    'name_en',
     'type',
 ]) {
     @Expose()
@@ -122,12 +120,14 @@ export class ArtistSearchDto extends PickType(ArtistDto, [
     public albums: AlbumSearchDto[]
 
     public static toDto(artist: ArtistES, params?): ArtistSearchDto {
+        const name = artist.name_th || artist.name_en
         return plainToInstance(
             ArtistSearchDto,
             {
                 ...artist,
                 ...params,
                 type: 'artist',
+                name,
             },
             {
                 excludeExtraneousValues: true,

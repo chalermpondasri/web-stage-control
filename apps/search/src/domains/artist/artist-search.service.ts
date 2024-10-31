@@ -1,5 +1,6 @@
 import { SearchHit, SearchResponse, SearchTotalHits } from '@elastic/elasticsearch/lib/api/types'
 import { ProviderName } from '@libs/common/constants'
+import { ListResponse } from '@libs/common/models'
 import { ArtistElasticRepository } from '@libs/repositories/elasticsearch/artist.elastic.repository'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
@@ -8,9 +9,8 @@ import { RelatedData } from '@libs/repositories/interfaces/search/search.interfa
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { Lang } from '@libs/utilities/lang.util'
 import { HttpException, HttpStatus, Inject, Logger } from '@nestjs/common'
-import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs'
+import { Observable, catchError, forkJoin, map, switchMap } from 'rxjs'
 import { AlbumSearchDto } from '../album/dtos/album.dto'
-import { TrackSearchDto } from '../track/dtos/track.dto'
 import { ArtistSearchDto } from './dtos/artist.dto'
 
 export class SearchArtistService {
@@ -24,7 +24,7 @@ export class SearchArtistService {
         private artistRepository: ArtistElasticRepository,
     ) {}
 
-    public searchArtistById(id: number): Observable<ArtistSearchDto> {
+    public searchArtistById(id: number): Observable<ListResponse<ArtistSearchDto>> {
         if (!id) {
             throw new Error('id is required')
         }
@@ -39,43 +39,27 @@ export class SearchArtistService {
             }),
             switchMap((response: SearchResponse<TrackES | ArtistES | AlbumES>) => {
                 return this.artistRepository.getRelatedData(response).pipe(
-                    map((relatedData) => {
+                    map((updatedResponse) => {
                         return {
-                            ...response,
-                            relatedData,
+                            ...updatedResponse,
                         }
                     }),
                 )
             }),
-            switchMap((response) => {
+            map((response) => {
                 const hit = response.hits.hits[0] as SearchHit<ArtistES>
-                const relatedData = response.relatedData
-                const trackAlbumCache: { [albumId: number]: AlbumES } = {}
-                const trackObservables = relatedData.tracks.map((track) => {
-                    if (track.album_id && trackAlbumCache[track.album_id]) {
-                        track.album = trackAlbumCache[track.album_id]
-                        return of(track)
-                    } else {
-                        return this.artistRepository.getTrackRelatedData(track).pipe(
-                            map((trackRelatedData) => {
-                                const album = trackRelatedData.albums[0]
-                                if (track.album_id) {
-                                    trackAlbumCache[track.album_id] = album
-                                }
-                                track.album = album
-                                return track
-                            }),
-                        )
-                    }
-                })
-
-                return forkJoin(trackObservables).pipe(
-                    map((updatedTracks) => {
-                        relatedData.tracks = updatedTracks
-                        const foundLang = Lang.Thai
-                        return this.getArtistSearchDto(hit, foundLang, relatedData)
-                    }),
-                )
+                const foundLang = Lang.Thai
+                return this.getArtistSearchDto(hit, foundLang)
+            }),
+            map((artist) => {
+                const listResponse = new ListResponse<ArtistSearchDto>()
+                listResponse.data = [
+                    artist,
+                ]
+                listResponse.total = 1
+                listResponse.page = 1
+                listResponse.limit = 1
+                return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error searching artist by id:`)
@@ -85,47 +69,11 @@ export class SearchArtistService {
         )
     }
 
-    private getTrackSearchDto(
-        hit: SearchHit<TrackES>,
-        foundLang: string = Lang.Thai,
-        relatedData: RelatedData,
-    ): TrackSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
-
-        const trackDto = TrackSearchDto.toDto(
-            {
-                ...hit._source,
-            },
-            {
-                artists: relatedData.artists.map((artist) => {
-                    return {
-                        ...artist,
-                        name: foundLang === Lang.Thai ? artist.name_th : artist.name_en,
-                    }
-                }),
-                album: relatedData.albums[0]
-                    ? {
-                          ...relatedData.albums[0],
-                          name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
-                      }
-                    : null,
-            },
-        )
-
-        trackDto.name = name
-        return trackDto
-    }
-
-    private getArtistSearchDto(
-        hit: SearchHit<ArtistES>,
-        foundLang: string = Lang.Thai,
-        relatedData: RelatedData,
-    ): ArtistSearchDto {
+    private getArtistSearchDto(hit: SearchHit<ArtistES>, foundLang: string = Lang.Thai): ArtistSearchDto {
         const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
 
         const artistDto = ArtistSearchDto.toDto({
             ...hit._source,
-            ...relatedData,
         })
 
         artistDto.name = name
@@ -147,7 +95,7 @@ export class SearchArtistService {
         return albumDto
     }
 
-    public getTopArtist(): Observable<ArtistSearchDto[]> {
+    public getTopArtist(): Observable<ListResponse<ArtistSearchDto>> {
         // get top artist based on listenCOunt from their track
         return this.artistRepository.getTopArtist().pipe(
             switchMap((topArtists) => {
@@ -166,6 +114,18 @@ export class SearchArtistService {
 
                 return forkJoin(artistObservables).pipe(
                     map((artists) => artists.sort((a, b) => b.total_hit_counts - a.total_hit_counts)),
+                    map((artists) => {
+                        const listResponse = new ListResponse<ArtistSearchDto>()
+                        listResponse.data = artists as ArtistSearchDto[]
+                        listResponse.total = artists.length
+                        listResponse.page = 1
+                        listResponse.limit = 999
+
+                        artists.forEach((artist) => {
+                            delete artist.total_hit_counts
+                        })
+                        return listResponse
+                    }),
                 )
             }),
             catchError((err) => {

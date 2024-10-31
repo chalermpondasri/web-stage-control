@@ -25,7 +25,9 @@ export interface ISearchRepository {
     indexDocument(index: string, document: Record<string, any>, opts?: IDocumentIndexOptions): Observable<any>
     fuzzySearchDocument(index: string, text: string, fields: string[], opts: ISearchOptions): Observable<SearchResponse>
     searchDocument(index: string, fields: Record<string, any>): Observable<SearchResponse<any>>
-    getRelatedData(searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>): Observable<RelatedData>
+    getRelatedData(
+        searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>,
+    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>>
 }
 
 export interface GenericAggResponse {
@@ -67,7 +69,9 @@ export interface TopHitsAggregationResponse {
 }
 
 export interface RelatedData {
-    tracks: TrackES[]
-    artists: ArtistES[]
-    albums: AlbumES[]
+    [key: string]: {
+        tracks: TrackES[]
+        artists: ArtistES[]
+        albums: AlbumES[]
+    }
 }

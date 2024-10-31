@@ -6,7 +6,7 @@ import { Logger } from '@nestjs/common'
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs'
 import { AlbumES } from '../interfaces/search/album.interface'
 import { ArtistES } from '../interfaces/search/artist.interface'
-import { ISearchOptions, RelatedData } from '../interfaces/search/search.interface'
+import { ISearchOptions } from '../interfaces/search/search.interface'
 import { TrackES } from '../interfaces/search/track.interface'
 import { ElasticsearchRepository } from './elasticsearch.repository'
 
@@ -130,11 +130,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         keyword: string,
         fields?: string[],
         opts?: ISearchOptions,
-    ): Observable<
-        SearchResponse<TrackES | AlbumES | ArtistES> & {
-            relatedData: RelatedData
-        }
-    > {
+    ): Observable<SearchResponse<TrackES | AlbumES | ArtistES>> {
         if (!opts) {
             opts = {}
             if (!opts.page) {
@@ -162,11 +158,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         text: string,
         fields: string[],
         opts?: ISearchOptions,
-    ): Observable<
-        SearchResponse<TrackES | ArtistES | AlbumES> & {
-            relatedData: RelatedData
-        }
-    > {
+    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
         if (!text) {
             return new Observable((observer) => {
                 observer.error('Text is required')
@@ -204,11 +196,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         text: string,
         fields: string[],
         opts?: ISearchOptions,
-    ): Observable<
-        SearchResponse<TrackES | ArtistES | AlbumES> & {
-            relatedData: RelatedData
-        }
-    > {
+    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
         let pagination = {}
         if (opts && opts.page && opts.limit) {
             pagination = {
@@ -255,9 +243,8 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         return from(promise).pipe(
             switchMap((response: SearchResponse<TrackES | AlbumES | ArtistES>) =>
                 this.getRelatedData(response).pipe(
-                    map((relatedData) => ({
-                        ...response,
-                        relatedData,
+                    map((updatedResponse: SearchResponse<TrackES | ArtistES | AlbumES>) => ({
+                        ...updatedResponse,
                     })),
                     catchError((err) => {
                         this.logger.error(`Error getting related data: ${err}`)
@@ -277,11 +264,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
         text: string,
         fields: string[],
         opts?: ISearchOptions,
-    ): Observable<
-        SearchResponse<TrackES | ArtistES | AlbumES> & {
-            relatedData: RelatedData
-        }
-    > {
+    ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
         let pagination = {}
         if (opts && opts.page && opts.limit) {
             pagination = {

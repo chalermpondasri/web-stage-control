@@ -1,4 +1,5 @@
 import { AlbumES } from './album.interface'
+import { ArtistES } from './artist.interface'
 import { MediaES } from './media.interface'
 
 export interface TrackES {
@@ -14,6 +15,7 @@ export interface TrackES {
     mvFile: MediaES
     album?: AlbumES
     album_id: number
+    artists?: ArtistES[]
     artist_ids: number[]
     genres: string[]
     playlist_ids: number[]

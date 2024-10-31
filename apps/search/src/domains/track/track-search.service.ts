@@ -4,7 +4,6 @@ import { ListResponse } from '@libs/common/models'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
-import { RelatedData } from '@libs/repositories/interfaces/search/search.interface'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
 import { Inject, Logger } from '@nestjs/common'
@@ -55,23 +54,11 @@ export class SearchTrackService implements ITrackService {
                             const foundLang = detectLanguage(keyword)
                             switch (hit._source.type) {
                                 case 'track':
-                                    return this.getTrackSearchDto(
-                                        hit as SearchHit<TrackES>,
-                                        foundLang,
-                                        response.relatedData,
-                                    )
+                                    return this.getTrackSearchDto(hit as SearchHit<TrackES>, foundLang)
                                 case 'artist':
-                                    return this.getArtistSearchDto(
-                                        hit as SearchHit<ArtistES>,
-                                        foundLang,
-                                        response.relatedData,
-                                    )
+                                    return this.getArtistSearchDto(hit as SearchHit<ArtistES>, foundLang)
                                 case 'album':
-                                    return this.getAlbumSearchDto(
-                                        hit as SearchHit<AlbumES>,
-                                        foundLang,
-                                        response.relatedData,
-                                    )
+                                    return this.getAlbumSearchDto(hit as SearchHit<AlbumES>, foundLang)
                             }
                         })
                         .flat(2)
@@ -91,41 +78,17 @@ export class SearchTrackService implements ITrackService {
             )
     }
 
-    private getTrackSearchDto(
-        hit: SearchHit<TrackES>,
-        foundLang: string = Lang.Thai,
-        relatedData: RelatedData,
-    ): TrackSearchDto {
+    private getTrackSearchDto(hit: SearchHit<TrackES>, foundLang: string = Lang.Thai): TrackSearchDto {
         const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
-        const trackDto = TrackSearchDto.toDto(
-            {
-                ...hit._source,
-            },
-            {
-                artists: relatedData.artists.map((artist) => {
-                    return {
-                        ...artist,
-                        name: foundLang === Lang.Thai ? artist.name_th : artist.name_en,
-                    }
-                }),
-                album: relatedData.albums[0]
-                    ? {
-                          ...relatedData.albums[0],
-                          name: foundLang === Lang.Thai ? relatedData.albums[0].name_th : relatedData.albums[0].name_en,
-                      }
-                    : null,
-            },
-        )
+        const trackDto = TrackSearchDto.toDto({
+            ...hit._source,
+        })
 
         trackDto.name = name
         return trackDto
     }
 
-    private getArtistSearchDto(
-        hit: SearchHit<ArtistES>,
-        foundLang: string = Lang.Thai,
-        relatedData: RelatedData,
-    ): ArtistSearchDto {
+    private getArtistSearchDto(hit: SearchHit<ArtistES>, foundLang: string = Lang.Thai): ArtistSearchDto {
         const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
 
         const artistDto = ArtistSearchDto.toDto({
@@ -136,11 +99,7 @@ export class SearchTrackService implements ITrackService {
         return artistDto
     }
 
-    private getAlbumSearchDto(
-        hit: SearchHit<AlbumES>,
-        foundLang: string = Lang.Thai,
-        relatedData: RelatedData,
-    ): AlbumSearchDto {
+    private getAlbumSearchDto(hit: SearchHit<AlbumES>, foundLang: string = Lang.Thai): AlbumSearchDto {
         const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
 
         const albumDto = AlbumSearchDto.toDto({
@@ -151,7 +110,7 @@ export class SearchTrackService implements ITrackService {
         return albumDto
     }
 
-    public getNewTracks(): Observable<TrackSearchDto[]> {
+    public getNewTracks(): Observable<ListResponse<TrackSearchDto>> {
         return this.trackRepository.getNewTracks().pipe(
             map((response) => {
                 return response.hits.hits.map((hit) => {
@@ -161,6 +120,15 @@ export class SearchTrackService implements ITrackService {
                     })
                 })
             }),
+            map((tracks) => {
+                const listResponse = new ListResponse<TrackSearchDto>()
+                listResponse.data = tracks
+                listResponse.total = tracks.length
+                listResponse.page = 1
+                listResponse.limit = 999
+
+                return listResponse
+            }),
             catchError((err) => {
                 this.logger.error(`Error getting new tracks: ${err}`)
                 throw err
@@ -168,7 +136,7 @@ export class SearchTrackService implements ITrackService {
         )
     }
 
-    public getTopTracks(): Observable<TrackSearchDto[]> {
+    public getTopTracks(): Observable<ListResponse<TrackSearchDto>> {
         return this.trackRepository.getTopTracks().pipe(
             map((response) => {
                 return response.hits.hits.map((hit) => {
@@ -177,6 +145,15 @@ export class SearchTrackService implements ITrackService {
                         name: track.name_th,
                     })
                 })
+            }),
+            map((tracks) => {
+                const listResponse = new ListResponse<TrackSearchDto>()
+                listResponse.data = tracks
+                listResponse.total = tracks.length
+                listResponse.page = 1
+                listResponse.limit = 999
+
+                return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error getting top tracks: ${err}`)

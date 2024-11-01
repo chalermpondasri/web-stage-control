@@ -266,7 +266,7 @@ export class TrackElasticRepository extends ElasticsearchRepository {
                     this.logger.log(`No exact or fuzzy match found for ${text}`)
                     return of(response)
                 }
-                return this.getRelatedData(response).pipe(
+                return this.getRelatedData(response, true, false, false).pipe(
                     map((updatedResponse: SearchResponse<TrackES | ArtistES | AlbumES>) => ({
                         ...updatedResponse,
                     })),

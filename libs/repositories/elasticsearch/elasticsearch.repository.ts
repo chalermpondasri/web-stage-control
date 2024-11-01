@@ -137,6 +137,9 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
     public getRelatedData(
         searchResponse: SearchResponse<TrackES | AlbumES | ArtistES>,
+        isFetchRelateOfTrack = true,
+        isFetchRelateOfAlbum = true,
+        isFetchRelateOfArtist = true,
     ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
         const hits = searchResponse.hits.hits
 
@@ -199,7 +202,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         }
 
         const observables = hits.map((hit) => {
-            if (hit._source.type === 'track') {
+            if (hit._source.type === 'track' && isFetchRelateOfTrack) {
                 const source = hit._source as TrackES
                 source.artists = []
                 source.album = null
@@ -232,7 +235,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 ]).pipe(map(() => source))
             }
 
-            if (hit._source.type === 'album') {
+            if (hit._source.type === 'album' && isFetchRelateOfAlbum) {
                 const source = hit._source as AlbumES
                 source.artists = []
                 source.tracks = []
@@ -269,7 +272,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 ]).pipe(map(() => source))
             }
 
-            if (hit._source.type === 'artist') {
+            if (hit._source.type === 'artist' && isFetchRelateOfArtist) {
                 const source = hit._source as ArtistES
                 source.albums = []
                 source.tracks = []

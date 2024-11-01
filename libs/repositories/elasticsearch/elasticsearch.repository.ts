@@ -316,29 +316,28 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         )
     }
 
-    public getTrackRelatedData(track: TrackES): Observable<any> {
-        const albumObservables = track.album_id
-            ? this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                  id: track.album_id.toString(),
-                  type: 'album',
-              })
-            : of(null)
-
-        const artistObservables = track.artist_ids
-            .filter((id) => id)
-            .map((id) =>
-                this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                    id: id.toString(),
-                    type: 'artist',
-                }),
-            )
-
-        if (albumObservables && artistObservables.length === 0) {
-            return of({
-                tracks: [],
-                albums: [],
-                artists: [],
+    public getTrackRelatedData(track: TrackES, isGetAlbum = false, isGetArtist = false): Observable<TrackES> {
+        let albumObservables: Observable<SearchResponse<any>>
+        if (isGetAlbum && track.album_id) {
+            albumObservables = this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: track.album_id.toString(),
+                type: 'album',
             })
+        }
+        let artistObservables: Observable<SearchResponse<any>>[] = []
+        if (isGetArtist && track.artist_ids && track.artist_ids.length > 0) {
+            artistObservables = track.artist_ids
+                .filter((id) => id)
+                .map((id) =>
+                    this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                        id: id.toString(),
+                        type: 'artist',
+                    }),
+                )
+        }
+
+        if (!albumObservables && artistObservables.length === 0) {
+            return of(track)
         }
 
         return forkJoin([
@@ -346,25 +345,25 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
             ...artistObservables,
         ]).pipe(
             map((relatedDocs) => {
-                const relatedData = relatedDocs.reduce(
-                    (acc, doc) => {
-                        if (doc === null || (doc.hits.total as SearchTotalHits).value === 0) {
-                            return acc
-                        }
+                relatedDocs.forEach((doc) => {
+                    if (doc === null || (doc.hits.total as SearchTotalHits).value === 0) {
+                        return
+                    }
 
-                        const data = doc.hits.hits[0]._source
+                    const data = doc.hits.hits[0]._source as AlbumES | ArtistES
 
-                        if (data.type === 'album') {
-                            acc.albums.push(data)
-                        } else if (data.type === 'artist') {
-                            acc.artists.push(data)
-                        }
-                        return acc
-                    },
-                    { tracks: [], albums: [], artists: [] },
-                )
+                    if (data.type === 'album') {
+                        track.album = data as AlbumES
+                    } else if (data.type === 'artist') {
+                        track.artists.push(data as ArtistES)
+                    }
+                })
 
-                return relatedData
+                return track
+            }),
+            catchError((error) => {
+                this._logger.error('Error in getTrackRelatedData:', error)
+                throw error
             }),
         )
     }

@@ -46,6 +46,33 @@ export class SearchArtistService {
                     }),
                 )
             }),
+            switchMap((response) => {
+                const hits = response.hits.hits as SearchHit<ArtistES>[]
+                const trackObservables = hits.flatMap((hit) =>
+                    hit._source.tracks.map((track) =>
+                        this.artistRepository.getTrackRelatedData(track, true, false).pipe(
+                            map((_track) => {
+                                track = _track
+                            }),
+                        ),
+                    ),
+                )
+
+                return forkJoin(trackObservables).pipe(map(() => response))
+            }),
+            map((response) => {
+                const hits = response.hits.hits as SearchHit<ArtistES>[]
+                hits.forEach((hit) => {
+                    const tracks = hit._source.tracks
+                    tracks.forEach((track) => {
+                        delete track.audioFile
+                        delete track.mvFile
+                        delete track.genres
+                        delete track.duration
+                    })
+                })
+                return response
+            }),
             map((response) => {
                 const hit = response.hits.hits[0] as SearchHit<ArtistES>
                 const foundLang = Lang.Thai

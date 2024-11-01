@@ -2735,6 +2735,42 @@ export interface CoinPackage {
     'purchasable': boolean;
     /**
      * 
+     * @type {number}
+     * @memberof CoinPackage
+     */
+    'discountFix'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackage
+     */
+    'discountPercent'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CoinPackage
+     */
+    'discountStart'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CoinPackage
+     */
+    'discountEnd'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackage
+     */
+    'totalSold'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackage
+     */
+    'totalRevenue'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof CoinPackage
      */
@@ -2857,6 +2893,42 @@ export interface CoinPackageRequestData {
      * @memberof CoinPackageRequestData
      */
     'purchasable': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackageRequestData
+     */
+    'discountFix'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackageRequestData
+     */
+    'discountPercent'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CoinPackageRequestData
+     */
+    'discountStart'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CoinPackageRequestData
+     */
+    'discountEnd'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackageRequestData
+     */
+    'totalSold'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CoinPackageRequestData
+     */
+    'totalRevenue'?: number;
 }
 /**
  * 
@@ -3670,6 +3742,307 @@ export interface PlaylistResponseDataObject {
      * @memberof PlaylistResponseDataObject
      */
     'attributes'?: Playlist;
+}
+/**
+ * 
+ * @export
+ * @interface Sticker
+ */
+export interface Sticker {
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Sticker
+     */
+    'price': number;
+    /**
+     * 
+     * @type {AlbumImage}
+     * @memberof Sticker
+     */
+    'image': AlbumImage;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'endDate'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Sticker
+     */
+    'purchasable': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof Sticker
+     */
+    'totalSold'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Sticker
+     */
+    'discountFix'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Sticker
+     */
+    'discountPercent'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'discountStart'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'discountEnd'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Sticker
+     */
+    'isFree': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Sticker
+     */
+    'totalRevenue'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'createdAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'updatedAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Sticker
+     */
+    'publishedAt'?: string;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @memberof Sticker
+     */
+    'createdBy'?: AlbumImageDataAttributesFolderDataAttributesParent;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @memberof Sticker
+     */
+    'updatedBy'?: AlbumImageDataAttributesFolderDataAttributesParent;
+}
+/**
+ * 
+ * @export
+ * @interface StickerListResponse
+ */
+export interface StickerListResponse {
+    /**
+     * 
+     * @type {Array<StickerListResponseDataItem>}
+     * @memberof StickerListResponse
+     */
+    'data'?: Array<StickerListResponseDataItem>;
+    /**
+     * 
+     * @type {AlbumListResponseMeta}
+     * @memberof StickerListResponse
+     */
+    'meta'?: AlbumListResponseMeta;
+}
+/**
+ * 
+ * @export
+ * @interface StickerListResponseDataItem
+ */
+export interface StickerListResponseDataItem {
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Sticker}
+     * @memberof StickerListResponseDataItem
+     */
+    'attributes'?: Sticker;
+}
+/**
+ * 
+ * @export
+ * @interface StickerRequest
+ */
+export interface StickerRequest {
+    /**
+     * 
+     * @type {StickerRequestData}
+     * @memberof StickerRequest
+     */
+    'data': StickerRequestData;
+}
+/**
+ * 
+ * @export
+ * @interface StickerRequestData
+ */
+export interface StickerRequestData {
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerRequestData
+     */
+    'price': number;
+    /**
+     * 
+     * @type {AlbumRequestDataImage}
+     * @memberof StickerRequestData
+     */
+    'image': AlbumRequestDataImage;
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'endDate'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StickerRequestData
+     */
+    'purchasable': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerRequestData
+     */
+    'totalSold'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerRequestData
+     */
+    'discountFix'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerRequestData
+     */
+    'discountPercent'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'discountStart'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'discountEnd'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StickerRequestData
+     */
+    'isFree': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerRequestData
+     */
+    'totalRevenue'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface StickerResponse
+ */
+export interface StickerResponse {
+    /**
+     * 
+     * @type {StickerResponseDataObject}
+     * @memberof StickerResponse
+     */
+    'data'?: StickerResponseDataObject;
+    /**
+     * 
+     * @type {object}
+     * @memberof StickerResponse
+     */
+    'meta'?: object;
+}
+/**
+ * 
+ * @export
+ * @interface StickerResponseDataObject
+ */
+export interface StickerResponseDataObject {
+    /**
+     * 
+     * @type {number}
+     * @memberof StickerResponseDataObject
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Sticker}
+     * @memberof StickerResponseDataObject
+     */
+    'attributes'?: Sticker;
 }
 /**
  * 
@@ -4558,6 +4931,235 @@ export interface UsersPostRequest {
      * @memberof UsersPostRequest
      */
     'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface Voucher
+ */
+export interface Voucher {
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'code': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Voucher
+     */
+    'quotas': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'endDate'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Voucher
+     */
+    'coinAmounts': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Voucher
+     */
+    'purchasable'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'createdAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'updatedAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Voucher
+     */
+    'publishedAt'?: string;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @memberof Voucher
+     */
+    'createdBy'?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @memberof Voucher
+     */
+    'updatedBy'?: AlbumImageDataAttributesFolderDataAttributesParent;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherListResponse
+ */
+export interface VoucherListResponse {
+    /**
+     * 
+     * @type {Array<VoucherListResponseDataItem>}
+     * @memberof VoucherListResponse
+     */
+    'data'?: Array<VoucherListResponseDataItem>;
+    /**
+     * 
+     * @type {AlbumListResponseMeta}
+     * @memberof VoucherListResponse
+     */
+    'meta'?: AlbumListResponseMeta;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherListResponseDataItem
+ */
+export interface VoucherListResponseDataItem {
+    /**
+     * 
+     * @type {number}
+     * @memberof VoucherListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Voucher}
+     * @memberof VoucherListResponseDataItem
+     */
+    'attributes'?: Voucher;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherRequest
+ */
+export interface VoucherRequest {
+    /**
+     * 
+     * @type {VoucherRequestData}
+     * @memberof VoucherRequest
+     */
+    'data': VoucherRequestData;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherRequestData
+ */
+export interface VoucherRequestData {
+    /**
+     * 
+     * @type {string}
+     * @memberof VoucherRequestData
+     */
+    'code': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VoucherRequestData
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VoucherRequestData
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof VoucherRequestData
+     */
+    'quotas': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VoucherRequestData
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VoucherRequestData
+     */
+    'endDate'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof VoucherRequestData
+     */
+    'coinAmounts': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof VoucherRequestData
+     */
+    'purchasable'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherResponse
+ */
+export interface VoucherResponse {
+    /**
+     * 
+     * @type {VoucherResponseDataObject}
+     * @memberof VoucherResponse
+     */
+    'data'?: VoucherResponseDataObject;
+    /**
+     * 
+     * @type {object}
+     * @memberof VoucherResponse
+     */
+    'meta'?: object;
+}
+/**
+ * 
+ * @export
+ * @interface VoucherResponseDataObject
+ */
+export interface VoucherResponseDataObject {
+    /**
+     * 
+     * @type {number}
+     * @memberof VoucherResponseDataObject
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Voucher}
+     * @memberof VoucherResponseDataObject
+     */
+    'attributes'?: Voucher;
 }
 
 /**
@@ -6895,6 +7497,474 @@ export class PlaylistApi extends BaseAPI {
      */
     public putPlaylistsId(id: number, playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig) {
         return PlaylistApiFp(this.configuration).putPlaylistsId(id, playlistRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * StickerApi - axios parameter creator
+ * @export
+ */
+export const StickerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStickersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteStickersId', 'id', id)
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStickers: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/stickers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount;
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage;
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize;
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart;
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate;
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters;
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStickersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getStickersId', 'id', id)
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postStickers: async (stickerRequest: StickerRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'stickerRequest' is not null or undefined
+            assertParamExists('postStickers', 'stickerRequest', stickerRequest)
+            const localVarPath = `/stickers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(stickerRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putStickersId: async (id: number, stickerRequest: StickerRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putStickersId', 'id', id)
+            // verify required parameter 'stickerRequest' is not null or undefined
+            assertParamExists('putStickersId', 'stickerRequest', stickerRequest)
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(stickerRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * StickerApi - functional programming interface
+ * @export
+ */
+export const StickerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = StickerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteStickersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStickersId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.deleteStickersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.getStickers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getStickersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStickersId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.getStickersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postStickers(stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postStickers(stickerRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.postStickers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putStickersId(id, stickerRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.putStickersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * StickerApi - factory interface
+ * @export
+ */
+export const StickerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = StickerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteStickersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteStickersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<StickerListResponse> {
+            return localVarFp.getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getStickersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<StickerResponse> {
+            return localVarFp.getStickersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postStickers(stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): AxiosPromise<StickerResponse> {
+            return localVarFp.postStickers(stickerRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {StickerRequest} stickerRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): AxiosPromise<StickerResponse> {
+            return localVarFp.putStickersId(id, stickerRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * StickerApi - object-oriented interface
+ * @export
+ * @class StickerApi
+ * @extends {BaseAPI}
+ */
+export class StickerApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StickerApi
+     */
+    public deleteStickersId(id: number, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).deleteStickersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StickerApi
+     */
+    public getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StickerApi
+     */
+    public getStickersId(id: number, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).getStickersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {StickerRequest} stickerRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StickerApi
+     */
+    public postStickers(stickerRequest: StickerRequest, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).postStickers(stickerRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {StickerRequest} stickerRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StickerApi
+     */
+    public putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).putStickersId(id, stickerRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -9496,6 +10566,474 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      */
     public usersPost(usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig) {
         return UsersPermissionsUsersRolesApiFp(this.configuration).usersPost(usersPostRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * VoucherApi - axios parameter creator
+ * @export
+ */
+export const VoucherApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteVouchersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteVouchersId', 'id', id)
+            const localVarPath = `/vouchers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVouchers: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/vouchers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount;
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage;
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize;
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart;
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate;
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters;
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVouchersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getVouchersId', 'id', id)
+            const localVarPath = `/vouchers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postVouchers: async (voucherRequest: VoucherRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'voucherRequest' is not null or undefined
+            assertParamExists('postVouchers', 'voucherRequest', voucherRequest)
+            const localVarPath = `/vouchers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(voucherRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putVouchersId: async (id: number, voucherRequest: VoucherRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putVouchersId', 'id', id)
+            // verify required parameter 'voucherRequest' is not null or undefined
+            assertParamExists('putVouchersId', 'voucherRequest', voucherRequest)
+            const localVarPath = `/vouchers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(voucherRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * VoucherApi - functional programming interface
+ * @export
+ */
+export const VoucherApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = VoucherApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteVouchersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteVouchersId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VoucherApi.deleteVouchersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VoucherApi.getVouchers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getVouchersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getVouchersId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VoucherApi.getVouchersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postVouchers(voucherRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VoucherApi.postVouchers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putVouchersId(id, voucherRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VoucherApi.putVouchersId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * VoucherApi - factory interface
+ * @export
+ */
+export const VoucherApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = VoucherApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteVouchersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteVouchersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<VoucherListResponse> {
+            return localVarFp.getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVouchersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
+            return localVarFp.getVouchersId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
+            return localVarFp.postVouchers(voucherRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {VoucherRequest} voucherRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
+            return localVarFp.putVouchersId(id, voucherRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * VoucherApi - object-oriented interface
+ * @export
+ * @class VoucherApi
+ * @extends {BaseAPI}
+ */
+export class VoucherApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VoucherApi
+     */
+    public deleteVouchersId(id: number, options?: RawAxiosRequestConfig) {
+        return VoucherApiFp(this.configuration).deleteVouchersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VoucherApi
+     */
+    public getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig) {
+        return VoucherApiFp(this.configuration).getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VoucherApi
+     */
+    public getVouchersId(id: number, options?: RawAxiosRequestConfig) {
+        return VoucherApiFp(this.configuration).getVouchersId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {VoucherRequest} voucherRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VoucherApi
+     */
+    public postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig) {
+        return VoucherApiFp(this.configuration).postVouchers(voucherRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {VoucherRequest} voucherRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VoucherApi
+     */
+    public putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig) {
+        return VoucherApiFp(this.configuration).putVouchersId(id, voucherRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

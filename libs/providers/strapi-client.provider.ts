@@ -7,7 +7,9 @@ import {
     Configuration,
     ConfigurationParameters,
     GenreApi,
+    StickerApi,
     TrackApi,
+    VoucherApi,
 } from '@libs/repositories/strapi-api'
 import { Provider } from '@nestjs/common'
 
@@ -17,6 +19,8 @@ export interface StrapiClient {
     trackApi: TrackApi
     genreApi: GenreApi
     coinPackage: CoinPackageApi
+    voucherApi: VoucherApi
+    stickerApi: StickerApi
 }
 
 export const strapiClientProvider: Provider = {
@@ -38,6 +42,8 @@ export const strapiClientProvider: Provider = {
             trackApi: new TrackApi(apiConfig),
             genreApi: new GenreApi(apiConfig),
             coinPackage: new CoinPackageApi(apiConfig),
+            voucherApi: new VoucherApi(apiConfig),
+            stickerApi: new StickerApi(apiConfig),
         }
 
         return apiClient

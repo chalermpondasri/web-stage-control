@@ -145,7 +145,7 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
                             sources: [
                                 { album_id: { terms: { field: 'album_id' } } },
                             ],
-                            size: 10, // Number of top albums to retrieve
+                            size: 10,
                         },
                         aggs: {
                             total_hit_counts: {

@@ -144,7 +144,7 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
                             sources: [
                                 { artist_id: { terms: { field: 'artist_ids' } } },
                             ],
-                            size: 10, // Number of top artists to retrieve
+                            size: 10,
                         },
                         aggs: {
                             total_hit_counts: {

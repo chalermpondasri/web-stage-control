@@ -2,7 +2,6 @@ import { SearchHit, SearchResponse, SearchTotalHits } from '@elastic/elasticsear
 import { ProviderName } from '@libs/common/constants'
 import { ListResponse, ObjectResponse } from '@libs/common/models'
 import { ArtistElasticRepository } from '@libs/repositories/elasticsearch/artist.elastic.repository'
-import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
 import { RelatedData } from '@libs/repositories/interfaces/search/search.interface'
@@ -16,10 +15,6 @@ import { ArtistSearchDto } from './dtos/artist.dto'
 export class SearchArtistService {
     private readonly logger = new Logger(SearchArtistService.name)
     constructor(
-        // TODO:: เก็บไว้คุยว่าควรออกแบบยังไงดี ตั้งชื่อยังไงดี เพราะทุกอย่างอยู่ใน indice เดียวกัน
-        @Inject(ProviderName.TRACK_REPOSITORY)
-        private trackRepository: TrackElasticRepository,
-
         @Inject(ProviderName.ARTIST_REPOSITORY)
         private artistRepository: ArtistElasticRepository,
     ) {}
@@ -69,6 +64,8 @@ export class SearchArtistService {
                         delete track.mvFile
                         delete track.genres
                         delete track.duration
+                        delete track?.album?.image
+                        delete track?.album?.releaseDate
                     })
                 })
                 return response
@@ -87,8 +84,7 @@ export class SearchArtistService {
                 return listResponse
             }),
             catchError((err) => {
-                this.logger.error(`Error searching artist by id:`)
-                this.logger.error(err)
+                this.logger.error(`Error searching artist by id:`, err)
                 throw new HttpException(err.message, HttpStatus.NOT_FOUND)
             }),
         )

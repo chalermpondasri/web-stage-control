@@ -3,8 +3,9 @@ import { envConfigProvider } from '@libs/providers/env.provider'
 import { eventSubjectProvider } from '@libs/providers/event-subject.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
 import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
-import { Global, Module } from '@nestjs/common'
 import { requestContextProvider } from '@libs/providers/request-context.provider'
+import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
+import { Global, Module } from '@nestjs/common'
 @Global()
 @Module({
     providers: [
@@ -15,6 +16,7 @@ import { requestContextProvider } from '@libs/providers/request-context.provider
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
+        strapiClientProvider,
     ],
     exports: [
         envConfigProvider,
@@ -24,6 +26,7 @@ import { requestContextProvider } from '@libs/providers/request-context.provider
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
+        strapiClientProvider,
     ],
 })
 export class GlobalModule {}

@@ -28,4 +28,6 @@ export enum ProviderName {
 
     USER_SERVICE = 'USER_SERVICE',
     REQUEST_CONTEXT = 'REQUEST_CONTEXT',
+
+    STRAPI_CLIENT = 'STRAPI_CLIENT',
 }

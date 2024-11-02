@@ -320,45 +320,76 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
     }
 
     public getTrackRelatedData(track: TrackES, isGetAlbum = false, isGetArtist = false): Observable<TrackES> {
-        let albumObservables: Observable<SearchResponse<any>>
-        if (isGetAlbum && track.album_id) {
-            albumObservables = this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: track.album_id.toString(),
+        const albumCache = new Map<string, AlbumES | null>()
+        const artistCache = new Map<string, ArtistES | null>()
+
+        const getAlbum = (albumId: string): Observable<AlbumES | null> => {
+            if (albumCache.has(albumId)) {
+                return of(albumCache.get(albumId))
+            }
+
+            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: albumId,
                 type: 'album',
-            })
-        }
-        let artistObservables: Observable<SearchResponse<any>>[] = []
-        if (isGetArtist && track.artist_ids && track.artist_ids.length > 0) {
-            artistObservables = track.artist_ids
-                .filter((id) => id)
-                .map((id) =>
-                    this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                        id: id.toString(),
-                        type: 'artist',
-                    }),
-                )
+            }).pipe(
+                map((doc) => {
+                    const album =
+                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as AlbumES)
+                    albumCache.set(albumId, album)
+                    return album
+                }),
+            )
         }
 
-        if (!albumObservables && artistObservables.length === 0) {
+        const getArtist = (artistId: string): Observable<ArtistES | null> => {
+            if (artistCache.has(artistId)) {
+                return of(artistCache.get(artistId))
+            }
+
+            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+                id: artistId,
+                type: 'artist',
+            }).pipe(
+                map((doc) => {
+                    const artist =
+                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as ArtistES)
+                    artistCache.set(artistId, artist)
+                    return artist
+                }),
+            )
+        }
+
+        let albumObservable: Observable<AlbumES | null> = of(null)
+        if (isGetAlbum && track.album_id) {
+            albumObservable = getAlbum(track.album_id.toString())
+        }
+
+        let artistObservables: Observable<ArtistES | null>[] = []
+        if (isGetArtist && track.artist_ids && track.artist_ids.length > 0) {
+            artistObservables = track.artist_ids.filter((id) => id).map((id) => getArtist(id.toString()))
+        }
+
+        if (!isGetAlbum && artistObservables.length === 0) {
             return of(track)
         }
 
         return forkJoin([
-            albumObservables,
+            albumObservable,
             ...artistObservables,
         ]).pipe(
             map((relatedDocs) => {
                 relatedDocs.forEach((doc) => {
-                    if (doc === null || (doc.hits.total as SearchTotalHits).value === 0) {
+                    if (doc === null) {
                         return
                     }
 
-                    const data = doc.hits.hits[0]._source as AlbumES | ArtistES
-
-                    if (data.type === 'album') {
-                        track.album = data as AlbumES
-                    } else if (data.type === 'artist') {
-                        track.artists.push(data as ArtistES)
+                    if ((doc as AlbumES).type === 'album') {
+                        track.album = doc as AlbumES
+                    } else if ((doc as ArtistES).type === 'artist') {
+                        if (!track.artists) {
+                            track.artists = []
+                        }
+                        track.artists.push(doc as ArtistES)
                     }
                 })
 

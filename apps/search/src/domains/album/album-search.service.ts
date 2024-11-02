@@ -42,6 +42,24 @@ export class SearchAlbumService {
                     })),
                 )
             }),
+            switchMap((response) => {
+                const hits = response.hits.hits as SearchHit<AlbumES>[]
+                const trackObservables = hits.flatMap((hit) =>
+                    hit._source.tracks.map((track) =>
+                        this.albumRepository.getTrackRelatedData(track, false, true).pipe(
+                            map((_track) => {
+                                track = _track
+                                track.artists.forEach((artist) => {
+                                    delete artist.image
+                                    delete artist.coverImage
+                                })
+                            }),
+                        ),
+                    ),
+                )
+
+                return forkJoin(trackObservables).pipe(map(() => response))
+            }),
             map((response) => {
                 const hit = response.hits.hits[0] as SearchHit<AlbumES>
                 const foundLang = Lang.Thai

@@ -7,7 +7,7 @@ import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
 import { HttpException, HttpStatus, Inject, Logger } from '@nestjs/common'
-import { catchError, map, Observable, switchMap } from 'rxjs'
+import { catchError, forkJoin, map, Observable, switchMap } from 'rxjs'
 import { AlbumSearchDto } from '../album/dtos/album.dto'
 import { ArtistSearchDto } from '../artist/dtos/artist.dto'
 import { TrackSearchDto } from './dtos/track.dto'
@@ -110,52 +110,84 @@ export class SearchTrackService implements ITrackService {
 
     public getNewTracks(): Observable<ListResponse<TrackSearchDto>> {
         return this.trackRepository.getNewTracks().pipe(
-            map((response) => {
-                return response.hits.hits.map((hit) => {
-                    const track = hit._source as TrackES
-                    return TrackSearchDto.toDto(track, {
-                        name: track.name_th,
-                    })
-                })
+            switchMap((response) => {
+                const hits = response.hits.hits as SearchHit<TrackES>[]
+                const trackObservables = hits.map((hit) =>
+                    this.trackRepository.getTrackRelatedData(hit._source, true, true).pipe(
+                        map((track) => {
+                            track.artists.forEach((artist) => {
+                                delete artist.image
+                                delete artist.coverImage
+                            })
+
+                            if (track.album) {
+                                delete track.album.image
+                                delete track.album.releaseDate
+                            }
+
+                            hit._source = track
+                            return hit
+                        }),
+                    ),
+                )
+
+                return forkJoin(trackObservables).pipe(map(() => response))
             }),
-            map((tracks) => {
+            map((response) => {
+                const hits = response.hits.hits as SearchHit<TrackES>[]
+                const tracks = hits.map((hit) => this.getTrackSearchDto(hit))
                 const listResponse = new ListResponse<TrackSearchDto>()
                 listResponse.data = tracks
-                listResponse.total = tracks.length
+                listResponse.total = (response.hits.total as SearchTotalHits).value
                 listResponse.page = 1
-                listResponse.limit = 999
-
+                listResponse.limit = tracks.length
                 return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error getting new tracks: ${err}`)
-                throw err
+                throw new HttpException(err.message, HttpStatus.NOT_FOUND)
             }),
         )
     }
 
     public getTopTracks(): Observable<ListResponse<TrackSearchDto>> {
         return this.trackRepository.getTopTracks().pipe(
-            map((response) => {
-                return response.hits.hits.map((hit) => {
-                    const track = hit._source as TrackES
-                    return TrackSearchDto.toDto(track, {
-                        name: track.name_th,
-                    })
-                })
+            switchMap((response) => {
+                const hits = response.hits.hits as SearchHit<TrackES>[]
+                const trackObservables = hits.map((hit) =>
+                    this.trackRepository.getTrackRelatedData(hit._source, true, true).pipe(
+                        map((track) => {
+                            hit._source = track
+
+                            track.artists.forEach((artist) => {
+                                delete artist.image
+                                delete artist.coverImage
+                            })
+
+                            if (track.album) {
+                                delete track.album.image
+                                delete track.album.releaseDate
+                            }
+                            return hit
+                        }),
+                    ),
+                )
+
+                return forkJoin(trackObservables).pipe(map(() => response))
             }),
-            map((tracks) => {
+            map((response) => {
+                const hits = response.hits.hits as SearchHit<TrackES>[]
+                const tracks = hits.map((hit) => this.getTrackSearchDto(hit))
                 const listResponse = new ListResponse<TrackSearchDto>()
                 listResponse.data = tracks
-                listResponse.total = tracks.length
+                listResponse.total = (response.hits.total as SearchTotalHits).value
                 listResponse.page = 1
-                listResponse.limit = 999
-
+                listResponse.limit = tracks.length
                 return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error getting top tracks: ${err}`)
-                throw err
+                throw new HttpException(err.message, HttpStatus.NOT_FOUND)
             }),
         )
     }

@@ -2,8 +2,6 @@ describe('Search API', () => {
     const baseUrl = 'http://localhost:3003/search'
     // const baseUrl = 'https://billboard-api.dev.ucconnect.co.th/search'
 
-    console.log(Cypress.env('DB_NAME'))
-
     it('should search track by thai keyword', () => {
         cy.request({
             method: 'GET',
@@ -78,6 +76,15 @@ describe('Search API', () => {
                 expect(track).to.have.property('id')
                 expect(track).to.have.property('name')
                 expect(track).to.have.property('type')
+                expect(track).to.have.property('artists')
+                track.artists.forEach((artist) => {
+                    expect(artist).to.have.property('name')
+                    expect(artist).to.have.property('type')
+                })
+                if (track.album) {
+                    expect(track.album).to.have.property('name')
+                    expect(track.album).to.have.property('type')
+                }
             })
         })
     })
@@ -93,6 +100,15 @@ describe('Search API', () => {
                 expect(track).to.have.property('id')
                 expect(track).to.have.property('name')
                 expect(track).to.have.property('type')
+                expect(track).to.have.property('artists')
+                track.artists.forEach((artist) => {
+                    expect(artist).to.have.property('name')
+                    expect(artist).to.have.property('type')
+                })
+                if (track.album) {
+                    expect(track.album).to.have.property('name')
+                    expect(track.album).to.have.property('type')
+                }
             })
         })
     })

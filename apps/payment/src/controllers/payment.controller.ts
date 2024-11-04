@@ -25,8 +25,6 @@ export class PaymentController {
         return this._paymentService.createPaymentTransaction()
     }
 
-    @UseGuards
-
     @Patch('/transaction')
     public checkoutPackage(@Body() body: CheckoutPackageRequest) {
         return this._paymentService.checkoutPackage(body.transactionToken, body.packageId)

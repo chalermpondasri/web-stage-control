@@ -1,11 +1,19 @@
+import {
+    Global,
+    MiddlewareConsumer,
+    Module,
+    NestModule,
+} from '@nestjs/common'
 import { elasticClientProvider } from '@libs/providers/elastic-client.provider'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import { eventSubjectProvider } from '@libs/providers/event-subject.provider'
+import {
+    RequestContextMiddleware,
+} from '@libs/providers/request-context.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
 import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
 import { requestContextProvider } from '@libs/providers/request-context.provider'
 import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
-import { Global, Module } from '@nestjs/common'
 @Global()
 @Module({
     providers: [
@@ -13,6 +21,7 @@ import { Global, Module } from '@nestjs/common'
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
@@ -23,10 +32,16 @@ import { Global, Module } from '@nestjs/common'
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
     ],
 })
-export class GlobalModule {}
+
+export class GlobalModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer): any {
+        consumer.apply(RequestContextMiddleware).forRoutes('*')
+    }
+}

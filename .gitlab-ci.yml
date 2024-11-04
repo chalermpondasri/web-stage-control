@@ -1,8 +1,0 @@
-variables:
-  RUNNER_TAG: "billboard-node-runner"
-
-
-include:
-  - project: 'ucconnect.devs/cicd-deployment'
-    ref: main
-    file: 'pipelines/node-service.pipeline.yml'

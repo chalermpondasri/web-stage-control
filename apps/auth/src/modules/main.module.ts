@@ -14,6 +14,7 @@ import { encryptionServiceProvider } from '@libs/providers/encryption.provider'
 import { AdminController } from '../controllers/admin.controller'
 import { UserController } from '../controllers/user.controller'
 import { SseController } from '../controllers/sse.controller'
+import { PaymentModule } from './payment.module'
 import { RequestContextMiddleware } from '@libs/providers/request-context.provider'
 import { MeController } from '../controllers/me.controller'
 
@@ -21,6 +22,7 @@ import { MeController } from '../controllers/me.controller'
     imports: [
         GlobalModule,
         OrmModule,
+        PaymentModule,
     ],
     providers: [
         encryptionServiceProvider,

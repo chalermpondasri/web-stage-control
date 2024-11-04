@@ -145,12 +145,20 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
                             sources: [
                                 { album_id: { terms: { field: 'album_id' } } },
                             ],
-                            size: 10,
+                            size: 10000,
                         },
                         aggs: {
                             total_hit_counts: {
                                 sum: {
                                     field: 'hitCounts',
+                                },
+                            },
+                            total_hit_sort: {
+                                bucket_sort: {
+                                    sort: [
+                                        { total_hit_counts: { order: 'desc' } },
+                                    ],
+                                    size: 10000,
                                 },
                             },
                         },

@@ -77,7 +77,7 @@ export class SearchTrackService implements ITrackService {
     }
 
     private getTrackSearchDto(hit: SearchHit<TrackES>, foundLang: string = Lang.Thai): TrackSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
         const trackDto = TrackSearchDto.toDto({
             ...hit._source,
         })
@@ -87,7 +87,7 @@ export class SearchTrackService implements ITrackService {
     }
 
     private getArtistSearchDto(hit: SearchHit<ArtistES>, foundLang: string = Lang.Thai): ArtistSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
 
         const artistDto = ArtistSearchDto.toDto({
             ...hit._source,
@@ -98,7 +98,7 @@ export class SearchTrackService implements ITrackService {
     }
 
     private getAlbumSearchDto(hit: SearchHit<AlbumES>, foundLang: string = Lang.Thai): AlbumSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
 
         const albumDto = AlbumSearchDto.toDto({
             ...hit._source,

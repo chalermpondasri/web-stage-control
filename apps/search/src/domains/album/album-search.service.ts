@@ -82,7 +82,7 @@ export class SearchAlbumService {
     }
 
     private getAlbumSearchDto(hit: SearchHit<AlbumES>, foundLang: string = Lang.Thai): AlbumSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
 
         const albumDto = AlbumSearchDto.toDto({
             ...hit._source,

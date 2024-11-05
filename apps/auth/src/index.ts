@@ -16,6 +16,10 @@ async function bootstrap(){
     })
     app.enableCors()
     const config = new DocumentBuilder()
+        .addBearerAuth({
+            scheme: "bearer",
+            type: "http"
+        })
         .setTitle('Community Billboard')
         .setDescription('Community Billboard API Description')
         .setVersion('1.0')

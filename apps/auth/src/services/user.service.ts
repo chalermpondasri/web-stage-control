@@ -19,7 +19,7 @@ import {
     plainToInstance,
 } from 'class-transformer'
 import { UserDto } from '@libs/common/models/user/user.dto'
-import { ITokenizationService } from './interfaces/tokenization-service.interface'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 

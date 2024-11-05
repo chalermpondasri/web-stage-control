@@ -11,9 +11,15 @@ import {
     RequestContextMiddleware,
 } from '@libs/providers/request-context.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
-import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
+import {
+    elasticRepositoryProviders,
+    lineRepositoryProvider,
+    ormRepositoryProviders,
+} from '@libs/providers/repository.provider'
 import { requestContextProvider } from '@libs/providers/request-context.provider'
 import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
+import { OrmModule } from '@libs/modules/orm.module'
+import { tokenizationServiceProvider } from '../../apps/auth/src/providers/service.provider'
 @Global()
 @Module({
     providers: [
@@ -26,6 +32,7 @@ import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
+        tokenizationServiceProvider,
     ],
     exports: [
         envConfigProvider,
@@ -37,11 +44,9 @@ import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
+        tokenizationServiceProvider,
     ],
 })
 
-export class GlobalModule implements NestModule {
-    public configure(consumer: MiddlewareConsumer): any {
-        consumer.apply(RequestContextMiddleware).forRoutes('*')
-    }
+export class GlobalModule {
 }

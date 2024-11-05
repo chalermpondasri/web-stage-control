@@ -33,4 +33,5 @@ export enum ProviderName {
     USER_SERVICE = 'USER_SERVICE',
 
     STRAPI_CLIENT = 'STRAPI_CLIENT',
+    PLAYLIST_SERVICE = 'PLAYLIST_SERVICE',
 }

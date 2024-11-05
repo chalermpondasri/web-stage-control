@@ -23,12 +23,12 @@ import {
 } from 'rxjs'
 import { IResult } from 'ua-parser-js'
 import { v4 } from 'uuid'
-import { ITokenizationService } from '../../apps/auth/src/services/interfaces/tokenization-service.interface'
 import { User } from '@libs/entities/user.entity'
 import { Repository } from 'typeorm'
 import { UaParserUtil } from '@libs/utilities/ua-parser/ua-parser.util'
 import { extractTokenFromHeader } from '@libs/utilities/token.util'
 import { ProviderName } from '@libs/common/constants/providerName'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
 interface IdentityInfo {
     userId: string

@@ -18,7 +18,7 @@ import {
 } from 'rxjs'
 import { IAuthenticationService } from './interfaces/authentication-service.interface'
 import { IEncryptionService } from '@libs/providers/encryption.provider'
-import { ITokenizationService } from './interfaces/tokenization-service.interface'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
 import {
     instanceToPlain,

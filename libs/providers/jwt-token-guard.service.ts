@@ -13,7 +13,7 @@ import {
 } from 'rxjs'
 
 import { ProviderName } from '@libs/common/constants/providerName'
-import { ITokenizationService } from '../../apps/auth/src/services/interfaces/tokenization-service.interface'
+import { ITokenizationService } from './tokenization/tokenization-service.interface'
 
 @Injectable()
 export class JwtTokenGuard implements CanActivate {

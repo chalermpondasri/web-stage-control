@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm'
 import { Community } from '@libs/entities/community.entity'
+import { QueueState } from '@libs/common/models/media/queue-state.enum'
 
 @Entity()
 export class Content {
@@ -18,6 +19,9 @@ export class Content {
     @ManyToOne(() => Community, community => community.playlist)
     public communityId: string
 
+    @Column({type:'text'})
+    public coverImage: string
+
     @Column()
     public title: string
 
@@ -27,13 +31,14 @@ export class Content {
     @Column({
         type: 'numeric'
     })
-    public influencePoint: number
+    @Column()
+    public totalBoost: number
 
     @Column({type: 'int'})
     public duration: number
 
-    @Column({type: 'boolean'})
-    public isPlaying: boolean
+    @Column()
+    public queueState: QueueState
 
     @CreateDateColumn()
     public createdAt: Date

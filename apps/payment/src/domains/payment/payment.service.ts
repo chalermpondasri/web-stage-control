@@ -27,14 +27,12 @@ import { Repository } from 'typeorm'
 import { v4 } from 'uuid'
 import { IPaymentTransaction } from './dto/payment-token.model'
 import { PaymentTransactionDto } from './dto/payment-transaction.dto'
-import { PaymentDomainErrorBuilder } from './errors/error-builder'
 import { IPaymentService } from './interfaces/service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { PaymentStatus } from '@libs/common/constants/payment-status.enum'
 import { CheckoutPackageResponse } from './dto/checkout-package.response'
 
 export class PaymentService implements IPaymentService {
-    private readonly _errorBuilder: PaymentDomainErrorBuilder
     private readonly _logger: LoggerService
 
     public constructor(
@@ -42,7 +40,6 @@ export class PaymentService implements IPaymentService {
         private readonly _requestContext: RequestContext,
         private readonly _encryptionService: IEncryptionService,
     ) {
-        this._errorBuilder = new PaymentDomainErrorBuilder()
         this._logger = new Logger(PaymentService.name)
     }
 

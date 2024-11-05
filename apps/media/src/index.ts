@@ -19,7 +19,7 @@ async function bootstrap(){
         .setTitle('Community Billboard')
         .setDescription('Community Billboard API Description')
         .setVersion('1.0')
-        .addTag('billboard')
+        .addTag('Media')
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('documentation', app, document);

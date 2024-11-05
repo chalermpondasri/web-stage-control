@@ -101,6 +101,17 @@ services:
   #   command: node dist/apps/scheduler
   #   restart: always
 
+  billboard-service-broadcast:
+    image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
+    container_name: billboard-service-broadcast
+    env_file:
+      - ".env-service-api.staging"
+    networks:
+      - billboard-network
+    command: node dist/apps/broadcast
+    restart: always
+    ports:
+      - 3303:3000
 
 networks:
   billboard-network:

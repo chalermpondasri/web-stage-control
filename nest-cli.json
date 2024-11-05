@@ -18,15 +18,15 @@
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
     },
-      "migration": {
-          "type": "application",
-          "root": "apps/migration",
-          "entryFile": "index",
-          "sourceRoot": "apps/migration/src",
-          "compilerOptions": {
-              "tsConfigPath": "apps/migration/tsconfig.app.json"
-          }
-      },
+    "migration": {
+      "type": "application",
+      "root": "apps/migration",
+      "entryFile": "index",
+      "sourceRoot": "apps/migration/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/migration/tsconfig.app.json"
+      }
+    },
     "mq-consumer": {
       "type": "application",
       "root": "apps/mq-consumer",
@@ -43,6 +43,20 @@
       "sourceRoot": "apps/search/src",
       "compilerOptions": {
         "tsConfigPath": "apps/search/tsconfig.app.json"
+      }
+    },
+    "broadcast": {
+      "type": "application",
+      "root": "apps/broadcast",
+      "entryFile": "index",
+      "sourceRoot": "apps/broadcast/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/broadcast/tsconfig.app.json",
+        "assets": [
+          {
+            "include": "assets"
+          }
+        ]
       }
     }
   }

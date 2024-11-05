@@ -91,7 +91,7 @@ export class SearchArtistService {
     }
 
     private getArtistSearchDto(hit: SearchHit<ArtistES>, foundLang: string = Lang.Thai): ArtistSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
 
         const artistDto = ArtistSearchDto.toDto({
             ...hit._source,
@@ -106,7 +106,7 @@ export class SearchArtistService {
         foundLang: string = Lang.Thai,
         relatedData: RelatedData,
     ): AlbumSearchDto {
-        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en
+        const name = foundLang === Lang.Thai ? hit._source.name_th : hit._source.name_en || hit._source.name_th
 
         const albumDto = AlbumSearchDto.toDto({
             ...hit._source,
@@ -134,7 +134,7 @@ export class SearchArtistService {
                 })
 
                 return forkJoin(artistObservables).pipe(
-                    map((artists) => artists.sort((a, b) => b.total_hit_counts - a.total_hit_counts)),
+                    // map((artists) => artists.sort((a, b) => b.total_hit_counts - a.total_hit_counts)),
                     map((artists) => {
                         const listResponse = new ListResponse<ArtistSearchDto>()
                         listResponse.data = artists as ArtistSearchDto[]

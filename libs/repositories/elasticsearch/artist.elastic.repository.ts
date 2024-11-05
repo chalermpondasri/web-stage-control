@@ -144,12 +144,20 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
                             sources: [
                                 { artist_id: { terms: { field: 'artist_ids' } } },
                             ],
-                            size: 10,
+                            size: 10000, // Connot more than 65k, which means artist in the system cannot exceed this number.
                         },
                         aggs: {
                             total_hit_counts: {
                                 sum: {
                                     field: 'hitCounts',
+                                },
+                            },
+                            total_hit_sort: {
+                                bucket_sort: {
+                                    sort: [
+                                        { total_hit_counts: { order: 'desc' } },
+                                    ],
+                                    size: 10000,
                                 },
                             },
                         },
@@ -160,6 +168,7 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
 
         return from(promise).pipe(
             map((response) => {
+                console.log((response.aggregations.top_artists as any).buckets)
                 const topArtists = (response.aggregations.top_artists as any).buckets.map((bucket) => ({
                     artist_id: bucket.key.artist_id,
                     total_hit_counts: bucket.total_hit_counts.value,

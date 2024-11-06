@@ -14,6 +14,10 @@ async function bootstrap() {
         .setTitle('UMU broadcast service')
         .setDescription('UMU broadcast service API Description')
         .setVersion('1.0')
+        .addBearerAuth({
+            scheme: 'bearer',
+            type: 'http',
+        })
         .addTag('umu')
         .build()
     const document = SwaggerModule.createDocument(app, config)

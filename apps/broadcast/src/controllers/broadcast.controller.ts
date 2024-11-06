@@ -1,10 +1,18 @@
-import { Body, Controller, Get, MessageEvent, Post, Query, Sse } from '@nestjs/common'
-import { ApiExtraModels, ApiOperation } from '@nestjs/swagger'
+import { GenericUserGuard } from '@libs/guards/generic-user.guard'
+import { Body, Controller, Get, MessageEvent, Post, Query, Sse, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Observable } from 'rxjs'
 import { BroadcastService } from '../domains/broadcast/broadcast.service'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from '../domains/broadcast/dtos/broadcast.dto'
 
+@ApiTags(
+    ...[
+        'broadcast',
+    ],
+)
+@ApiBearerAuth()
 @Controller('/broadcast')
+@UseGuards(GenericUserGuard)
 export class BroadcastController {
     constructor(private readonly _broadcastService: BroadcastService) {}
 

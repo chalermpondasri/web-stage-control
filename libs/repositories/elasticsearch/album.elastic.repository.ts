@@ -3,7 +3,7 @@ import { UpdateResponse, WriteResponseBase } from '@elastic/elasticsearch/lib/ap
 import { SearchResponse } from '@elastic/elasticsearch/lib/api/typesWithBodyKey'
 import { ElasticConstant } from '@libs/common/constants/elastic.constant'
 import { Logger } from '@nestjs/common'
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs'
+import { catchError, from, map, Observable, switchMap } from 'rxjs'
 import { AlbumES } from '../interfaces/search/album.interface'
 import { ArtistES } from '../interfaces/search/artist.interface'
 import { TrackES } from '../interfaces/search/track.interface'
@@ -16,11 +16,7 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
         super(client)
     }
 
-    public addAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
-        return this.indexDocument(ElasticConstant.INDICE.MUSIC, album)
-    }
-
-    public updateAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
+    private searchAlbumByIdInternal(albumId: string): Observable<string> {
         return from(
             this.client.search({
                 index: ElasticConstant.INDICE.MUSIC,
@@ -28,63 +24,7 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
                     query: {
                         bool: {
                             must: [
-                                { match: { id: album.id } },
-                                { match: { type: 'album' } },
-                            ],
-                        },
-                    },
-                },
-            }),
-        ).pipe(
-            switchMap((response) => {
-                const id = response.hits.hits[0]?._id
-                if (!id) {
-                    return this.addAlbum(album as AlbumES).pipe(
-                        map((addResponse) => {
-                            const newId = addResponse._id
-                            this.logger.log(`Album added with ID: ${newId}`)
-                            return newId
-                        }),
-                        catchError((error) => {
-                            this.logger.error(`Error adding album: ${error.message}`)
-                            throw error
-                        }),
-                    )
-                }
-                this.logger.log(`Album found: ${id}`)
-                return of(id)
-            }),
-            switchMap((id) => {
-                return from(
-                    this.client
-                        .update({
-                            index: ElasticConstant.INDICE.MUSIC,
-                            id: id.toString(),
-                            body: {
-                                doc: album,
-                            },
-                        })
-                        .then((response: UpdateResponse<unknown>) => {
-                            return response as WriteResponseBase
-                        }),
-                )
-            }),
-            catchError((error) => {
-                this.logger.error(`Error updating album: ${error.message}`)
-                throw error
-            }),
-        )
-    }
-
-    public deleteAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
-        return from(
-            this.client.search({
-                index: ElasticConstant.INDICE.MUSIC,
-                body: {
-                    query: {
-                        bool: {
-                            must: [
-                                { match: { id: album.id } },
+                                { match: { id: albumId } },
                                 { match: { type: 'album' } },
                             ],
                         },
@@ -100,6 +40,45 @@ export class AlbumElasticRepository extends ElasticsearchRepository {
                 this.logger.log(`Album found: ${id}`)
                 return id
             }),
+            catchError((error) => {
+                this.logger.error(`Error searching album by ID: ${error.message}`)
+                throw error
+            }),
+        )
+    }
+
+    public addAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
+        return this.indexDocument(ElasticConstant.INDICE.MUSIC, album)
+    }
+
+    public updateAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
+        return this.searchAlbumByIdInternal(album.id.toString()).pipe(
+            switchMap((id) => {
+                return from(
+                    this.client.update({
+                        index: ElasticConstant.INDICE.MUSIC,
+                        id: id.toString(),
+                        body: {
+                            doc: album,
+                        },
+                    }),
+                ).pipe(
+                    map((response: UpdateResponse<unknown>) => response as WriteResponseBase),
+                    catchError((error) => {
+                        this.logger.error(`Error updating album: ${error.message}`)
+                        throw error
+                    }),
+                )
+            }),
+            catchError((error) => {
+                this.logger.error(`Error updating album: ${error.message}`)
+                throw error
+            }),
+        )
+    }
+
+    public deleteAlbum(album: Partial<AlbumES>): Observable<WriteResponseBase> {
+        return this.searchAlbumByIdInternal(album.id.toString()).pipe(
             switchMap((id) =>
                 from(
                     this.client.delete({

@@ -6,20 +6,15 @@ import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.e
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConsumeMessage } from 'amqplib'
+import { getRabbitSubscribeConfig, handleError, isValidMessage } from 'apps/mq-consumer/src/utils/consumer.util'
 import { catchError, firstValueFrom } from 'rxjs'
 
-const rabbitSubscribeConfig = {
-    exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
-    routingKey: 'album.deleted',
-    queue: QUEUES.ALBUM_DELETE,
-    queueOptions: {
-        durable: true,
-        autoDelete: false,
-        exclusive: false,
-        deadLetterExchange: EXCHANGES.ALBUM_DL,
-        deadLetterRoutingKey: 'album.deleted.dlq',
-    },
-}
+const rabbitSubscribeConfig = getRabbitSubscribeConfig(
+    QUEUES.ALBUM_DELETE,
+    'album.deleted',
+    EXCHANGES.ALBUM_DL,
+    'album.deleted.dlq',
+)
 
 @Injectable()
 export class AlbumDeleteConsumer {
@@ -30,19 +25,13 @@ export class AlbumDeleteConsumer {
 
         @Inject(ProviderName.ALBUM_REPOSITORY)
         private albumRepository: AlbumElasticRepository,
-    ) {}
+    ) {
+        this._logger.log(this._envConfig.MESSAGE_BROKER_HOST)
+    }
 
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        if (!msg['payload']) {
-            this._logger.error('Invalid message format: no payload')
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ALBUM_DL)
-            return new Nack()
-        }
-
-        if (msg['event'] !== 'album.deleted') {
-            this._logger.error('Invalid event type: ' + msg['event'])
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ALBUM_DL)
+        if (!isValidMessage(this._logger, msg, EXCHANGES.ALBUM_DL)) {
             return new Nack()
         }
 
@@ -55,13 +44,11 @@ export class AlbumDeleteConsumer {
             await firstValueFrom(
                 this.albumRepository.deleteAlbum(album).pipe(
                     catchError((error) => {
-                        this._logger.error(`Error deleting document: ${error}`)
-                        this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+                        handleError(this._logger, error, EXCHANGES.ALBUM_DL)
                         throw error
                     }),
                 ),
             )
-
             this._logger.log(`Document deleted successfully`)
         } catch (error) {
             return new Nack()

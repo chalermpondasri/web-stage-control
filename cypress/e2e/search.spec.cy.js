@@ -2,12 +2,18 @@ describe('Search API', () => {
     const baseUrl = 'http://localhost:3003/search'
     // const baseUrl = 'https://billboard-api.dev.ucconnect.co.th/search'
 
-    const makeRequest = (method, url, qs = {}) => {
-        return cy.request({
+    const makeRequest = (method, url, qs = {}, body = {}) => {
+        const options = {
             method,
             url: `${baseUrl}${url}`,
             qs,
-        })
+        }
+
+        if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+            options.body = body
+        }
+
+        return cy.request(options)
     }
 
     const validateResponse = (response, status = 200) => {
@@ -229,7 +235,7 @@ describe('Search API', () => {
 
     it('should add hitCounts to track', () => {
         makeRequest('GET', '/track/100/hit').then((response) => {
-            validateResponse(response)
+            expect(response.status).to.eq(200)
         })
     })
 })

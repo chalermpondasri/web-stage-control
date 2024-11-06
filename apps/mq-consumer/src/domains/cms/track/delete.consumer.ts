@@ -6,20 +6,15 @@ import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.e
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConsumeMessage } from 'amqplib'
+import { getRabbitSubscribeConfig, handleError, isValidMessage } from 'apps/mq-consumer/src/utils/consumer.util'
 import { catchError, firstValueFrom } from 'rxjs'
 
-const rabbitSubscribeConfig = {
-    exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
-    routingKey: 'track.deleted',
-    queue: QUEUES.TRACK_DELETE,
-    queueOptions: {
-        durable: true,
-        autoDelete: false,
-        exclusive: false,
-        deadLetterExchange: EXCHANGES.TRACK_DL,
-        deadLetterRoutingKey: 'track.deleted.dlq',
-    },
-}
+const rabbitSubscribeConfig = getRabbitSubscribeConfig(
+    QUEUES.TRACK_DELETE,
+    'track.deleted',
+    EXCHANGES.TRACK_DL,
+    'track.deleted.dlq',
+)
 
 @Injectable()
 export class TrackDeleteConsumer {
@@ -33,17 +28,10 @@ export class TrackDeleteConsumer {
     ) {
         this._logger.log(this._envConfig.MESSAGE_BROKER_HOST)
     }
+
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        if (!msg['payload']) {
-            this._logger.error('Invalid message format: no payload')
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
-            return new Nack()
-        }
-
-        if (msg['event'] !== 'track.deleted') {
-            this._logger.error('Invalid event type: ' + msg['event'])
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.TRACK_DL)
+        if (!isValidMessage(this._logger, msg, EXCHANGES.TRACK_DL)) {
             return new Nack()
         }
 
@@ -56,13 +44,11 @@ export class TrackDeleteConsumer {
             await firstValueFrom(
                 this.trackRepository.deleteTrack(track).pipe(
                     catchError((error) => {
-                        this._logger.error(`Error deleting document: ${error}`)
-                        this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+                        handleError(this._logger, error, EXCHANGES.TRACK_DL)
                         throw error
                     }),
                 ),
             )
-
             this._logger.log(`Document deleted successfully`)
         } catch (error) {
             return new Nack()

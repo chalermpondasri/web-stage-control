@@ -84,11 +84,30 @@ export class BroadcastService {
 
     public getAllStickers(request: GetStickerRequest): Observable<ListResponse<StickerListResponseDataItem>> {
         return from(
-            this._strapiClient.stickerApi.getStickers('createdAt:asc', true, request.page || 1, request.limit || 10),
+            this._strapiClient.stickerApi.getStickers(
+                'createdAt:asc',
+                true,
+                request.page || 1,
+                request.limit || 10,
+                undefined,
+                undefined,
+                undefined,
+                'image',
+            ),
         ).pipe(
             map((res) => {
                 if (res?.data?.data) {
-                    return res.data.data
+                    const stickers = res.data.data
+                    return stickers.map((sticker) => {
+                        return {
+                            id: sticker.id,
+                            price: sticker.attributes.price,
+                            isFree: sticker.attributes.isFree,
+                            image: {
+                                url: sticker.attributes.image.data.attributes.url,
+                            },
+                        }
+                    })
                 }
 
                 return []

@@ -6,21 +6,16 @@ import { ArtistElasticRepository } from '@libs/repositories/elasticsearch/artist
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConsumeMessage } from 'amqplib'
+import { getRabbitSubscribeConfig, handleError, isValidMessage } from 'apps/mq-consumer/src/utils/consumer.util'
 import { ArtistEsDto } from 'apps/search/src/domains/artist/dtos/artist.dto'
 import { catchError, firstValueFrom } from 'rxjs'
 
-const rabbitSubscribeConfig = {
-    exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
-    routingKey: 'artist.created',
-    queue: QUEUES.ARTIST_CREATE,
-    queueOptions: {
-        durable: true,
-        autoDelete: false,
-        exclusive: false,
-        deadLetterExchange: EXCHANGES.ARTIST_DL,
-        deadLetterRoutingKey: 'artist.created.dlq',
-    },
-}
+const rabbitSubscribeConfig = getRabbitSubscribeConfig(
+    QUEUES.ARTIST_CREATE,
+    'artist.created',
+    EXCHANGES.ARTIST_DL,
+    'artist.created.dlq',
+)
 
 @Injectable()
 export class ArtistCreateConsumer {
@@ -31,19 +26,13 @@ export class ArtistCreateConsumer {
 
         @Inject(ProviderName.ARTIST_REPOSITORY)
         private artistRepository: ArtistElasticRepository,
-    ) {}
+    ) {
+        this._logger.log(this._envConfig.MESSAGE_BROKER_HOST)
+    }
 
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        if (!msg['payload']) {
-            this._logger.error('Invalid message format: no payload')
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
-            return new Nack()
-        }
-
-        if (msg['event'] !== 'artist.created') {
-            this._logger.error('Invalid event type: ' + msg['event'])
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+        if (!isValidMessage(this._logger, msg, EXCHANGES.ARTIST_DL)) {
             return new Nack()
         }
 
@@ -55,13 +44,11 @@ export class ArtistCreateConsumer {
             await firstValueFrom(
                 this.artistRepository.addArtist(artist).pipe(
                     catchError((error) => {
-                        this._logger.error(`Error indexing document: ${error}`)
-                        this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+                        handleError(this._logger, error, EXCHANGES.ARTIST_DL)
                         throw error
                     }),
                 ),
             )
-
             this._logger.log(`Document created successfully`)
         } catch (error) {
             return new Nack()

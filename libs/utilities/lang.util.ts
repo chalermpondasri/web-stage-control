@@ -14,8 +14,5 @@ export enum Lang {
 }
 
 export function blurProfileName(name: string): string {
-    if (name.length <= 5) {
-        return '***'
-    }
-    return `${name.charAt(0)}${name.charAt(1)}***${name.charAt(name.length - 1)}`
+    return `${name.charAt(0)}${name.charAt(1)}******`
 }

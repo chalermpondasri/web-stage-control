@@ -1,5 +1,6 @@
 import { ProviderName } from '@libs/common/constants'
 import {
+    BadRequestException,
     Inject,
     Injectable,
     Logger,
@@ -19,6 +20,7 @@ import {
     of,
     tap,
 } from 'rxjs'
+import { get } from 'lodash'
 import { IResult } from 'ua-parser-js'
 import { v4 } from 'uuid'
 import { ITokenizationService } from '../../apps/auth/src/services/interfaces/tokenization-service.interface'
@@ -26,6 +28,8 @@ import { User } from '@libs/entities/user.entity'
 import { Repository } from 'typeorm'
 import { UaParserUtil } from '@libs/utilities/ua-parser/ua-parser.util'
 import { extractTokenFromHeader } from '@libs/utilities/token.util'
+import { isNil } from '@nestjs/common/utils/shared.utils'
+import { ErrorEnum } from '@libs/common/constants/error.enum'
 
 interface IdentityInfo {
     userId: string
@@ -71,7 +75,8 @@ export class RequestContextMiddleware implements NestMiddleware {
         private readonly _userRepository: Repository<User>,
         @Inject(ProviderName.TOKENIZATION_SERVICE)
         private readonly _tokenization: ITokenizationService,
-    ) {}
+    ) {
+    }
 
     public use(req: Request, res: Response, next: NextFunction) {
         return of(req)
@@ -89,14 +94,18 @@ export class RequestContextMiddleware implements NestMiddleware {
                     const token = extractTokenFromHeader(r.headers['authorization'])
                     const data = this._tokenization.verifyAccessToken(token)
 
-                    if(!data) {
+                    if (!data) {
                         return EMPTY
                     }
-                    return from(this._userRepository.findOneBy({id:  <string> data.payload.sub})).pipe(
+                    const userId = get(data.payload, 'id', null)
+                    if(isNil(userId)) {
+                        throw new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID)
+                    }
+                    return from(this._userRepository.findOneBy({ id: userId })).pipe(
                         tap(result => {
                             this._rc.identityInfo.userId = result.id
                             this._rc.identityInfo.token = token
-                        })
+                        }),
                     )
                 }),
             )

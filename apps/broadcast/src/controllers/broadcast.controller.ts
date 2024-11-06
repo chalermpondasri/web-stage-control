@@ -1,6 +1,6 @@
-import { GenericUserGuard } from '@libs/guards/generic-user.guard'
-import { Body, Controller, Get, MessageEvent, Post, Query, Sse, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ProviderName } from '@libs/common/constants'
+import { Body, Controller, Get, Inject, MessageEvent, Post, Query, Sse } from '@nestjs/common'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Observable } from 'rxjs'
 import { BroadcastService } from '../domains/broadcast/broadcast.service'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from '../domains/broadcast/dtos/broadcast.dto'
@@ -14,7 +14,10 @@ import { CreateBroadcastMessageRequest, GetStickerRequest } from '../domains/bro
 @Controller('/broadcast')
 @UseGuards(GenericUserGuard)
 export class BroadcastController {
-    constructor(private readonly _broadcastService: BroadcastService) {}
+    constructor(
+        @Inject(ProviderName.BROADCAST_SERVICE)
+        private readonly _broadcastService: BroadcastService,
+    ) {}
 
     @ApiOperation({
         description: 'Get all stickers',
@@ -30,7 +33,6 @@ export class BroadcastController {
             $ref: 'CreateBroadcastMessageRequest',
         },
     })
-    @ApiExtraModels(CreateBroadcastMessageRequest)
     @Post('/message')
     public createBroadcastMessage(@Body() broadcastBody: CreateBroadcastMessageRequest) {
         return this._broadcastService.createBroadcastMessage(broadcastBody)

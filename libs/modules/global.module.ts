@@ -1,3 +1,4 @@
+import { broadcastSseProvider } from '@libs/providers/broadcast.provider'
 import { elasticClientProvider } from '@libs/providers/elastic-client.provider'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import { eventSubjectProvider } from '@libs/providers/event-subject.provider'
@@ -17,6 +18,7 @@ import { Global, Module } from '@nestjs/common'
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
+        broadcastSseProvider,
     ],
     exports: [
         envConfigProvider,
@@ -27,6 +29,7 @@ import { Global, Module } from '@nestjs/common'
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
+        broadcastSseProvider,
     ],
 })
 export class GlobalModule {}

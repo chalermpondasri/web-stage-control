@@ -51,12 +51,7 @@
       "entryFile": "index",
       "sourceRoot": "apps/broadcast/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/broadcast/tsconfig.app.json",
-        "assets": [
-          {
-            "include": "assets"
-          }
-        ]
+        "tsConfigPath": "apps/broadcast/tsconfig.app.json"
       }
     }
   }

@@ -1,11 +1,10 @@
-import { ProviderName } from '@libs/common/constants'
 import { ListResponse, ObjectResponse } from '@libs/common/models'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { StickerListResponseDataItem } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
-import { Body, Inject, Injectable, Logger, MessageEvent, Sse } from '@nestjs/common'
+import { Body, Injectable, Logger, MessageEvent, Sse } from '@nestjs/common'
 import fs from 'fs'
 import path from 'path'
 import { catchError, from, map, Observable, switchMap } from 'rxjs'
@@ -23,12 +22,8 @@ export class BroadcastService {
     private _enFilter
 
     constructor(
-        @Inject(ProviderName.STRAPI_CLIENT)
         private readonly _strapiClient: StrapiClient,
-
         private readonly _broadcastSseService: BroadcastSseService,
-
-        @Inject(ProviderName.BROADCAST_REPOSITORY)
         private readonly _broadcastRepository: Repository<Broadcast>,
     ) {
         this._initializeFilters()
@@ -40,18 +35,16 @@ export class BroadcastService {
 
     private async _initializeFilters() {
         this._loadEnCurseWords()
-        ;(async () => {
-            const { Filter } = await FilterApi
-            this._enFilter = new Filter({
-                placeHolder: '*',
-            })
-            this._enFilter.addWords(...this._enCurseWords)
-        })()
+        const { Filter } = await FilterApi
+        this._enFilter = new Filter({
+            placeHolder: '*',
+        })
+        this._enFilter.addWords(...this._enCurseWords)
     }
 
     private _loadThaiWords() {
         this._thWords = fs
-            .readFileSync(path.join('dist', 'apps', 'broadcast', 'assets', 'words_th.txt'), {
+            .readFileSync(path.join('assets', 'words_th.txt'), {
                 encoding: 'utf-8',
             })
             .split(/[\r\n]+/)
@@ -62,7 +55,7 @@ export class BroadcastService {
 
     private _loadThaiCurseWords() {
         this._thCurseWords = fs
-            .readFileSync(path.join('dist', 'apps', 'broadcast', 'assets', 'curse_words_th.txt'), {
+            .readFileSync(path.join('assets', 'curse_words_th.txt'), {
                 encoding: 'utf-8',
             })
             .split(/[\r\n]+/)
@@ -73,7 +66,7 @@ export class BroadcastService {
 
     private _loadEnCurseWords() {
         this._enCurseWords = fs
-            .readFileSync(path.join('dist', 'apps', 'broadcast', 'assets', 'curse_words_en.txt'), {
+            .readFileSync(path.join('assets', 'curse_words_en.txt'), {
                 encoding: 'utf-8',
             })
             .split(/[\r\n]+/)
@@ -96,21 +89,20 @@ export class BroadcastService {
             ),
         ).pipe(
             map((res) => {
-                if (res?.data?.data) {
-                    const stickers = res.data.data
-                    return stickers.map((sticker) => {
-                        return {
-                            id: sticker.id,
-                            price: sticker.attributes.price,
-                            isFree: sticker.attributes.isFree,
-                            image: {
-                                url: sticker.attributes.image.data.attributes.url,
-                            },
-                        }
-                    })
+                if (!res.data?.data) {
+                    return []
                 }
 
-                return []
+                return res.data.data.map((sticker) => {
+                    return {
+                        id: sticker.id,
+                        price: sticker.attributes.price,
+                        isFree: sticker.attributes.isFree,
+                        image: {
+                            url: sticker.attributes.image.data.attributes.url,
+                        },
+                    }
+                })
             }),
             map((data) => {
                 const listResponse = new ListResponse<StickerListResponseDataItem>()
@@ -181,7 +173,7 @@ export class BroadcastService {
                 )
             }),
             map((res) => {
-                if (res?.data?.data && res?.data?.data.length > 0) {
+                if (res?.data?.data && res.data.data.length > 0) {
                     const sticker = res.data.data[0]
                     eventMessage.sticker = {
                         id: sticker.id,

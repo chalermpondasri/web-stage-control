@@ -101,12 +101,12 @@ export class RequestContextMiddleware implements NestMiddleware {
                 }),
                 mergeMap((r) => {
                     if (!r.headers['authorization']) {
-                        return
+                        return of(true)
                     }
                     const token = extractTokenFromHeader(r.headers['authorization'])
                     const data = this._tokenization.verifyAccessToken(token)
                     if (!data) {
-                        return
+                        return of(true)
                     }
 
                     this._rc.identityInfo.userId = null

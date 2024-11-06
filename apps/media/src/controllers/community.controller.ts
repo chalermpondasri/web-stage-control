@@ -11,6 +11,7 @@ import {
     ApiResponse,
 } from '@nestjs/swagger'
 import { PlayingTrackDto } from '@libs/common/models/media/playing-track.dto'
+import { PlaylistDto } from '@libs/common/models/media/playlist.dto'
 
 @Controller('/communities')
 export class CommunityController {
@@ -20,7 +21,6 @@ export class CommunityController {
         private readonly _playlistService: IPlaylistService
     ) {
     }
-
 
     @ApiOperation({description:'get current playing on the community' })
     @ApiResponse({
@@ -35,10 +35,15 @@ export class CommunityController {
         return this._playlistService.getNowPlaying(communityId)
     }
 
+    @ApiOperation({description:'get playlist' })
+    @ApiResponse({
+        type: PlaylistDto,
+    })
     @Get('/:communityId/playlist')
     public getPlaylist(
         @Param('communityId') communityId: string,
     ) {
+
         return this._playlistService.getPlaylist(communityId)
     }
 

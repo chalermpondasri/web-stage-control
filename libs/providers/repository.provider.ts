@@ -3,7 +3,6 @@ import { ProviderName } from '@libs/common/constants/providerName'
 import { EnvironmentConfig } from '@libs/common/models'
 import { Admin } from '@libs/entities/admin.entity'
 import { Community } from '@libs/entities/community.entity'
-import { Content } from '@libs/entities/content.entity'
 import { User } from '@libs/entities/user.entity'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 import { ArtistElasticRepository } from '@libs/repositories/elasticsearch/artist.elastic.repository'
@@ -12,6 +11,7 @@ import { LineRepository } from '@libs/repositories/line.repository'
 import { Provider } from '@nestjs/common'
 import { AxiosInstance } from 'axios'
 import { DataSource } from 'typeorm'
+import { Playlist } from '@libs/entities/playlist.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -36,11 +36,11 @@ export const ormRepositoryProviders: Provider[] = [
         useFactory: (ds: DataSource) => ds.getRepository(Community),
     },
     {
-        provide: ProviderName.CONTENT_REPOSITORY,
+        provide: ProviderName.PLAYLIST_REPOSITORY,
         inject: [
             ProviderName.ORM_DATASOURCE,
         ],
-        useFactory: (ds: DataSource) => ds.getRepository(Content),
+        useFactory: (ds: DataSource) => ds.getRepository(Playlist),
     },
 ]
 

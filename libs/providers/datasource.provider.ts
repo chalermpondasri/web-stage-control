@@ -4,8 +4,8 @@ import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { Admin } from '@libs/entities/admin.entity'
 import { Community } from '@libs/entities/community.entity'
-import { Content } from '@libs/entities/content.entity'
 import { User } from '@libs/entities/user.entity'
+import { Playlist } from '@libs/entities/playlist.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
@@ -13,7 +13,7 @@ export const ormEntityProvider: Provider = {
         Admin,
         User,
         Community,
-        Content,
+        Playlist,
     ],
 
 }

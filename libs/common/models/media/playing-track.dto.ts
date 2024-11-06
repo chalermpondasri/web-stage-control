@@ -3,13 +3,19 @@ import { Expose } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class PlayingTrackDto {
-    @ApiProperty()
+    @ApiProperty({
+        type: Locale
+    })
     @Expose()
     public title: Locale
 
     @ApiProperty()
     @Expose()
     public artists: string[]
+
+    @ApiProperty()
+    @Expose()
+    public artistImage: string
 
     @ApiProperty()
     @Expose()

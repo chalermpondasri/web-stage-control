@@ -1,8 +1,10 @@
 import {
+    Body,
     Controller,
     Get,
     Inject,
     Param,
+    Patch,
     StreamableFile,
     UseGuards,
 } from '@nestjs/common'
@@ -18,12 +20,13 @@ import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 import { createReadStream } from 'fs'
 import path from 'path'
+import { UpdateProfileRequest } from '@libs/common/models/user/update-profile.request'
 
 @ApiTags(...['user', 'me'])
 @ApiBearerAuth()
 @Controller('/users/me')
 @UseGuards(GenericUserGuard)
-export  class MeController {
+export class MeController {
     public constructor(
         @Inject(ProviderName.USER_SERVICE)
         private readonly _userService: IUserService,
@@ -31,7 +34,7 @@ export  class MeController {
     }
 
     @ApiOperation({
-        description: 'Get user profile'
+        description: 'Get user profile',
     })
     @ApiResponse({
         type: UserProfileDto,
@@ -42,7 +45,17 @@ export  class MeController {
 
     }
 
-    @ApiTags(...['user','me', 'resource'])
+    @ApiResponse({
+        type: UserProfileDto,
+    })
+    @Patch('/')
+    public updateUser(
+        @Body() request: UpdateProfileRequest,
+    ) {
+        return this._userService.updateUserProfile(request)
+    }
+
+    @ApiTags(...['user', 'me', 'resource'])
     @Get('/image/static/:filename')
     public getUserImage(
         @Param('filename') filename: string,

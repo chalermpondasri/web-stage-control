@@ -1,7 +1,6 @@
 import { QueueTrackDto } from '@libs/common/models/media/queue-track.dto'
 import {
     Expose,
-    Type,
 } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 

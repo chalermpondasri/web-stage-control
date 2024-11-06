@@ -41,7 +41,7 @@ export class BroadcastController {
     @ApiOperation({
         description: 'Subscribe for a broadcast message',
     })
-    @Sse('sse')
+    @Sse('/sse')
     public broadcastSSE(): Observable<MessageEvent> {
         return this._broadcastService.sse()
     }

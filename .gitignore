@@ -45,3 +45,4 @@ lerna-debug.log*
 /tmp
 stop-docker-local.sh
 start-docker-local.sh
+cypress/screenshots

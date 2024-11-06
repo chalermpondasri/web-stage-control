@@ -113,6 +113,7 @@ export class BroadcastService {
     ): Observable<ObjectResponse<{ status: boolean }>> {
         // TODO:: Get profile information
         // TODO:: Transaction
+        // TODO:: Blur profile name if body.isShowProfileName = false
         const isContainThai = detectLanguage(body.message) === Lang.Thai
 
         let filteredMessage = body.message
@@ -131,6 +132,7 @@ export class BroadcastService {
         }
 
         body.message = filteredMessage
+
         const eventMessage: any = {
             ...body,
         }

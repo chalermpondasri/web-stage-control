@@ -1,5 +1,6 @@
 import { ProviderName } from '@libs/common/constants'
-import { Body, Controller, Get, Inject, MessageEvent, Post, Query, Sse } from '@nestjs/common'
+import { GenericUserGuard } from '@libs/guards/generic-user.guard'
+import { Body, Controller, Get, Inject, MessageEvent, Post, Query, Sse, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Observable } from 'rxjs'
 import { BroadcastService } from '../domains/broadcast/broadcast.service'

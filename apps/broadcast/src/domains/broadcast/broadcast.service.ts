@@ -4,7 +4,7 @@ import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { StickerListResponseDataItem } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
-import { Body, Injectable, Logger, MessageEvent, Sse } from '@nestjs/common'
+import { Body, Logger, MessageEvent, Sse } from '@nestjs/common'
 import fs from 'fs'
 import path from 'path'
 import { catchError, from, map, Observable, switchMap } from 'rxjs'
@@ -13,7 +13,6 @@ import { Repository } from 'typeorm'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from './dtos/broadcast.dto'
 const FilterApi = Function("return import('bad-words')")()
 
-@Injectable()
 export class BroadcastService {
     private readonly _logger = new Logger(BroadcastService.name)
     private _thWords: string[] = []

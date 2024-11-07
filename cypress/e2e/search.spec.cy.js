@@ -163,7 +163,6 @@ describe('Search API', () => {
     })
 
     it('should get album by id', () => {
-        cy.log('HELLOOOOOOO')
         makeRequest('GET', '/album/100').then((response) => {
             validateResponse(response, 200, false)
             const album = response.body

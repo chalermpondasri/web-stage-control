@@ -23,7 +23,7 @@ RUN npm run build:auth \
     && npm run build:migration \
     && npm run build:mq \
     && npm run build:search \
-    && npm run build:broadcast
+    && npm run build:broadcast \
     && npm run build:media
 
 USER node

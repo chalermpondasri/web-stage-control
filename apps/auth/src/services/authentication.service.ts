@@ -182,7 +182,10 @@ export class AuthenticationService implements IAuthenticationService {
                 if (!data) {
                     return throwError(() => new BadRequestException(ErrorEnum.LOGIN_INVALID_TOKEN))
                 }
-                return this._userRepository.findOneBy({ id: _.get('payload.id', data) })
+
+                const id = _.get(data, 'payload.id')
+
+                return from(this._userRepository.findOneBy({ id }))
             }),
             map((model) => this._generateUserToken(model)),
         )

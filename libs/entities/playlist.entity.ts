@@ -39,7 +39,7 @@ export class Playlist {
     public artist: string
 
     @Column({nullable: true})
-    public albumId: string
+    public albumId: number
 
     @Column({nullable: true, type: 'json'})
     public albumName: Locale

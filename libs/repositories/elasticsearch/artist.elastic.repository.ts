@@ -2,7 +2,7 @@ import { Client } from '@elastic/elasticsearch'
 import { SearchResponse, UpdateResponse, WriteResponseBase } from '@elastic/elasticsearch/lib/api/types'
 import { ElasticConstant } from '@libs/common/constants/elastic.constant'
 import { Logger } from '@nestjs/common'
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs'
+import { catchError, from, map, Observable, switchMap } from 'rxjs'
 import { AlbumES } from '../interfaces/search/album.interface'
 import { ArtistES } from '../interfaces/search/artist.interface'
 import { TrackES } from '../interfaces/search/track.interface'
@@ -15,11 +15,7 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
         super(client)
     }
 
-    public addArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
-        return this.indexDocument(ElasticConstant.INDICE.MUSIC, artist)
-    }
-
-    public updateArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
+    private searchArtistByIdInternal(artistId: string): Observable<string> {
         return from(
             this.client.search({
                 index: ElasticConstant.INDICE.MUSIC,
@@ -27,63 +23,7 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
                     query: {
                         bool: {
                             must: [
-                                { match: { id: artist.id } },
-                                { match: { type: 'artist' } },
-                            ],
-                        },
-                    },
-                },
-            }),
-        ).pipe(
-            switchMap((response) => {
-                const id = response.hits.hits[0]?._id
-                if (!id) {
-                    return this.addArtist(artist as ArtistES).pipe(
-                        map((addResponse) => {
-                            const newId = addResponse._id
-                            this.logger.log(`Artist added with ID: ${newId}`)
-                            return newId
-                        }),
-                        catchError((error) => {
-                            this.logger.error(`Error adding artist: ${error.message}`)
-                            throw error
-                        }),
-                    )
-                }
-                this.logger.log(`Artist found: ${id}`)
-                return of(id)
-            }),
-            switchMap((id) => {
-                return from(
-                    this.client
-                        .update({
-                            index: ElasticConstant.INDICE.MUSIC,
-                            id: id.toString(),
-                            body: {
-                                doc: artist,
-                            },
-                        })
-                        .then((response: UpdateResponse<unknown>) => {
-                            return response as WriteResponseBase
-                        }),
-                )
-            }),
-            catchError((error) => {
-                this.logger.error(`Error updating artist: ${error.message}`)
-                throw error
-            }),
-        )
-    }
-
-    public deleteArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
-        return from(
-            this.client.search({
-                index: ElasticConstant.INDICE.MUSIC,
-                body: {
-                    query: {
-                        bool: {
-                            must: [
-                                { match: { id: artist.id } },
+                                { match: { id: artistId } },
                                 { match: { type: 'artist' } },
                             ],
                         },
@@ -99,6 +39,45 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
                 this.logger.log(`Artist found: ${id}`)
                 return id
             }),
+            catchError((error) => {
+                this.logger.error(`Error searching artist by ID: ${error.message}`)
+                throw error
+            }),
+        )
+    }
+
+    public addArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
+        return this.indexDocument(ElasticConstant.INDICE.MUSIC, artist)
+    }
+
+    public updateArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
+        return this.searchArtistByIdInternal(artist.id.toString()).pipe(
+            switchMap((id) => {
+                return from(
+                    this.client.update({
+                        index: ElasticConstant.INDICE.MUSIC,
+                        id: id.toString(),
+                        body: {
+                            doc: artist,
+                        },
+                    }),
+                ).pipe(
+                    map((response: UpdateResponse<unknown>) => response as WriteResponseBase),
+                    catchError((error) => {
+                        this.logger.error(`Error updating artist: ${error.message}`)
+                        throw error
+                    }),
+                )
+            }),
+            catchError((error) => {
+                this.logger.error(`Error updating artist: ${error.message}`)
+                throw error
+            }),
+        )
+    }
+
+    public deleteArtist(artist: Partial<ArtistES>): Observable<WriteResponseBase> {
+        return this.searchArtistByIdInternal(artist.id.toString()).pipe(
             switchMap((id) =>
                 from(
                     this.client.delete({
@@ -144,7 +123,7 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
                             sources: [
                                 { artist_id: { terms: { field: 'artist_ids' } } },
                             ],
-                            size: 10000, // Connot more than 65k, which means artist in the system cannot exceed this number.
+                            size: 10000, // Cannot exceed 65k, which means artists in the system cannot exceed this number.
                         },
                         aggs: {
                             total_hit_counts: {
@@ -168,7 +147,6 @@ export class ArtistElasticRepository extends ElasticsearchRepository {
 
         return from(promise).pipe(
             map((response) => {
-                console.log((response.aggregations.top_artists as any).buckets)
                 const topArtists = (response.aggregations.top_artists as any).buckets.map((bucket) => ({
                     artist_id: bucket.key.artist_id,
                     total_hit_counts: bucket.total_hit_counts.value,

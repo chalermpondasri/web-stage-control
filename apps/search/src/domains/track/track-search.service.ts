@@ -61,13 +61,7 @@ export class SearchTrackService implements ITrackService {
                         })
                         .flat(2)
 
-                    const listResponse = new ListResponse<TrackSearchDto | ArtistSearchDto | AlbumSearchDto>()
-                    listResponse.data = found
-                    listResponse.total = (response.hits.total as SearchTotalHits).value
-                    listResponse.page = page
-                    listResponse.limit = limit
-
-                    return listResponse
+                    return this.createListResponse(found, response.hits.total as SearchTotalHits, page, limit)
                 }),
                 catchError((err) => {
                     this.logger.error(`Error searching tracks: ${err}`)
@@ -108,40 +102,46 @@ export class SearchTrackService implements ITrackService {
         return albumDto
     }
 
+    private createListResponse<T>(data: T[], totalHits: SearchTotalHits, page: number, limit: number): ListResponse<T> {
+        const listResponse = new ListResponse<T>()
+        listResponse.data = data
+        listResponse.total = totalHits.value
+        listResponse.page = page
+        listResponse.limit = limit
+        return listResponse
+    }
+
+    private processTrackData(hit: SearchHit<TrackES>): Observable<SearchHit<TrackES>> {
+        return this.trackRepository.getTrackRelatedData(hit._source, true, true).pipe(
+            map((track) => {
+                track.artists.forEach((artist) => {
+                    delete artist.image
+                    delete artist.coverImage
+                })
+
+                if (track.album) {
+                    delete track.album.image
+                    delete track.album.releaseDate
+                }
+
+                hit._source = track
+                return hit
+            }),
+        )
+    }
+
     public getNewTracks(): Observable<ListResponse<TrackSearchDto>> {
         return this.trackRepository.getNewTracks().pipe(
             switchMap((response) => {
                 const hits = response.hits.hits as SearchHit<TrackES>[]
-                const trackObservables = hits.map((hit) =>
-                    this.trackRepository.getTrackRelatedData(hit._source, true, true).pipe(
-                        map((track) => {
-                            track.artists.forEach((artist) => {
-                                delete artist.image
-                                delete artist.coverImage
-                            })
-
-                            if (track.album) {
-                                delete track.album.image
-                                delete track.album.releaseDate
-                            }
-
-                            hit._source = track
-                            return hit
-                        }),
-                    ),
-                )
+                const trackObservables = hits.map((hit) => this.processTrackData(hit))
 
                 return forkJoin(trackObservables).pipe(map(() => response))
             }),
             map((response) => {
                 const hits = response.hits.hits as SearchHit<TrackES>[]
                 const tracks = hits.map((hit) => this.getTrackSearchDto(hit))
-                const listResponse = new ListResponse<TrackSearchDto>()
-                listResponse.data = tracks
-                listResponse.total = (response.hits.total as SearchTotalHits).value
-                listResponse.page = 1
-                listResponse.limit = tracks.length
-                return listResponse
+                return this.createListResponse(tracks, response.hits.total as SearchTotalHits, 1, tracks.length)
             }),
             catchError((err) => {
                 this.logger.error(`Error getting new tracks: ${err}`)
@@ -154,36 +154,14 @@ export class SearchTrackService implements ITrackService {
         return this.trackRepository.getTopTracks().pipe(
             switchMap((response) => {
                 const hits = response.hits.hits as SearchHit<TrackES>[]
-                const trackObservables = hits.map((hit) =>
-                    this.trackRepository.getTrackRelatedData(hit._source, true, true).pipe(
-                        map((track) => {
-                            hit._source = track
-
-                            track.artists.forEach((artist) => {
-                                delete artist.image
-                                delete artist.coverImage
-                            })
-
-                            if (track.album) {
-                                delete track.album.image
-                                delete track.album.releaseDate
-                            }
-                            return hit
-                        }),
-                    ),
-                )
+                const trackObservables = hits.map((hit) => this.processTrackData(hit))
 
                 return forkJoin(trackObservables).pipe(map(() => response))
             }),
             map((response) => {
                 const hits = response.hits.hits as SearchHit<TrackES>[]
                 const tracks = hits.map((hit) => this.getTrackSearchDto(hit))
-                const listResponse = new ListResponse<TrackSearchDto>()
-                listResponse.data = tracks
-                listResponse.total = (response.hits.total as SearchTotalHits).value
-                listResponse.page = 1
-                listResponse.limit = tracks.length
-                return listResponse
+                return this.createListResponse(tracks, response.hits.total as SearchTotalHits, 1, tracks.length)
             }),
             catchError((err) => {
                 this.logger.error(`Error getting top tracks: ${err}`)
@@ -217,17 +195,15 @@ export class SearchTrackService implements ITrackService {
             map((response) => {
                 const hit = response.hits.hits[0] as SearchHit<TrackES>
                 const foundLang = Lang.Thai
-                return this.getTrackSearchDto(hit, foundLang)
-            }),
-            map((track) => {
-                const listResponse = new ListResponse<TrackSearchDto>()
-                listResponse.data = [
-                    track,
-                ]
-                listResponse.total = 1
-                listResponse.page = 1
-                listResponse.limit = 1
-                return listResponse
+                const track = this.getTrackSearchDto(hit, foundLang)
+                return this.createListResponse(
+                    [
+                        track,
+                    ],
+                    response.hits.total as SearchTotalHits,
+                    1,
+                    1,
+                )
             }),
             catchError((err) => {
                 this.logger.error(`Error searching track by id:`)

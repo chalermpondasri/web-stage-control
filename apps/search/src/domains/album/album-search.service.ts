@@ -1,6 +1,6 @@
 import { SearchHit, SearchResponse, SearchTotalHits } from '@elastic/elasticsearch/lib/api/types'
 import { ProviderName } from '@libs/common/constants'
-import { ListResponse, ObjectResponse } from '@libs/common/models'
+import { ListResponse } from '@libs/common/models'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
@@ -22,7 +22,7 @@ export class SearchAlbumService {
         private albumRepository: AlbumElasticRepository,
     ) {}
 
-    public searchAlbumById(id: number): Observable<ObjectResponse<AlbumSearchDto>> {
+    public searchAlbumById(id: number): Observable<AlbumSearchDto> {
         if (!id) {
             throw new Error('id is required')
         }
@@ -64,15 +64,6 @@ export class SearchAlbumService {
                 const hit = response.hits.hits[0] as SearchHit<AlbumES>
                 const foundLang = Lang.Thai
                 return this.getAlbumSearchDto(hit, foundLang)
-            }),
-            map((album) => {
-                const listResponse = new ObjectResponse<AlbumSearchDto>()
-                listResponse.data = album
-                listResponse.total = 1
-                listResponse.page = 1
-                listResponse.limit = 1
-
-                return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error searching album by id: ${err}`)

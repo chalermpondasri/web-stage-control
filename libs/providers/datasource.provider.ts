@@ -1,11 +1,12 @@
 import { ProviderName } from '@libs/common/constants/providerName'
 import { EnvironmentConfig } from '@libs/common/models'
+import { Admin } from '@libs/entities/admin.entity'
+import { Broadcast } from '@libs/entities/broadcast.entity'
+import { Community } from '@libs/entities/community.entity'
+import { Playlist } from '@libs/entities/playlist.entity'
+import { User } from '@libs/entities/user.entity'
 import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
-import { Admin } from '@libs/entities/admin.entity'
-import { Community } from '@libs/entities/community.entity'
-import { User } from '@libs/entities/user.entity'
-import { Playlist } from '@libs/entities/playlist.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
@@ -14,12 +15,15 @@ export const ormEntityProvider: Provider = {
         User,
         Community,
         Playlist,
+        Broadcast,
     ],
-
 }
 export const ormDatasourceProvider: Provider = {
     provide: ProviderName.ORM_DATASOURCE,
-    inject: [ProviderName.ENV_CONFIG, ProviderName.ORM_ENTITY],
+    inject: [
+        ProviderName.ENV_CONFIG,
+        ProviderName.ORM_ENTITY,
+    ],
     useFactory: async (config: EnvironmentConfig, entities) => {
         return await new DataSource({
             type: 'postgres',

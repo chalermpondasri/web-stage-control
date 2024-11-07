@@ -2,6 +2,7 @@ import { Client } from '@elastic/elasticsearch'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { EnvironmentConfig } from '@libs/common/models'
 import { Admin } from '@libs/entities/admin.entity'
+import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
@@ -41,6 +42,13 @@ export const ormRepositoryProviders: Provider[] = [
             ProviderName.ORM_DATASOURCE,
         ],
         useFactory: (ds: DataSource) => ds.getRepository(Playlist),
+    },
+    {
+        provide: ProviderName.BROADCAST_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(Broadcast),
     },
 ]
 

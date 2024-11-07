@@ -15,6 +15,7 @@ COPY tsconfig.json .
 COPY apps ./apps
 COPY libs ./libs
 COPY static ./static
+COPY assets ./assets
 
 USER root
 RUN npm install
@@ -22,6 +23,7 @@ RUN npm run build:auth \
     && npm run build:migration \
     && npm run build:mq \
     && npm run build:search \
+    && npm run build:broadcast
     && npm run build:media
 
 USER node

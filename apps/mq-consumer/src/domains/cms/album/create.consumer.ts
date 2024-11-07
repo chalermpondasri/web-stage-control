@@ -6,21 +6,16 @@ import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.e
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ConsumeMessage } from 'amqplib'
+import { getRabbitSubscribeConfig, handleError, isValidMessage } from 'apps/mq-consumer/src/utils/consumer.util'
 import { AlbumEsDto } from 'apps/search/src/domains/album/dtos/album.dto'
 import { catchError, firstValueFrom } from 'rxjs'
 
-const rabbitSubscribeConfig = {
-    exchange: `${process.env.NODE_ENV}_${EXCHANGES.EVENT_BUS}`,
-    routingKey: 'album.created',
-    queue: QUEUES.ALBUM_CREATE,
-    queueOptions: {
-        durable: true,
-        autoDelete: false,
-        exclusive: false,
-        deadLetterExchange: EXCHANGES.ALBUM_DL,
-        deadLetterRoutingKey: 'album.created.dlq',
-    },
-}
+const rabbitSubscribeConfig = getRabbitSubscribeConfig(
+    QUEUES.ALBUM_CREATE,
+    'album.created',
+    EXCHANGES.ALBUM_DL,
+    'album.created.dlq',
+)
 
 @Injectable()
 export class AlbumCreateConsumer {
@@ -31,19 +26,13 @@ export class AlbumCreateConsumer {
 
         @Inject(ProviderName.ALBUM_REPOSITORY)
         private albumRepository: AlbumElasticRepository,
-    ) {}
+    ) {
+        this._logger.log(this._envConfig.MESSAGE_BROKER_HOST)
+    }
 
     @RabbitSubscribe(rabbitSubscribeConfig)
     public async pubSubHandler(msg: {}, amqpMsg: ConsumeMessage) {
-        if (!msg['payload']) {
-            this._logger.error('Invalid message format: no payload')
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ALBUM_DL)
-            return new Nack()
-        }
-
-        if (msg['event'] !== 'album.created') {
-            this._logger.error('Invalid event type: ' + msg['event'])
-            this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ALBUM_DL)
+        if (!isValidMessage(this._logger, msg, EXCHANGES.ALBUM_DL)) {
             return new Nack()
         }
 
@@ -55,13 +44,11 @@ export class AlbumCreateConsumer {
             await firstValueFrom(
                 this.albumRepository.addAlbum(album).pipe(
                     catchError((error) => {
-                        this._logger.error(`Error indexing document: ${error}`)
-                        this._logger.error('Moving message to dead letter queue: ' + EXCHANGES.ARTIST_DL)
+                        handleError(this._logger, error, EXCHANGES.ALBUM_DL)
                         throw error
                     }),
                 ),
             )
-
             this._logger.log(`Document created successfully`)
         } catch (error) {
             return new Nack()

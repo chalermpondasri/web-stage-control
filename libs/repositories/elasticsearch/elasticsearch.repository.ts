@@ -17,6 +17,64 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
     private readonly _logger: Logger = new Logger(ElasticsearchRepository.name)
     public constructor(private readonly _client: Client) {}
 
+    private albumCache = new Map<string, AlbumES | null>()
+    private artistCache = new Map<string, ArtistES | null>()
+    private trackCache = new Map<string, TrackES | null>()
+
+    private getAlbum(albumId: string): Observable<AlbumES | null> {
+        if (this.albumCache.has(albumId)) {
+            return of(this.albumCache.get(albumId))
+        }
+
+        return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+            id: albumId,
+            type: 'album',
+        }).pipe(
+            map((doc) => {
+                const album =
+                    (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as AlbumES)
+                this.albumCache.set(albumId, album)
+                return album
+            }),
+        )
+    }
+
+    private getArtist(artistId: string): Observable<ArtistES | null> {
+        if (this.artistCache.has(artistId)) {
+            return of(this.artistCache.get(artistId))
+        }
+
+        return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+            id: artistId,
+            type: 'artist',
+        }).pipe(
+            map((doc) => {
+                const artist =
+                    (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as ArtistES)
+                this.artistCache.set(artistId, artist)
+                return artist
+            }),
+        )
+    }
+
+    private getTrack(trackId: string): Observable<TrackES | null> {
+        if (this.trackCache.has(trackId)) {
+            return of(this.trackCache.get(trackId))
+        }
+
+        return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
+            id: trackId,
+            type: 'track',
+        }).pipe(
+            map((doc) => {
+                const track =
+                    (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as TrackES)
+                this.trackCache.set(trackId, track)
+                return track
+            }),
+        )
+    }
+
     public getDocument(index: string, id: string): Observable<GetResponse<any>> {
         const promise = this._client.get({
             index,
@@ -141,65 +199,9 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
         isFetchRelateOfAlbum = true,
         isFetchRelateOfArtist = true,
     ): Observable<SearchResponse<TrackES | ArtistES | AlbumES>> {
+        this._clearCache()
+
         const hits = searchResponse.hits.hits
-
-        const albumCache = new Map<string, AlbumES | null>()
-        const artistCache = new Map<string, ArtistES | null>()
-        const trackCache = new Map<string, TrackES | null>()
-
-        const getAlbum = (albumId: string): Observable<AlbumES | null> => {
-            if (albumCache.has(albumId)) {
-                return of(albumCache.get(albumId))
-            }
-
-            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: albumId,
-                type: 'album',
-            }).pipe(
-                map((doc) => {
-                    const album =
-                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as AlbumES)
-                    albumCache.set(albumId, album)
-                    return album
-                }),
-            )
-        }
-
-        const getArtist = (artistId: string): Observable<ArtistES | null> => {
-            if (artistCache.has(artistId)) {
-                return of(artistCache.get(artistId))
-            }
-
-            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: artistId,
-                type: 'artist',
-            }).pipe(
-                map((doc) => {
-                    const artist =
-                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as ArtistES)
-                    artistCache.set(artistId, artist)
-                    return artist
-                }),
-            )
-        }
-
-        const getTrack = (trackId: string): Observable<TrackES | null> => {
-            if (trackCache.has(trackId)) {
-                return of(trackCache.get(trackId))
-            }
-
-            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: trackId,
-                type: 'track',
-            }).pipe(
-                map((doc) => {
-                    const track =
-                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as TrackES)
-                    trackCache.set(trackId, track)
-                    return track
-                }),
-            )
-        }
 
         const observables = hits.map((hit) => {
             if (hit._source.type === 'track' && isFetchRelateOfTrack) {
@@ -208,7 +210,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 source.album = null
 
                 const albumObservable = source.album_id
-                    ? getAlbum(source.album_id.toString()).pipe(
+                    ? this.getAlbum(source.album_id.toString()).pipe(
                           map((album) => {
                               source.album = album
                               return source
@@ -218,7 +220,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
                 const artistObservables = source.artist_ids
                     ? source.artist_ids.map((artistId) =>
-                          getArtist(artistId.toString()).pipe(
+                          this.getArtist(artistId.toString()).pipe(
                               map((artist) => {
                                   source.artists.push(artist)
                                   return source
@@ -242,7 +244,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
                 const artistObservables = source.artist_ids
                     ? source.artist_ids.map((artistId) =>
-                          getArtist(artistId.toString()).pipe(
+                          this.getArtist(artistId.toString()).pipe(
                               map((artist) => {
                                   source.artists.push(artist)
                                   return source
@@ -255,7 +257,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
                 const trackObservables = source.track_ids
                     ? source.track_ids.map((trackId) =>
-                          getTrack(trackId.toString()).pipe(
+                          this.getTrack(trackId.toString()).pipe(
                               map((track) => {
                                   source.tracks.push(track)
                                   return source
@@ -279,7 +281,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
                 const albumObservables = source.album_ids
                     ? source.album_ids.map((albumId) =>
-                          getAlbum(albumId.toString()).pipe(
+                          this.getAlbum(albumId.toString()).pipe(
                               map((album) => {
                                   source.albums.push(album)
                                   return source
@@ -292,7 +294,7 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
 
                 const trackObservables = source.track_ids
                     ? source.track_ids.map((trackId) =>
-                          getTrack(trackId.toString()).pipe(
+                          this.getTrack(trackId.toString()).pipe(
                               map((track) => {
                                   source.tracks.push(track)
                                   return source
@@ -320,53 +322,14 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
     }
 
     public getTrackRelatedData(track: TrackES, isGetAlbum = false, isGetArtist = false): Observable<TrackES> {
-        const albumCache = new Map<string, AlbumES | null>()
-        const artistCache = new Map<string, ArtistES | null>()
-
-        const getAlbum = (albumId: string): Observable<AlbumES | null> => {
-            if (albumCache.has(albumId)) {
-                return of(albumCache.get(albumId))
-            }
-
-            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: albumId,
-                type: 'album',
-            }).pipe(
-                map((doc) => {
-                    const album =
-                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as AlbumES)
-                    albumCache.set(albumId, album)
-                    return album
-                }),
-            )
-        }
-
-        const getArtist = (artistId: string): Observable<ArtistES | null> => {
-            if (artistCache.has(artistId)) {
-                return of(artistCache.get(artistId))
-            }
-
-            return this.searchDocument(ElasticConstant.INDICE.MUSIC, {
-                id: artistId,
-                type: 'artist',
-            }).pipe(
-                map((doc) => {
-                    const artist =
-                        (doc.hits.total as SearchTotalHits).value === 0 ? null : (doc.hits.hits[0]._source as ArtistES)
-                    artistCache.set(artistId, artist)
-                    return artist
-                }),
-            )
-        }
-
         let albumObservable: Observable<AlbumES | null> = of(null)
         if (isGetAlbum && track.album_id) {
-            albumObservable = getAlbum(track.album_id.toString())
+            albumObservable = this.getAlbum(track.album_id.toString())
         }
 
         let artistObservables: Observable<ArtistES | null>[] = []
         if (isGetArtist && track.artist_ids && track.artist_ids.length > 0) {
-            artistObservables = track.artist_ids.filter((id) => id).map((id) => getArtist(id.toString()))
+            artistObservables = track.artist_ids.filter((id) => id).map((id) => this.getArtist(id.toString()))
         }
 
         if (!isGetAlbum && artistObservables.length === 0) {
@@ -400,5 +363,11 @@ export abstract class ElasticsearchRepository implements ISearchRepository {
                 throw error
             }),
         )
+    }
+
+    private _clearCache() {
+        this.albumCache.clear()
+        this.artistCache.clear()
+        this.trackCache.clear()
     }
 }

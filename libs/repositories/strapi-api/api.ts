@@ -2735,42 +2735,6 @@ export interface CoinPackage {
     'purchasable': boolean;
     /**
      * 
-     * @type {number}
-     * @memberof CoinPackage
-     */
-    'discountFix'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackage
-     */
-    'discountPercent'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CoinPackage
-     */
-    'discountStart'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CoinPackage
-     */
-    'discountEnd'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackage
-     */
-    'totalSold'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackage
-     */
-    'totalRevenue'?: number;
-    /**
-     * 
      * @type {string}
      * @memberof CoinPackage
      */
@@ -2893,42 +2857,6 @@ export interface CoinPackageRequestData {
      * @memberof CoinPackageRequestData
      */
     'purchasable': boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackageRequestData
-     */
-    'discountFix'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackageRequestData
-     */
-    'discountPercent'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CoinPackageRequestData
-     */
-    'discountStart'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CoinPackageRequestData
-     */
-    'discountEnd'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackageRequestData
-     */
-    'totalSold'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof CoinPackageRequestData
-     */
-    'totalRevenue'?: number;
 }
 /**
  * 
@@ -3787,36 +3715,6 @@ export interface Sticker {
     'purchasable': boolean;
     /**
      * 
-     * @type {number}
-     * @memberof Sticker
-     */
-    'totalSold'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Sticker
-     */
-    'discountFix'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Sticker
-     */
-    'discountPercent'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sticker
-     */
-    'discountStart'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sticker
-     */
-    'discountEnd'?: string;
-    /**
-     * 
      * @type {boolean}
      * @memberof Sticker
      */
@@ -3827,12 +3725,6 @@ export interface Sticker {
      * @memberof Sticker
      */
     'description'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Sticker
-     */
-    'totalRevenue'?: number;
     /**
      * 
      * @type {string}
@@ -3959,36 +3851,6 @@ export interface StickerRequestData {
     'purchasable': boolean;
     /**
      * 
-     * @type {number}
-     * @memberof StickerRequestData
-     */
-    'totalSold'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StickerRequestData
-     */
-    'discountFix'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StickerRequestData
-     */
-    'discountPercent'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof StickerRequestData
-     */
-    'discountStart'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof StickerRequestData
-     */
-    'discountEnd'?: string;
-    /**
-     * 
      * @type {boolean}
      * @memberof StickerRequestData
      */
@@ -3999,12 +3861,6 @@ export interface StickerRequestData {
      * @memberof StickerRequestData
      */
     'description'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof StickerRequestData
-     */
-    'totalRevenue'?: number;
 }
 /**
  * 

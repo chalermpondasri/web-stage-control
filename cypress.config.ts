@@ -5,11 +5,11 @@ import dotenvExpand from 'dotenv-expand'
 export default defineConfig({
     e2e: {
         setupNodeEvents(on, config) {
-            // Load .env file
             const myEnv = dotenv.config()
             dotenvExpand.expand(myEnv)
 
-            // Assign environment variables to Cypress config
+            require('cypress-terminal-report/src/installLogsPrinter')(on)
+
             config.env = {
                 ...config.env,
                 ...process.env,

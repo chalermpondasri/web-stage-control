@@ -12,3 +12,7 @@ export enum Lang {
     Thai = 'Thai',
     Other = 'Other',
 }
+
+export function blurProfileName(name: string): string {
+    return `${name.charAt(0)}${name.charAt(1)}******`
+}

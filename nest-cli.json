@@ -53,6 +53,15 @@
             "compilerOptions": {
                 "tsConfigPath": "apps/media/tsconfig.app.json"
             }
+        },
+        "broadcast": {
+            "type": "application",
+            "root": "apps/broadcast",
+            "entryFile": "index",
+            "sourceRoot": "apps/broadcast/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/broadcast/tsconfig.app.json"
+            }
         }
     }
 }

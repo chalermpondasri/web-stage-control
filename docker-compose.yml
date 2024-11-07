@@ -101,6 +101,8 @@ services:
       - billboard-network
     command: node dist/apps/media
     restart: always
+    ports:
+      - 3304:3000
 
   # service-scheduler:
   #   image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging

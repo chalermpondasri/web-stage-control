@@ -41,7 +41,7 @@ export class PlaylistService implements IPlaylistService {
 
                 const opts: FindManyOptions<Playlist> = {
                     where: { communityId: communityId, queueState: QueueState.QUEUED },
-                    take: 5,
+                    take: 10,
                     order: {
                         totalBoost: 'desc',
                         updatedAt: 'desc',
@@ -51,39 +51,15 @@ export class PlaylistService implements IPlaylistService {
             }),
             map(([playlist, total]) => {
 
-                // TODO add list from cms
                 const dto = new PlaylistDto()
                 dto.communityId = communityId
-                dto.queue = [
-                    plainToInstance(QueueTrackDto, {
-                        trackId: 1,
-                        title: plainToInstance(Locale, { en: 'Wad Wai', th: 'วาดไว้' }),
-                        artists: ['Bowkylion'],
-                        coverImage: 'https://placehold.co/400?text=Bowkylion',
-                        totalCoins: 999,
-                    }),
-                    plainToInstance(QueueTrackDto, {
-                        trackId: 2,
-                        title: plainToInstance(Locale, { en: 'Day One', th: 'Day One' }),
-                        artists: ['PUN'],
-                        coverImage: 'https://placehold.co/400?text=PUN',
-                        totalCoins: 777,
-                    }),
-                    plainToInstance(QueueTrackDto, {
-                        trackId: 3,
-                        title: plainToInstance(Locale, { en: 'Proud', th: 'Proud' }),
-                        artists: ['fellow fellow'],
-                        coverImage: 'https://placehold.co/400?text=fellow fellow',
-                        totalCoins: 666,
-                    }),
-                    plainToInstance(QueueTrackDto, {
-                        trackId: 4,
-                        title: plainToInstance(Locale, { en: 'Perfume', th: 'น้ำหอม' }),
-                        artists: ['COCKTAIL', 'Papa Roach?'],
-                        coverImage: 'https://placehold.co/400?text=COCKTAIL',
-                        totalCoins: 666,
-                    }),
-                ]
+                dto.queue = playlist.map(p => plainToInstance(QueueTrackDto, {
+                    trackId: p.trackId,
+                    title: plainToInstance(Locale, { en: p.title, th: p.title }),
+                    artists: p.artist,
+                    coverImage: p.coverImage,
+                    totalCoins: p.totalBoost,
+                }))
 
                 return dto
 

@@ -54,6 +54,15 @@
                 "tsConfigPath": "apps/media/tsconfig.app.json"
             }
         },
+        "payment": {
+            "type": "application",
+            "root": "apps/payment",
+            "entryFile": "index",
+            "sourceRoot": "apps/payment/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/payment/tsconfig.app.json"
+            }
+        },
         "broadcast": {
             "type": "application",
             "root": "apps/broadcast",

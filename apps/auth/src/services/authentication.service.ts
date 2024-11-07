@@ -132,7 +132,7 @@ export class AuthenticationService implements IAuthenticationService {
                         if (!!user) {
                             //TODO for testing purpose
                             user.remainCoins = 9999
-                            return this._userRepository.save(user)
+                            return fromPromise(this._userRepository.save(user))
                         }
                         const entity = this._userRepository.create({
                             lineId: sub,
@@ -147,7 +147,7 @@ export class AuthenticationService implements IAuthenticationService {
                                 return fromPromise(this._downloadImage(user.id, picture)).pipe(
                                     mergeMap(() => {
                                         user.picture = `/static/${user.id}`
-                                        return this._userRepository.save(user)
+                                        return fromPromise(this._userRepository.save(user))
                                     }),
                                 )
                             }),

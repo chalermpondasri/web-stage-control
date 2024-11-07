@@ -1,6 +1,6 @@
 import { Jwt, decode, sign, verify } from 'jsonwebtoken'
 import { v4 } from 'uuid'
-import { IKeySigner } from './interfaces/tokenization-service.interface'
+import { IKeySigner } from '@libs/providers/tokenization/tokenization-service.interface'
 
 export class JwtSignerService implements IKeySigner {
     private readonly _secret: Buffer

@@ -1,6 +1,6 @@
 import { Jwt } from 'jsonwebtoken'
-import { JwtSignerService } from './jwt-signer.service'
-import { ITokenizationService } from './interfaces/tokenization-service.interface'
+import { JwtSignerService } from '../../../apps/auth/src/services/jwt-signer.service'
+import { ITokenizationService } from './tokenization-service.interface'
 
 export class TokenizationService implements ITokenizationService {
     private readonly _accessTokenSigner: JwtSignerService

@@ -3,7 +3,7 @@ import { EnvironmentConfig } from '@libs/common/models'
 import { Admin } from '@libs/entities/admin.entity'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
-import { Content } from '@libs/entities/content.entity'
+import { Playlist } from '@libs/entities/playlist.entity'
 import { User } from '@libs/entities/user.entity'
 import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
@@ -14,7 +14,7 @@ export const ormEntityProvider: Provider = {
         Admin,
         User,
         Community,
-        Content,
+        Playlist,
         Broadcast,
     ],
 }

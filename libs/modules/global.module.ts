@@ -7,6 +7,8 @@ import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/provid
 import { requestContextProvider } from '@libs/providers/request-context.provider'
 import { strapiClientProvider } from '@libs/providers/strapi-client.provider'
 import { Global, Module } from '@nestjs/common'
+import { tokenizationServiceProvider } from '../../apps/auth/src/providers/service.provider'
+
 @Global()
 @Module({
     providers: [
@@ -14,22 +16,26 @@ import { Global, Module } from '@nestjs/common'
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
         broadcastSseProvider,
+        tokenizationServiceProvider,
     ],
     exports: [
         envConfigProvider,
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,
         strapiClientProvider,
         broadcastSseProvider,
+        tokenizationServiceProvider,
     ],
 })
 export class GlobalModule {}

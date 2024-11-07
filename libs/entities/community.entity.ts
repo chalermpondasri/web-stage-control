@@ -3,14 +3,13 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    JoinColumn,
     ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-import { Content } from '@libs/entities/content.entity'
 import { Admin } from '@libs/entities/admin.entity'
+import { Playlist } from '@libs/entities/playlist.entity'
 
 @Entity({
     comment: 'community entity',
@@ -34,9 +33,9 @@ export class Community {
     @Column({nullable: true})
     public coverImage: string
 
-    @JoinColumn()
-    @OneToMany(() => Content, target => target.communityId)
-    public playlist: Content[]
+
+    @OneToMany(() => Playlist, target => target)
+    public playlist: Promise<Playlist[]>
 
     @ManyToMany(() => Admin, admin => admin.communities)
     public admins: Admin[]

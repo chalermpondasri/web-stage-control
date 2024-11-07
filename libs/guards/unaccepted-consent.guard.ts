@@ -12,7 +12,7 @@ import {
     Observable,
     of,
 } from 'rxjs'
-import { ITokenizationService } from '../../apps/auth/src/services/interfaces/tokenization-service.interface'
+import { ITokenizationService } from '../providers/tokenization/tokenization-service.interface'
 
 @Injectable()
 export class UnacceptedConsentGuard implements CanActivate {

@@ -18,7 +18,7 @@ import {
 } from 'rxjs'
 import { IAuthenticationService } from './interfaces/authentication-service.interface'
 import { IEncryptionService } from '@libs/providers/encryption.provider'
-import { ITokenizationService } from './interfaces/tokenization-service.interface'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
 import {
     instanceToPlain,
@@ -143,7 +143,9 @@ export class AuthenticationService implements IAuthenticationService {
                 return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
                         if (!!user) {
-                            return of(user)
+                            //TODO for testing purpose
+                            user.remainCoins = 9999
+                            return this._userRepository.save(user)
                         }
                         const entity = this._userRepository.create({
                             lineId: sub,

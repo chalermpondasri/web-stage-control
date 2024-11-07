@@ -1,4 +1,3 @@
-import { ProviderName } from '@libs/common/constants'
 import {
     BadRequestException,
     Inject,
@@ -9,12 +8,15 @@ import {
     Scope,
 } from '@nestjs/common'
 import {
+    Language,
+    parse,
+} from 'accept-language-parser'
+import {
     NextFunction,
     Request,
     Response,
 } from 'express'
 import {
-    EMPTY,
     from,
     mergeMap,
     of,
@@ -23,32 +25,42 @@ import {
 import { get } from 'lodash'
 import { IResult } from 'ua-parser-js'
 import { v4 } from 'uuid'
-import { ITokenizationService } from '../../apps/auth/src/services/interfaces/tokenization-service.interface'
 import { User } from '@libs/entities/user.entity'
 import { Repository } from 'typeorm'
 import { UaParserUtil } from '@libs/utilities/ua-parser/ua-parser.util'
 import { extractTokenFromHeader } from '@libs/utilities/token.util'
 import { isNil } from '@nestjs/common/utils/shared.utils'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import { ProviderName } from '@libs/common/constants/providerName'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
 interface IdentityInfo {
     userId: string
     token: string
     userAgent: IResult
+    deviceId: string
+    profileId: string
 }
 
 export class RequestContext {
     public readonly ts = Date.now()
     public readonly requestId = v4()
     public request: Request
+    public languages: Language[] = []
     public identityInfo: IdentityInfo
 
     public constructor() {
         this.identityInfo = {
             token: null,
             userId: null,
+            profileId: null,
             userAgent: null,
+            deviceId: null,
         }
+    }
+
+    public parseLanguageFromHeader(acceptLang: string): void {
+        this.languages = parse(acceptLang)
     }
 
     public toJson() {
@@ -56,6 +68,7 @@ export class RequestContext {
             timestamp: new Date(this.ts).toISOString(),
             requestId: this.requestId,
             identityInfo: this.identityInfo,
+            language: this.languages.map((v) => ({ ...v })),
         }
     }
 }
@@ -89,13 +102,13 @@ export class RequestContextMiddleware implements NestMiddleware {
                 }),
                 mergeMap((r) => {
                     if (!r.headers['authorization']) {
-                        return EMPTY
+                        return of(true)
                     }
                     const token = extractTokenFromHeader(r.headers['authorization'])
                     const data = this._tokenization.verifyAccessToken(token)
 
                     if (!data) {
-                        return EMPTY
+                        return of(true)
                     }
                     const userId = get(data.payload, 'id', null)
                     if(isNil(userId)) {

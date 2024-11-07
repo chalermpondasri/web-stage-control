@@ -111,18 +111,18 @@ export class BroadcastService {
         const isContainThai = detectLanguage(body.message) === Lang.Thai
 
         let filteredMessage = body.message
-        let isBadWords = false
+        let isContainsBadWords = false
 
         if (isContainThai) {
             filteredMessage = this.censorThaiCurseWords(body.message)
             if (filteredMessage !== body.message) {
-                isBadWords = true
+                isContainsBadWords = true
             }
         }
 
         filteredMessage = this.badwords.filter(filteredMessage)
         if (filteredMessage !== body.message) {
-            isBadWords = true
+            isContainsBadWords = true
         }
 
         body.message = filteredMessage
@@ -186,6 +186,7 @@ export class BroadcastService {
                     filteredMessage: eventMessage.message,
                     isShowProfileImage: body.isShowProfileImage,
                     isShowProfileName: body.isShowProfileName,
+                    isContainsBadWords,
                 }
                 return objectResponse
             }),

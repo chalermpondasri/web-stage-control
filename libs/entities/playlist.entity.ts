@@ -9,6 +9,7 @@ import {
 } from 'typeorm'
 import { Community } from '@libs/entities/community.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
+import { Locale } from '@libs/common/models'
 
 @Entity()
 export class Playlist {
@@ -36,6 +37,15 @@ export class Playlist {
 
     @Column()
     public artist: string
+
+    @Column({nullable: true})
+    public albumId: string
+
+    @Column({nullable: true, type: 'json'})
+    public albumName: Locale
+
+    @Column({nullable: true, type: 'text'})
+    public albumImageUrl: string
 
     @Column({
         type: 'numeric'

@@ -2,6 +2,19 @@ import { Locale } from '@libs/common/models'
 import { Expose } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
+
+export class AlbumQueueTrackDto {
+    @ApiProperty()
+    @Expose()
+    public albumId: number
+    @ApiProperty({type: Locale})
+    @Expose()
+    public albumName: Locale
+    @ApiProperty()
+    @Expose()
+    public albumImageUrl: string
+}
+
 export class QueueTrackDto {
     @ApiProperty()
     @Expose()
@@ -24,5 +37,8 @@ export class QueueTrackDto {
     @ApiProperty()
     @Expose()
     public totalCoins: number
+
+    @ApiProperty({type: AlbumQueueTrackDto})
+    public album: AlbumQueueTrackDto
 
 }

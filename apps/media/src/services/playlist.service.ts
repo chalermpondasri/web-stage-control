@@ -17,7 +17,10 @@ import { BadRequestException } from '@nestjs/common'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { Playlist } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
-import { QueueTrackDto } from '@libs/common/models/media/queue-track.dto'
+import {
+    AlbumQueueTrackDto,
+    QueueTrackDto,
+} from '@libs/common/models/media/queue-track.dto'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { plainToInstance } from 'class-transformer'
 import { Locale } from '@libs/common/models'
@@ -59,6 +62,11 @@ export class PlaylistService implements IPlaylistService {
                     artists: p.artist,
                     coverImage: p.coverImage,
                     totalCoins: p.totalBoost,
+                    album: plainToInstance(AlbumQueueTrackDto, {
+                        albumId: p.albumId,
+                        albumName: p.albumName,
+                        albumImageUrl: p.albumImageUrl,
+                    })
                 }))
 
                 return dto

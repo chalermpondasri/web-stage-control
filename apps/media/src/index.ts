@@ -15,6 +15,7 @@ async function bootstrap(){
         forceCloseConnections: true,
     })
     app.enableCors()
+    app.setGlobalPrefix('/media')
     const config = new DocumentBuilder()
         .setTitle('Community Billboard')
         .setDescription('Community Billboard API Description')

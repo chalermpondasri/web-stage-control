@@ -15,7 +15,11 @@ import {
     FindOptionsWhere,
     Repository,
 } from 'typeorm'
-import { BadRequestException } from '@nestjs/common'
+import {
+    BadRequestException,
+    Logger,
+    LoggerService,
+} from '@nestjs/common'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { Playlist } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
@@ -26,6 +30,7 @@ import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 
 export class BoostService implements IBoostService {
+    private readonly _logger: LoggerService
     public constructor(
         private readonly _cmsRepository: StrapiClient,
         private readonly _requestContext: RequestContext,
@@ -35,6 +40,8 @@ export class BoostService implements IBoostService {
         private readonly _playlistSubjectEvent: EventSubjectFactory,
         private readonly _albumElasticRepository: AlbumElasticRepository,
     ) {
+        this._logger = new Logger(BoostService.name)
+
     }
 
     public boostMedia(request: BoostRequest): Observable<{success:boolean}> {
@@ -70,10 +77,7 @@ export class BoostService implements IBoostService {
                                return this._albumElasticRepository.getTrackRelatedData(track, true, true)
                             }),
                             mergeMap(result => {
-                                // if ((result.hits.total as SearchTotalHits).value === 0) {
-                                //     return throwError(() => new InternalServerErrorException(ErrorEnum.MEDIA_TRACK_NOT_FOUND))
-                                // }
-
+                                this._logger.log(result)
                                 const track = result
 
                                 const model = this._playlistRepository.create()
@@ -81,7 +85,7 @@ export class BoostService implements IBoostService {
                                 model.coverImage = track.image?.url
                                 model.trackId = track.id
                                 model.title = track.name_th ?? track.name_en
-                                model.artist = !!track.artists ? track.artists.join(',') : ''
+                                model.artist = !!track.artists ? track.artists.map(t => t.name_th).join(',') : ''
                                 model.totalBoost = request.boostCoin
                                 model.duration = track.duration
                                 model.queueState = QueueState.QUEUED

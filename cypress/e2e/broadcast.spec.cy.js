@@ -15,9 +15,10 @@ describe('Search API', () => {
         return cy.request(options)
     }
 
-    const validateResponse = (response, status = 200) => {
+    const validateResponse = (response, status = 200, withData = true) => {
         expect(response.status).to.eq(status)
-        expect(response.body).to.have.property('data')
+
+        if (withData) expect(response.body).to.have.property('data')
     }
 
     const validateItems = (items, properties) => {
@@ -53,10 +54,10 @@ describe('Search API', () => {
                 isShowProfileName: true,
             },
         ).then((response) => {
-            validateResponse(response, 201)
-            expect(response.body.data).to.have.property('filteredMessage')
-            expect(response.body.data.filteredMessage).to.not.include('damn')
-            expect(response.body.data.filteredMessage).to.not.include('ไอ้')
+            validateResponse(response, 201, false)
+            expect(response.body).to.have.property('filteredMessage')
+            expect(response.body.filteredMessage).to.not.include('damn')
+            expect(response.body.filteredMessage).to.not.include('ไอ้')
         })
     })
 })

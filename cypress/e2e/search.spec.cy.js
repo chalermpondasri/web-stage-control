@@ -16,9 +16,10 @@ describe('Search API', () => {
         return cy.request(options)
     }
 
-    const validateResponse = (response, status = 200) => {
+    const validateResponse = (response, status = 200, withData = true) => {
         expect(response.status).to.eq(status)
-        expect(response.body).to.have.property('data')
+
+        if (withData) expect(response.body).to.have.property('data')
     }
 
     const validateItems = (items, properties) => {
@@ -162,9 +163,10 @@ describe('Search API', () => {
     })
 
     it('should get album by id', () => {
+        cy.log('HELLOOOOOOO')
         makeRequest('GET', '/album/100').then((response) => {
-            validateResponse(response)
-            const album = response.body.data
+            validateResponse(response, 200, false)
+            const album = response.body
             validateItems(
                 [
                     album,
@@ -205,8 +207,8 @@ describe('Search API', () => {
 
     it('should get artist by id', () => {
         makeRequest('GET', '/artist/100').then((response) => {
-            validateResponse(response)
-            const artist = response.body.data
+            validateResponse(response, 200, false)
+            const artist = response.body
             validateItems(
                 [
                     artist,

@@ -1,6 +1,6 @@
 import { SearchHit, SearchResponse, SearchTotalHits } from '@elastic/elasticsearch/lib/api/types'
 import { ProviderName } from '@libs/common/constants'
-import { ListResponse, ObjectResponse } from '@libs/common/models'
+import { ListResponse } from '@libs/common/models'
 import { ArtistElasticRepository } from '@libs/repositories/elasticsearch/artist.elastic.repository'
 import { AlbumES } from '@libs/repositories/interfaces/search/album.interface'
 import { ArtistES } from '@libs/repositories/interfaces/search/artist.interface'
@@ -19,7 +19,7 @@ export class SearchArtistService {
         private artistRepository: ArtistElasticRepository,
     ) {}
 
-    public searchArtistById(id: number): Observable<ObjectResponse<ArtistSearchDto>> {
+    public searchArtistById(id: number): Observable<ArtistSearchDto> {
         if (!id) {
             throw new Error('id is required')
         }
@@ -74,14 +74,6 @@ export class SearchArtistService {
                 const hit = response.hits.hits[0] as SearchHit<ArtistES>
                 const foundLang = Lang.Thai
                 return this.getArtistSearchDto(hit, foundLang)
-            }),
-            map((artist) => {
-                const listResponse = new ObjectResponse<ArtistSearchDto>()
-                listResponse.data = artist
-                listResponse.total = 1
-                listResponse.page = 1
-                listResponse.limit = 1
-                return listResponse
             }),
             catchError((err) => {
                 this.logger.error(`Error searching artist by id:`, err)

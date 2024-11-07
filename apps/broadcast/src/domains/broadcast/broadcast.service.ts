@@ -1,10 +1,10 @@
-import { ListResponse, ObjectResponse } from '@libs/common/models'
+import { ListResponse } from '@libs/common/models'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { StickerListResponseDataItem } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
-import { Body, Logger, MessageEvent, Sse } from '@nestjs/common'
+import { Body, HttpException, HttpStatus, Logger, MessageEvent, Sse } from '@nestjs/common'
 import fs from 'fs'
 import path from 'path'
 import { catchError, from, map, Observable, switchMap } from 'rxjs'
@@ -118,9 +118,7 @@ export class BroadcastService {
         )
     }
 
-    public createBroadcastMessage(
-        @Body() body: CreateBroadcastMessageRequest,
-    ): Observable<ObjectResponse<{ status: boolean }>> {
+    public createBroadcastMessage(@Body() body: CreateBroadcastMessageRequest): Observable<{ status: boolean }> {
         // TODO:: Get profile information
         // TODO:: Transaction
         // TODO:: Blur profile name if body.isShowProfileName = false
@@ -186,32 +184,28 @@ export class BroadcastService {
                 }
                 return eventMessage
             }),
-            map((data) => {
-                delete data.stickerId
+            map((eventMessage) => {
+                delete eventMessage.stickerId
 
                 this._broadcastSseService.sendEvent({
                     type: 'broadcast',
-                    data,
+                    data: eventMessage,
                 })
 
-                return data
+                return eventMessage
             }),
-            map((data) => {
-                const objectResponse = new ObjectResponse<{
-                    status: boolean
-                    isBadWords: boolean
-                    filteredMessage: string
-                }>()
-                objectResponse.data = {
+            map((eventMessage) => {
+                const objectResponse = {
                     status: true,
-                    isBadWords,
-                    filteredMessage,
+                    filteredMessage: eventMessage.message,
+                    isShowProfileImage: body.isShowProfileImage,
+                    isShowProfileName: body.isShowProfileName,
                 }
                 return objectResponse
             }),
             catchError((err) => {
                 this._logger.error(err)
-                throw err
+                throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR)
             }),
         )
     }

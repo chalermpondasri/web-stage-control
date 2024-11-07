@@ -105,7 +105,7 @@ export class RequestContextMiddleware implements NestMiddleware {
                         return of(true)
                     }
                     const token = extractTokenFromHeader(r.headers['authorization'])
-                    const data = this._tokenization.verifyAccessToken(token)
+                    const data = process.env.NODE_ENV === 'development' ? this._tokenization.decode(token, 'accessToken') : this._tokenization.verifyAccessToken(token)
 
                     if (!data) {
                         return of(true)

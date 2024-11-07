@@ -36,7 +36,6 @@ import { AdminUserDto } from '@libs/common/models/user/admin-user.dto'
 import { Community } from '@libs/entities/community.entity'
 import { User } from '@libs/entities/user.entity'
 import dayjs from 'dayjs'
-import { ItemUpdateDto } from '@libs/common/models/media/item-update.dto'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { fromPromise } from 'rxjs/internal/observable/innerFrom'
 import axios from 'axios'
@@ -66,18 +65,6 @@ export class AuthenticationService implements IAuthenticationService {
                 if (!user || password !== this._encryptionService.decrypt({ encrypted: Buffer.from(user.secret, 'base64') })) {
                     throw new BadRequestException(ErrorEnum.LOGIN_LOGIN_FAILED)
                 }
-
-                const mediaUpdateDto: ItemUpdateDto = {
-                    mediaId: 1,
-                    artist: 'Loremsum',
-                    title: 'Lorem Ipsum Dolor Sit Amet',
-                    duration: 215,
-                    coverImage: null,
-                    totalPoint: Date.now() % 10000,
-                    updatedAt: Date.now(),
-                }
-
-                this._sseSubject.next({ type: 'ITEM_UPDATE', data: mediaUpdateDto })
 
                 const adminUserDto = plainToInstance(AdminUserDto, instanceToPlain(user), { excludeExtraneousValues: true })
 

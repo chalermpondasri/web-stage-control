@@ -16,17 +16,20 @@ export class Playlist {
     public id: string
 
 
-
     @Column()
     public communityId: string
 
     @JoinColumn()
     @ManyToOne(() => Community, community => community.playlist)
-    public community: string
+    public community: Community
 
 
     @Column({type:'text'})
     public coverImage: string
+
+
+    @Column({nullable: true})
+    public trackId: number
 
     @Column()
     public title: string

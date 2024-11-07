@@ -4,10 +4,15 @@ import {
     NestModule,
 } from '@nestjs/common'
 import { CommunityController } from '../controllers/community.controller'
-import { playlistServiceProvider } from '../providers/service.provider'
+import {
+    boostServiceProvider,
+    playlistServiceProvider,
+} from '../providers/service.provider'
 import { OrmModule } from '@libs/modules/orm.module'
 import { GlobalModule } from '@libs/modules/global.module'
 import { RequestContextMiddleware } from '@libs/providers/request-context.provider'
+import { BoostController } from '../controllers/boost.controller'
+import { PlaylistController } from '../controllers/playlist.controller'
 
 @Module({
     imports: [
@@ -16,9 +21,12 @@ import { RequestContextMiddleware } from '@libs/providers/request-context.provid
     ],
     controllers: [
         CommunityController,
+        BoostController,
+        PlaylistController,
     ],
     providers: [
         playlistServiceProvider,
+        boostServiceProvider,
     ],
 })
 export class MainModule implements NestModule {

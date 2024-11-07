@@ -1,7 +1,10 @@
 import { broadcastSseProvider } from '@libs/providers/broadcast.provider'
 import { elasticClientProvider } from '@libs/providers/elastic-client.provider'
 import { envConfigProvider } from '@libs/providers/env.provider'
-import { eventSubjectProvider } from '@libs/providers/event-subject.provider'
+import {
+    eventSubjectProvider,
+    eventSubjectFactoryProvider,
+} from '@libs/providers/event-subject.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
 import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
 import { requestContextProvider } from '@libs/providers/request-context.provider'
@@ -16,6 +19,7 @@ import { tokenizationServiceProvider } from '../../apps/auth/src/providers/servi
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        eventSubjectFactoryProvider,
         requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
@@ -29,6 +33,7 @@ import { tokenizationServiceProvider } from '../../apps/auth/src/providers/servi
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
+        eventSubjectFactoryProvider,
         requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,

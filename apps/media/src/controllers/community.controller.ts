@@ -9,10 +9,12 @@ import { IPlaylistService } from '../services/interfaces/service.interface'
 import {
     ApiOperation,
     ApiResponse,
+    ApiTags,
 } from '@nestjs/swagger'
 import { PlayingTrackDto } from '@libs/common/models/media/playing-track.dto'
 import { PlaylistDto } from '@libs/common/models/media/playlist.dto'
 
+@ApiTags(...['community'])
 @Controller('/communities')
 export class CommunityController {
 

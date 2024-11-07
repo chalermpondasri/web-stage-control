@@ -56,24 +56,28 @@ export class PlaylistService implements IPlaylistService {
                 dto.communityId = communityId
                 dto.queue = [
                     plainToInstance(QueueTrackDto, {
+                        trackId: 1,
                         title: plainToInstance(Locale, { en: 'Wad Wai', th: 'วาดไว้' }),
                         artists: ['Bowkylion'],
                         coverImage: 'https://placehold.co/400?text=Bowkylion',
                         totalCoins: 999,
                     }),
                     plainToInstance(QueueTrackDto, {
+                        trackId: 2,
                         title: plainToInstance(Locale, { en: 'Day One', th: 'Day One' }),
                         artists: ['PUN'],
                         coverImage: 'https://placehold.co/400?text=PUN',
                         totalCoins: 777,
                     }),
                     plainToInstance(QueueTrackDto, {
+                        trackId: 3,
                         title: plainToInstance(Locale, { en: 'Proud', th: 'Proud' }),
                         artists: ['fellow fellow'],
                         coverImage: 'https://placehold.co/400?text=fellow fellow',
                         totalCoins: 666,
                     }),
                     plainToInstance(QueueTrackDto, {
+                        trackId: 4,
                         title: plainToInstance(Locale, { en: 'Perfume', th: 'น้ำหอม' }),
                         artists: ['COCKTAIL', 'Papa Roach?'],
                         coverImage: 'https://placehold.co/400?text=COCKTAIL',
@@ -104,6 +108,7 @@ export class PlaylistService implements IPlaylistService {
             map((result) => {
 
                 return plainToInstance(PlayingTrackDto, {
+                    trackId: 99,
                     title: plainToInstance(Locale, { en: 'Golden Hours', th: 'Golden Hours' }),
                     artists: ['Billkin'],
 

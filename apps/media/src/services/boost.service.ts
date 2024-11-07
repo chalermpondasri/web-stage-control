@@ -89,9 +89,9 @@ export class BoostService implements IBoostService {
                                 model.totalBoost = request.boostCoin
                                 model.duration = track.duration
                                 model.queueState = QueueState.QUEUED
-                                model.albumId = track.album_id
-                                model.albumName = {en: track.album.name_en, th: track.album.name_th, cn: null}
-                                model.albumImageUrl = track.album.image.url
+                                model.albumId = track?.album_id
+                                model.albumName = {en: track?.album?.name_en, th: track?.album?.name_th, cn: null}
+                                model.albumImageUrl = track?.album?.image?.url
 
                                 return this._playlistRepository.save(model)
                             }),

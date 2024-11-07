@@ -24,7 +24,8 @@ RUN npm run build:auth \
     && npm run build:mq \
     && npm run build:search \
     && npm run build:broadcast \
-    && npm run build:media
+    && npm run build:media \
+    && npm run build:payment
 
 USER node
 EXPOSE 3000

@@ -43,7 +43,7 @@ export class Playlist {
     @Column({type: 'int'})
     public duration: number
 
-    @Column()
+    @Column({type: 'varchar'})
     public queueState: QueueState
 
     @CreateDateColumn()

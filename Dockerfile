@@ -28,6 +28,5 @@ RUN npm run build:auth \
     && npm run build:payment
 
 USER node
-EXPOSE 3000
 CMD ["node", "dist/apps/auth"]
 

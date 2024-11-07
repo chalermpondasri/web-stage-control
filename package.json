@@ -12,6 +12,7 @@
         "build:migration": "nest build migration",
         "build:search": "nest build search",
         "build:media": "nest build media",
+        "build:mq": "nest build mq-consumer",
         "start": "npm run start:prod",
         "dev": "nest start auth --tsc --watch",
         "dev:migration": "nest start migration --tsc --watch",

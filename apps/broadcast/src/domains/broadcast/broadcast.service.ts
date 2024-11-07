@@ -5,13 +5,14 @@ import { StickerListResponseDataItem } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
 import { Body, HttpException, HttpStatus, Logger, MessageEvent, Sse } from '@nestjs/common'
+import en from 'assets/en.json'
+import BadWordsNext from 'bad-words-next'
 import fs from 'fs'
 import path from 'path'
 import { catchError, from, map, Observable, switchMap } from 'rxjs'
 import thaiCut from 'thai-cut-slim'
 import { Repository } from 'typeorm'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from './dtos/broadcast.dto'
-const FilterApi = Function("return import('bad-words')")()
 
 export class BroadcastService {
     private readonly _logger = new Logger(BroadcastService.name)
@@ -19,6 +20,7 @@ export class BroadcastService {
     private _thCurseWords: string[] = []
     private _enCurseWords: string[] = []
     private _enFilter
+    private badwords: BadWordsNext
 
     constructor(
         private readonly _strapiClient: StrapiClient,
@@ -33,12 +35,7 @@ export class BroadcastService {
     }
 
     private async _initializeFilters() {
-        this._loadEnCurseWords()
-        const { Filter } = await FilterApi
-        this._enFilter = new Filter({
-            placeHolder: '*',
-        })
-        this._enFilter.addWords(...this._enCurseWords)
+        this.badwords = new BadWordsNext({ data: en })
     }
 
     private _loadThaiWords() {
@@ -55,17 +52,6 @@ export class BroadcastService {
     private _loadThaiCurseWords() {
         this._thCurseWords = fs
             .readFileSync(path.join('assets', 'curse_words_th.txt'), {
-                encoding: 'utf-8',
-            })
-            .split(/[\r\n]+/)
-            .filter(function (w) {
-                return w.length > 1
-            })
-    }
-
-    private _loadEnCurseWords() {
-        this._enCurseWords = fs
-            .readFileSync(path.join('assets', 'curse_words_en.txt'), {
                 encoding: 'utf-8',
             })
             .split(/[\r\n]+/)
@@ -134,7 +120,7 @@ export class BroadcastService {
             }
         }
 
-        filteredMessage = this._enFilter.clean(filteredMessage)
+        filteredMessage = this.badwords.filter(filteredMessage)
         if (filteredMessage !== body.message) {
             isBadWords = true
         }

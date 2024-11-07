@@ -15,20 +15,15 @@ import {
     FindOptionsWhere,
     Repository,
 } from 'typeorm'
-import {
-    BadRequestException,
-    InternalServerErrorException,
-} from '@nestjs/common'
+import { BadRequestException } from '@nestjs/common'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { Playlist } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
-import {
-    SearchTotalHits,
-} from '@elastic/elasticsearch/lib/api/types'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { TrackBoostedSse } from '@libs/common/models/media/sse/track-boosted.sse'
 import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
+import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 
 export class BoostService implements IBoostService {
     public constructor(
@@ -37,7 +32,8 @@ export class BoostService implements IBoostService {
         private readonly _userRepository: Repository<User>,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _trackElasticRepository: TrackElasticRepository,
-        private readonly _playlistSubjectEvent: EventSubjectFactory
+        private readonly _playlistSubjectEvent: EventSubjectFactory,
+        private readonly _albumElasticRepository: AlbumElasticRepository,
     ) {
     }
 
@@ -70,11 +66,15 @@ export class BoostService implements IBoostService {
 
                         return this._trackElasticRepository.searchTrackById(request.trackId).pipe(
                             mergeMap(result => {
-                                if ((result.hits.total as SearchTotalHits).value === 0) {
-                                    return throwError(() => new InternalServerErrorException(ErrorEnum.MEDIA_TRACK_NOT_FOUND))
-                                }
-
                                 const track = <TrackES> result.hits.hits[0]._source
+                               return this._albumElasticRepository.getTrackRelatedData(track, true, true)
+                            }),
+                            mergeMap(result => {
+                                // if ((result.hits.total as SearchTotalHits).value === 0) {
+                                //     return throwError(() => new InternalServerErrorException(ErrorEnum.MEDIA_TRACK_NOT_FOUND))
+                                // }
+
+                                const track = result
 
                                 const model = this._playlistRepository.create()
                                 model.communityId = request.communityId
@@ -85,7 +85,7 @@ export class BoostService implements IBoostService {
                                 model.totalBoost = request.boostCoin
                                 model.duration = track.duration
                                 model.queueState = QueueState.QUEUED
-                                model.albumId = track.album.id
+                                model.albumId = track.album_id
                                 model.albumName = {en: track.album.name_en, th: track.album.name_th, cn: null}
                                 model.albumImageUrl = track.album.image.url
 

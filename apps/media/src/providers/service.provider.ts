@@ -9,6 +9,7 @@ import { RequestContext } from '@libs/providers/request-context.provider'
 import { User } from '@libs/entities/user.entity'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
+import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -38,6 +39,7 @@ export const boostServiceProvider = {
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.TRACK_REPOSITORY,
         ProviderName.SSE_EVENT_SUBJECT_FACTORY,
+        ProviderName.ALBUM_REPOSITORY,
     ],
     useFactory: (
         client: StrapiClient,
@@ -46,6 +48,7 @@ export const boostServiceProvider = {
         playlistRepository: Repository<Playlist>,
         trackElasticRepository: TrackElasticRepository,
         eventSubject: EventSubjectFactory,
+        albumElasticRepository: AlbumElasticRepository,
     ) => {
         return new BoostService(
             client,
@@ -54,6 +57,7 @@ export const boostServiceProvider = {
             playlistRepository,
             trackElasticRepository,
             eventSubject,
+            albumElasticRepository,
             )
     }
 }

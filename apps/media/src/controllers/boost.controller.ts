@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Inject,
     Post,
@@ -9,6 +10,7 @@ import { BoostService } from '../services/boost.service'
 import { ProviderName } from '@libs/common/constants'
 import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import {
+    ApiBearerAuth,
     ApiBody,
     ApiOperation,
     ApiResponse,
@@ -24,6 +26,7 @@ export class BoostController {
     ) {
     }
 
+    @ApiBearerAuth(GenericUserGuard.name)
     @ApiOperation({description:'boost select track with user coin'})
     @ApiBody({
         type: BoostRequest,
@@ -31,7 +34,9 @@ export class BoostController {
     @ApiResponse({example: {success: true}})
     @UseGuards(GenericUserGuard)
     @Post('/')
-    public boostMedia(request: BoostRequest) {
+    public boostMedia(
+        @Body() request: BoostRequest
+    ) {
         return this._boostService.boostMedia(request)
     }
 

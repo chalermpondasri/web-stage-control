@@ -114,7 +114,7 @@ services:
     command: node dist/apps/payment
     restart: always
     ports:
-      - 3305:3002
+      - 3305:3000
 
   # service-scheduler:
   #   image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging

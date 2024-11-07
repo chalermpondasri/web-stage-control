@@ -92,6 +92,16 @@ services:
     command: node dist/apps/mq-consumer
     restart: always
 
+  billboard-service-media:
+    image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
+    container_name: billboard-service-media
+    env_file:
+      - ".env-service-api.staging"
+    networks:
+      - billboard-network
+    command: node dist/apps/media
+    restart: always
+
   # service-scheduler:
   #   image: registry.gitlab.com/ucconnect.devs/community-billboard/service-api:staging
   #   env_file:

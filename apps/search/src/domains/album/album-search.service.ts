@@ -44,8 +44,19 @@ export class SearchAlbumService {
             }),
             switchMap((response) => {
                 const hits = response.hits.hits as SearchHit<AlbumES>[]
-                const trackObservables = hits.flatMap((hit) =>
-                    hit._source.tracks.map((track) =>
+
+                const trackObservables = hits.flatMap((hit) => {
+                    // Need to deep clone artists because in getTrackRelatedData, we use caching machanism
+                    // So, album.track.artist refer to same object as album.artist
+                    // but we need to remove image from album.track.artist (not album.artist)
+                    // so we need to deep clone the root's artist first
+                    hit._source.artists = hit._source.artists.map((artist) => {
+                        return {
+                            ...artist,
+                        }
+                    })
+
+                    return hit._source.tracks.map((track) =>
                         this.albumRepository.getTrackRelatedData(track, false, true).pipe(
                             map((_track) => {
                                 track = _track
@@ -55,10 +66,14 @@ export class SearchAlbumService {
                                 })
                             }),
                         ),
-                    ),
-                )
+                    )
+                })
 
-                return forkJoin(trackObservables).pipe(map(() => response))
+                return forkJoin(trackObservables).pipe(
+                    map(() => {
+                        return response
+                    }),
+                )
             }),
             map((response) => {
                 const hit = response.hits.hits[0] as SearchHit<AlbumES>

@@ -6,11 +6,7 @@ import { Observable } from 'rxjs'
 import { BroadcastService } from '../domains/broadcast/broadcast.service'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from '../domains/broadcast/dtos/broadcast.dto'
 
-@ApiTags(
-    ...[
-        'broadcast',
-    ],
-)
+@ApiTags('broadcast')
 @Controller('/broadcast')
 export class BroadcastController {
     constructor(

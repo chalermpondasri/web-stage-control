@@ -94,13 +94,18 @@ export class BroadcastService {
                     }
                 })
             }),
-            map((data) => {
-                const listResponse = new ListResponse<StickerListResponseDataItem>()
-                listResponse.data = data
-                listResponse.page = request.page || 1
-                listResponse.limit = request.limit || 10
-                listResponse.total = data.length
-                return listResponse
+            mergeMap((data) => {
+                return from(this._strapiClient.stickerApi.getStickers()).pipe(
+                    map((res) => {
+                        const total = res.data?.meta?.pagination?.total || 0
+                        const listResponse = new ListResponse<StickerListResponseDataItem>()
+                        listResponse.data = data
+                        listResponse.page = request.page || 1
+                        listResponse.limit = request.limit || 10
+                        listResponse.total = total
+                        return listResponse
+                    }),
+                )
             }),
             catchError((err) => {
                 this._logger.error(err)

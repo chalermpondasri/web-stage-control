@@ -1,15 +1,21 @@
 import { Injectable, MessageEvent } from '@nestjs/common'
-import { Subject } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 
 @Injectable()
 export class BroadcastSseService {
-    private eventStream = new Subject<MessageEvent>()
+    private eventStreams: { [key: string]: Subject<MessageEvent> } = {}
 
-    getStream() {
-        return this.eventStream.asObservable()
+    getStream(communityId: string): Observable<MessageEvent> {
+        if (!this.eventStreams[communityId]) {
+            this.eventStreams[communityId] = new Subject<MessageEvent>()
+        }
+        return this.eventStreams[communityId].asObservable()
     }
 
-    sendEvent(data: MessageEvent) {
-        this.eventStream.next(data)
+    sendEvent(communityId: string, data: MessageEvent) {
+        if (!this.eventStreams[communityId]) {
+            this.eventStreams[communityId] = new Subject<MessageEvent>()
+        }
+        this.eventStreams[communityId].next(data)
     }
 }

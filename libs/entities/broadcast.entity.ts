@@ -1,4 +1,14 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm'
+import { Community } from './community.entity'
+import { User } from './user.entity'
 
 @Entity({
     comment: 'broadcast entity',
@@ -14,8 +24,13 @@ export class Broadcast {
     @Column()
     public stickerId: number
 
-    // @ManyToOne(() => User, (user) => user.id)
-    // public user: User
+    @JoinColumn()
+    @ManyToOne(() => Community, (community) => community.broadcasts)
+    public community: Community
+
+    @JoinColumn()
+    @ManyToOne(() => User, (user) => user.id)
+    public createdBy: User
 
     // TODO:: add transaction
 

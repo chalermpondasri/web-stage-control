@@ -29,6 +29,12 @@ export class Payment {
     @Column({ type: 'varchar' })
     public paymentStatus: PaymentStatus
 
+    @Column({ nullable: true , type:'timestamptz' })
+    public expiredAt: Date
+
+    @Column({ nullable: true , type: 'text'})
+    public referenceNumber: string
+
     @CreateDateColumn()
     public createdAt: Date
     @UpdateDateColumn()

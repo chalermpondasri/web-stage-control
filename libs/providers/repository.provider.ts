@@ -13,6 +13,7 @@ import { Provider } from '@nestjs/common'
 import { AxiosInstance } from 'axios'
 import { DataSource } from 'typeorm'
 import { Playlist } from '@libs/entities/playlist.entity'
+import { Payment } from '@libs/entities/payment.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -50,6 +51,13 @@ export const ormRepositoryProviders: Provider[] = [
         ],
         useFactory: (ds: DataSource) => ds.getRepository(Broadcast),
     },
+    {
+        provide: ProviderName.PAYMENT_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(Payment),
+    }
 ]
 
 export const lineRepositoryProvider: Provider = {

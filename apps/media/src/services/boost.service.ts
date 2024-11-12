@@ -77,7 +77,6 @@ export class BoostService implements IBoostService {
                                return this._albumElasticRepository.getTrackRelatedData(track, true, true)
                             }),
                             mergeMap(result => {
-                                this._logger.log(result)
                                 const track = result
 
                                 const model = this._playlistRepository.create()

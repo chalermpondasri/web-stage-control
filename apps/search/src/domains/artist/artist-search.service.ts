@@ -43,15 +43,20 @@ export class SearchArtistService {
             }),
             switchMap((response) => {
                 const hits = response.hits.hits as SearchHit<ArtistES>[]
-                const trackObservables = hits.flatMap((hit) =>
-                    hit._source.tracks.map((track) =>
+                const trackObservables = hits.flatMap((hit) => {
+                    hit._source.albums = hit._source.albums.map((album) => {
+                        return {
+                            ...album,
+                        }
+                    })
+                    return hit._source.tracks.map((track) =>
                         this.artistRepository.getTrackRelatedData(track, true, false).pipe(
                             map((_track) => {
                                 track = _track
                             }),
                         ),
-                    ),
-                )
+                    )
+                })
 
                 return forkJoin(trackObservables).pipe(map(() => response))
             }),

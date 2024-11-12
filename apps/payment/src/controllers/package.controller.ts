@@ -4,7 +4,7 @@ import {
     Inject,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants'
-import { IPackageService } from '../domains/payment/interfaces/service.interface'
+import { IPackageService } from '../services/interfaces/service.interface'
 import {
     ApiOperation,
     ApiResponse,

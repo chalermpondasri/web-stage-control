@@ -1,6 +1,6 @@
 import { Pagination } from '@libs/common/models'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsDefined, IsNumber, IsString, MaxLength, Min } from 'class-validator'
+import { IsBoolean, IsDefined, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator'
 
 export class GetStickerRequest extends Pagination {}
 
@@ -18,7 +18,7 @@ export class CreateBroadcastMessageRequest {
         example: 1,
         description: 'The sticker id to be broadcasted',
     })
-    @IsDefined()
+    @IsOptional()
     @IsNumber()
     @Min(0)
     public stickerId: number

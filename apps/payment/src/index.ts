@@ -1,10 +1,10 @@
+import { config } from 'dotenv'
+config()
+
 import { PipeTransform, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { PaymentModule } from './modules/payment.module'
-import {
-    DocumentBuilder,
-    SwaggerModule,
-} from '@nestjs/swagger'
 
 async function bootstrap() {
     const app = await NestFactory.create(PaymentModule, {
@@ -19,9 +19,10 @@ async function bootstrap() {
         .setDescription('Community Billboard Payment API Description')
         .setVersion('1.0')
         .addTag('payment')
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('documentation', app, document);
+        .addBearerAuth()
+        .build()
+    const document = SwaggerModule.createDocument(app, config)
+    SwaggerModule.setup('documentation', app, document)
 
     const nestValidationPipes: PipeTransform[] = [
         new ValidationPipe({

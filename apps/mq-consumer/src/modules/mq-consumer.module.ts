@@ -3,6 +3,7 @@ import { EXCHANGES } from '@libs/common/constants/mq-config.constant'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { EnvironmentConfig } from '@libs/common/models'
 import { GlobalModule } from '@libs/modules/global.module'
+import { OrmModule } from '@libs/modules/orm.module'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import { Module } from '@nestjs/common'
 import { AlbumCreateConsumer } from '../domains/cms/album/create.consumer'
@@ -11,6 +12,7 @@ import { AlbumUpdateConsumer } from '../domains/cms/album/update.consumer'
 import { ArtistCreateConsumer } from '../domains/cms/artist/create.consumer'
 import { ArtistDeleteConsumer } from '../domains/cms/artist/delete.consumer'
 import { ArtistUpdateConsumer } from '../domains/cms/artist/update.consumer'
+import { CampaignUpdateConsumer } from '../domains/cms/campaign/update.consumer'
 import { TrackCreateConsumer } from '../domains/cms/track/create.consumer'
 import { TrackDeleteConsumer } from '../domains/cms/track/delete.consumer'
 import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
@@ -38,6 +40,7 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
                 ProviderName.ENV_CONFIG,
             ],
         }),
+        OrmModule,
     ],
     controllers: [],
     providers: [
@@ -51,6 +54,7 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
         ArtistCreateConsumer,
         ArtistUpdateConsumer,
         ArtistDeleteConsumer,
+        CampaignUpdateConsumer,
     ],
 })
 export class MqConsumerModule {}

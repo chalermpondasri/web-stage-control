@@ -9,6 +9,7 @@ export class Pagination {
     @ApiProperty({
         description: 'Limit of items per page',
         default: 20,
+        required: false,
         type: Number,
     })
     @IsInt()
@@ -20,6 +21,7 @@ export class Pagination {
     @ApiProperty({
         description: 'Page number',
         default: 1,
+        required: false,
         type: Number,
     })
     @IsInt()
@@ -40,6 +42,7 @@ export class PaginationQuery extends Pagination {
     @ApiProperty({
         description: 'Query to search',
         example: 'Hello World',
+        required: false,
     })
     public query: string
 }

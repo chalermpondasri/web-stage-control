@@ -7,6 +7,6 @@ import { ormRepositoryProviders } from '@libs/providers/repository.provider'
 
 @Module({
     providers: [ormEntityProvider, ormDatasourceProvider, ...ormRepositoryProviders],
-    exports: [...ormRepositoryProviders],
+    exports: [...ormRepositoryProviders, ormDatasourceProvider],
 })
 export class OrmModule {}

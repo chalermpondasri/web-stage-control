@@ -3,13 +3,13 @@ import { EnvironmentConfig } from '@libs/common/models'
 import {
     AlbumApi,
     ArtistApi,
+    CampaignApi,
     CoinPackageApi,
     Configuration,
     ConfigurationParameters,
     GenreApi,
     StickerApi,
     TrackApi,
-    VoucherApi,
 } from '@libs/repositories/strapi-api'
 import { Provider } from '@nestjs/common'
 
@@ -19,8 +19,8 @@ export interface StrapiClient {
     trackApi: TrackApi
     genreApi: GenreApi
     coinPackage: CoinPackageApi
-    voucherApi: VoucherApi
     stickerApi: StickerApi
+    campaignApi: CampaignApi
 }
 
 export const strapiClientProvider: Provider = {
@@ -42,7 +42,7 @@ export const strapiClientProvider: Provider = {
             trackApi: new TrackApi(apiConfig),
             genreApi: new GenreApi(apiConfig),
             coinPackage: new CoinPackageApi(apiConfig),
-            voucherApi: new VoucherApi(apiConfig),
+            campaignApi: new CampaignApi(apiConfig),
             stickerApi: new StickerApi(apiConfig),
         }
 

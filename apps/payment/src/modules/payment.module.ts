@@ -1,13 +1,11 @@
 import { GlobalModule } from '@libs/modules/global.module'
 import { OrmModule } from '@libs/modules/orm.module'
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { RequestContextMiddleware } from '@libs/providers/request-context.provider'
-import {
-    packageServiceProvider,
-    paymentServiceProvider,
-} from '../providers/service.provider'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { PackageController } from '../controllers/package.controller'
 import { RootController } from '../controllers/root.controller'
+import { VoucherController } from '../controllers/voucher.controller'
+import { packageServiceProvider, paymentServiceProvider, voucherServiceProvider } from '../providers/service.provider'
 
 @Module({
     imports: [
@@ -17,14 +15,16 @@ import { RootController } from '../controllers/root.controller'
     providers: [
         packageServiceProvider,
         paymentServiceProvider,
+        voucherServiceProvider,
     ],
     controllers: [
         PackageController,
         RootController,
+        VoucherController,
     ],
 })
 export class PaymentModule implements NestModule {
     public configure(consumer: MiddlewareConsumer) {
-        consumer.apply( RequestContextMiddleware).forRoutes('*')
+        consumer.apply(RequestContextMiddleware).forRoutes('*')
     }
 }

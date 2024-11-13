@@ -23,6 +23,10 @@ export class UserProfileDto {
 
     @ApiProperty()
     @Expose()
+    public phoneNumber: string
+
+    @ApiProperty()
+    @Expose()
     public isConsentAccepted: boolean
 
     @ApiProperty()

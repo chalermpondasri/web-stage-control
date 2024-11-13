@@ -101,7 +101,7 @@ export class VoucherService {
             } catch (error) {
                 // Rollback the transaction in case of error
                 await queryRunner.rollbackTransaction()
-                throw new BadRequestException(error)
+                throw error
             } finally {
                 // Release the query runner
                 await queryRunner.release()

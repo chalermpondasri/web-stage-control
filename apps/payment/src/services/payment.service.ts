@@ -1,5 +1,6 @@
 import { Payment } from '@libs/entities/payment.entity'
 import {
+    BadRequestException,
     Logger,
     LoggerService,
 } from '@nestjs/common'
@@ -9,6 +10,8 @@ import {
     map,
     mergeMap,
     Observable,
+    of,
+    throwError,
 } from 'rxjs'
 import { Repository } from 'typeorm'
 import { IPaymentService } from './interfaces/service.interface'
@@ -18,6 +21,8 @@ import _ from 'lodash'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { PaymentStatus } from '@libs/common/constants/payment-status.enum'
 import { plainToInstance } from 'class-transformer'
+import { CheckoutPackageRequest } from './dto/checkout-package.request'
+import { ErrorEnum } from '@libs/common/constants/error.enum'
 
 export class PaymentService implements IPaymentService {
     private readonly _logger: LoggerService
@@ -30,7 +35,9 @@ export class PaymentService implements IPaymentService {
         this._logger = new Logger(PaymentService.name)
     }
 
-    public checkoutPackage(packageId: number): Observable<CheckoutPackageResponse> {
+    public checkoutPackage(body: CheckoutPackageRequest): Observable<CheckoutPackageResponse> {
+
+        const {packageId} = body
 
         const ts = dayjs()
         const expiredAt = ts.add(15, 'minutes')
@@ -38,8 +45,24 @@ export class PaymentService implements IPaymentService {
             .replaceAll('-', '').split('')
             .reduce((acc, v) => acc + parseInt(v, 16), 0)
         const transactionId = `${ts.format('YYYYMMDDHHmmssSSS')}-TA${_.padStart(String(packageId), 2, '0')}${(Number(ts.format('SSS')) + idSum) % 1000}`
+
+
         return from(this._strapiClient.coinPackage.getCoinPackagesId(packageId)).pipe(
-            mergeMap(({ data }) => {
+            mergeMap(({data}) => {
+
+                const {price, coins, bonus, purchasable} = data.data.attributes
+
+                if(!purchasable ||
+                    price !== body.price ||
+                    coins !== body.coinGain ||
+                    bonus !== body.coinBonus
+                ) {
+                    return throwError(() => new BadRequestException(ErrorEnum.CHECKOUT_INVALID_PACKAGE))
+                }
+
+                return of(data)
+            }),
+            mergeMap(data => {
 
                 const entity = this._paymentRepository.create({
                     transactionId,

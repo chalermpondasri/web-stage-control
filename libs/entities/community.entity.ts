@@ -10,6 +10,7 @@ import {
 } from 'typeorm'
 import { Admin } from '@libs/entities/admin.entity'
 import { Playlist } from '@libs/entities/playlist.entity'
+import { Broadcast } from './broadcast.entity'
 
 @Entity({
     comment: 'community entity',
@@ -33,12 +34,14 @@ export class Community {
     @Column({nullable: true})
     public coverImage: string
 
-
     @OneToMany(() => Playlist, target => target)
     public playlist: Promise<Playlist[]>
 
     @ManyToMany(() => Admin, admin => admin.communities)
     public admins: Admin[]
+    
+    @OneToMany(() => Broadcast, target => target)
+    public broadcasts: Promise<Broadcast[]>
 
     @CreateDateColumn()
     public createdAt: Date

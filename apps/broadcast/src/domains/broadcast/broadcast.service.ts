@@ -1,15 +1,18 @@
+import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { ListResponse } from '@libs/common/models'
 import { Broadcast } from '@libs/entities/broadcast.entity'
+import { Community } from '@libs/entities/community.entity'
+import { RequestContext } from '@libs/providers/request-context.provider'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { StickerListResponseDataItem } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang } from '@libs/utilities/lang.util'
-import { Body, HttpException, HttpStatus, Logger, MessageEvent, Sse } from '@nestjs/common'
+import { BadRequestException, Logger, MessageEvent, Sse } from '@nestjs/common'
 import en from 'assets/en.json'
 import BadWordsNext from 'bad-words-next'
 import fs from 'fs'
 import path from 'path'
-import { catchError, from, map, Observable, switchMap } from 'rxjs'
+import { catchError, from, map, mergeMap, Observable, switchMap, throwError } from 'rxjs'
 import thaiCut from 'thai-cut-slim'
 import { Repository } from 'typeorm'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from './dtos/broadcast.dto'
@@ -26,6 +29,8 @@ export class BroadcastService {
         private readonly _strapiClient: StrapiClient,
         private readonly _broadcastSseService: BroadcastSseService,
         private readonly _broadcastRepository: Repository<Broadcast>,
+        private readonly _communityRepository: Repository<Community>,
+        private readonly _requestContext: RequestContext,
     ) {
         this._initializeFilters()
         this._loadThaiWords()
@@ -89,13 +94,18 @@ export class BroadcastService {
                     }
                 })
             }),
-            map((data) => {
-                const listResponse = new ListResponse<StickerListResponseDataItem>()
-                listResponse.data = data
-                listResponse.page = request.page || 1
-                listResponse.limit = request.limit || 10
-                listResponse.total = data.length
-                return listResponse
+            mergeMap((data) => {
+                return from(this._strapiClient.stickerApi.getStickers()).pipe(
+                    map((res) => {
+                        const total = res.data?.meta?.pagination?.total || 0
+                        const listResponse = new ListResponse<StickerListResponseDataItem>()
+                        listResponse.data = data
+                        listResponse.page = request.page || 1
+                        listResponse.limit = request.limit || 10
+                        listResponse.total = total
+                        return listResponse
+                    }),
+                )
             }),
             catchError((err) => {
                 this._logger.error(err)
@@ -104,7 +114,10 @@ export class BroadcastService {
         )
     }
 
-    public createBroadcastMessage(@Body() body: CreateBroadcastMessageRequest): Observable<{ status: boolean }> {
+    public createBroadcastMessage(
+        communityId: string,
+        body: CreateBroadcastMessageRequest,
+    ): Observable<{ status: boolean }> {
         // TODO:: Get profile information
         // TODO:: Transaction
         // TODO:: Blur profile name if body.isShowProfileName = false
@@ -129,14 +142,22 @@ export class BroadcastService {
 
         const eventMessage: any = {
             ...body,
+            communityId,
         }
 
-        return from(
-            this._broadcastRepository.save({
-                message: body.message,
-                stickerId: body.stickerId,
+        return from(this._communityRepository.findOneBy({ id: communityId })).pipe(
+            mergeMap((community) => {
+                if (!community) {
+                    return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
+                }
+
+                return this._broadcastRepository.save({
+                    message: body.message,
+                    stickerId: body.stickerId,
+                    community: { id: communityId },
+                    createdBy: { id: this._requestContext.identityInfo.userId },
+                })
             }),
-        ).pipe(
             map((res) => {
                 eventMessage.id = res.id
                 return eventMessage
@@ -173,7 +194,7 @@ export class BroadcastService {
             map((eventMessage) => {
                 delete eventMessage.stickerId
 
-                this._broadcastSseService.sendEvent({
+                this._broadcastSseService.sendEvent(communityId, {
                     type: 'broadcast',
                     data: eventMessage,
                 })
@@ -187,19 +208,34 @@ export class BroadcastService {
                     isShowProfileImage: body.isShowProfileImage,
                     isShowProfileName: body.isShowProfileName,
                     isContainsBadWords,
+                    communityId,
                 }
                 return objectResponse
             }),
-            catchError((err) => {
-                this._logger.error(err)
-                throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR)
-            }),
+            // catchError((err) => {
+            //     this._logger.error(err)
+
+            //     if (err instanceof BadRequestException) {
+            //         throw err
+            //     }
+
+            //     throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR)
+            // }),
         )
     }
 
     @Sse('broadcast')
-    sse(): Observable<MessageEvent> {
-        return this._broadcastSseService.getStream()
+    sse(communityId: string): Observable<MessageEvent> {
+        return from(this._communityRepository.findOneBy({ id: communityId })).pipe(
+            map((community) => {
+                if (!community) {
+                    return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
+                }
+            }),
+            switchMap(() => {
+                return this._broadcastSseService.getStream(communityId)
+            }),
+        )
     }
 
     private censorThaiCurseWords(message: string): string {

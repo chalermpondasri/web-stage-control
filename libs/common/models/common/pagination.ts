@@ -1,16 +1,29 @@
-import { Transform } from 'class-transformer'
-import { IsNumber, IsOptional, Min } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
+import { IsInt, IsNumber, IsOptional, Min } from 'class-validator'
 
 export class Pagination {
     @IsOptional()
     @IsNumber()
-    @Min(0)
-    @Transform((v) => (v?.obj?.limit ? Number(v?.obj?.limit) : 20))
+    @Min(1)
+    @ApiProperty({
+        description: 'Limit of items per page',
+        default: 20,
+        type: Number,
+    })
+    @IsInt()
+    @Type(() => Number)
     public limit = 20
 
     @IsOptional()
     @Min(1)
-    @Transform((v) => (v?.obj?.page ? Number(v?.obj?.page) : 1))
+    @ApiProperty({
+        description: 'Page number',
+        default: 1,
+        type: Number,
+    })
+    @IsInt()
+    @Type(() => Number)
     public page = 1
 
     public toSkip(): number {
@@ -24,5 +37,9 @@ export class Pagination {
 
 export class PaginationQuery extends Pagination {
     @IsOptional()
+    @ApiProperty({
+        description: 'Query to search',
+        example: 'Hello World',
+    })
     public query: string
 }

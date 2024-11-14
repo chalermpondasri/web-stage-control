@@ -16,6 +16,8 @@ import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.e
 import { StageService } from '../services/stage.service'
 import { Stage } from '@libs/entities/stage.entity'
 import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
+import { Provider } from '@nestjs/common'
+import { MediaService } from '../services/media.service'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -90,6 +92,18 @@ export const stageServiceProvider = {
             playlistSubject,
             playlistRepository,
             playedMediaRepository,
+        )
+    }
+}
+
+export const mediaServiceProvider: Provider = {
+    provide: ProviderName.MEDIA_SERVICE,
+    inject: [
+        ProviderName.STRAPI_CLIENT,
+    ],
+    useFactory: (client: StrapiClient) =>  {
+        return new MediaService(
+            client,
         )
     }
 }

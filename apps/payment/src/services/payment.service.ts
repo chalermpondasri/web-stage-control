@@ -35,6 +35,37 @@ export class PaymentService implements IPaymentService {
         this._logger = new Logger(PaymentService.name)
     }
 
+    public getCheckoutById(id: string): Observable<CheckoutPackageResponse> {
+        const userId = this._requestContext.identityInfo.userId
+        return from(this._paymentRepository.findOneBy({
+            userId,
+            transactionId: id,
+            paymentStatus: PaymentStatus.PENDING,
+        })).pipe(
+            mergeMap(result => {
+                if(!result) {
+                    return throwError(() => new BadRequestException(ErrorEnum.CHECKOUT_INVALID_PACKAGE))
+                }
+
+                return of(result)
+            }),
+            map(data => {
+                return plainToInstance(CheckoutPackageResponse,
+                    {
+                        transactionId: data.transactionId,
+                        expireAt: data.expiredAt,
+                        packageId: data.coinPackageId,
+                        total: data.total,
+                        coinGain: data.coinGain,
+                        coinBonus: data.coinBonus,
+                        qrData: 'Lorem-Ipsum-Dolor-Sit-Amet',
+                        paymentStatus: data.paymentStatus,
+                    })
+            })
+        )
+
+    }
+
     public checkoutPackage(body: CheckoutPackageRequest): Observable<CheckoutPackageResponse> {
 
         const {packageId} = body

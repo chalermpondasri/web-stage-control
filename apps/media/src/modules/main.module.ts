@@ -37,7 +37,7 @@ export class MainModule implements NestModule {
     public configure(consumer: MiddlewareConsumer) {
         const excludeRouteInfo: RouteInfo[] = [
             {
-                path: '/communities/(.*)/(play|pause|stop)/(.*)',
+                path: '/communities/(.*)',
                 method: RequestMethod.ALL,
             }
         ]

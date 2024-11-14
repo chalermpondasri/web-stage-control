@@ -1,6 +1,6 @@
 import { ProviderName } from '@libs/common/constants'
 import { GenericUserGuard } from '@libs/guards/generic-user.guard'
-import { Body, Controller, Get, Inject, Post, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Inject, NotFoundException, Post, Query, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger'
 import { ApplyVoucherRequest, GetVoucherRequest } from '../services/dto/voucher-request.request'
 import { VoucherService } from '../services/voucher.service'
@@ -16,6 +16,10 @@ export class VoucherController {
     @ApiExcludeEndpoint(process.env.NODE_ENV === 'production')
     @Get('/')
     public getAllVouchers(@Query() query: GetVoucherRequest) {
+        if (process.env.NODE_ENV === 'production') {
+            throw new NotFoundException()
+        }
+
         return this._voucherService.getAllVouchers(query)
     }
 

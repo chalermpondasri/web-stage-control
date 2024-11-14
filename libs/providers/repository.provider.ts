@@ -13,7 +13,10 @@ import { LineRepository } from '@libs/repositories/line.repository'
 import { Provider } from '@nestjs/common'
 import { AxiosInstance } from 'axios'
 import { DataSource } from 'typeorm'
-import { Playlist } from '@libs/entities/playlist.entity'
+import {
+    PlayedMedia,
+    Playlist,
+} from '@libs/entities/playlist.entity'
 import { Payment } from '@libs/entities/payment.entity'
 import { Stage } from '@libs/entities/stage.entity'
 
@@ -73,6 +76,13 @@ export const ormRepositoryProviders: Provider[] = [
             ProviderName.ORM_DATASOURCE,
         ],
         useFactory: (ds: DataSource) => ds.getRepository(Stage)
+    },
+    {
+        provide: ProviderName.PLAYED_MEDIA_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(PlayedMedia),
     }
 ]
 

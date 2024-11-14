@@ -3,7 +3,7 @@ import { elasticClientProvider } from '@libs/providers/elastic-client.provider'
 import { envConfigProvider } from '@libs/providers/env.provider'
 import {
     eventSubjectProvider,
-    eventSubjectFactoryProvider,
+    playlistSubjectFactoryProvider,
 } from '@libs/providers/event-subject.provider'
 import { httpClientProvider } from '@libs/providers/http-client.provider'
 import { elasticRepositoryProviders, lineRepositoryProvider } from '@libs/providers/repository.provider'
@@ -19,7 +19,7 @@ import { tokenizationServiceProvider } from '../../apps/auth/src/providers/servi
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
-        eventSubjectFactoryProvider,
+        playlistSubjectFactoryProvider,
         requestContextProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
@@ -32,7 +32,7 @@ import { tokenizationServiceProvider } from '../../apps/auth/src/providers/servi
         httpClientProvider,
         lineRepositoryProvider,
         eventSubjectProvider,
-        eventSubjectFactoryProvider,
+        playlistSubjectFactoryProvider,
         elasticClientProvider,
         ...elasticRepositoryProviders,
         requestContextProvider,

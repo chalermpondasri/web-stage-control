@@ -2,7 +2,10 @@ import { ProviderName } from '@libs/common/constants'
 import { Repository } from 'typeorm'
 import { Community } from '@libs/entities/community.entity'
 import { PlaylistService } from '../services/playlist.service'
-import { Playlist } from '@libs/entities/playlist.entity'
+import {
+    PlayedMedia,
+    Playlist,
+} from '@libs/entities/playlist.entity'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { BoostService } from '../services/boost.service'
 import { RequestContext } from '@libs/providers/request-context.provider'
@@ -41,7 +44,7 @@ export const boostServiceProvider = {
         ProviderName.USER_REPOSITORY,
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.TRACK_REPOSITORY,
-        ProviderName.SSE_EVENT_SUBJECT_FACTORY,
+        ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
         ProviderName.ALBUM_REPOSITORY,
     ],
     useFactory: (
@@ -70,14 +73,23 @@ export const stageServiceProvider = {
     inject: [
         ProviderName.STAGE_REPOSITORY,
         ProviderName.TOKENIZATION_SERVICE,
+        ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
+        ProviderName.PLAYLIST_REPOSITORY,
+        ProviderName.PLAYED_MEDIA_REPOSITORY,
     ],
     useFactory: (
         stageRepository: Repository<Stage>,
         tokenizationService: ITokenizationService,
+        playlistSubject: EventSubjectFactory,
+        playlistRepository: Repository<Playlist>,
+        playedMediaRepository: Repository<PlayedMedia>,
     ) => {
         return new StageService(
             stageRepository,
             tokenizationService,
+            playlistSubject,
+            playlistRepository,
+            playedMediaRepository,
         )
     }
 }

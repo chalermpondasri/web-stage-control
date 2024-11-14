@@ -15,6 +15,7 @@ import {
 import {
     ApiBody,
     ApiOperation,
+    ApiParam,
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger'
@@ -23,6 +24,10 @@ import { PlaylistDto } from '@libs/common/models/media/playlist.dto'
 import { StageRegisterRequest } from '@libs/common/models/community/stage-register.request'
 import { AccessTokenDto } from '@libs/common/models/common/token.dto'
 import { StageGuard } from '@libs/guards/stage.guard'
+import {
+    MediaPauseRequest,
+    MediaPlayRequest,
+} from '@libs/common/models/media/media-play.request'
 
 @ApiTags(...['community'])
 @Controller('/communities')
@@ -77,23 +82,30 @@ export class CommunityController {
 
 
     @ApiOperation({description:'play media control' })
+    @ApiBody({type: MediaPlayRequest})
+    @ApiParam({name: 'communityId', description: 'community id', type: 'uuid'})
+    @ApiParam({name: 'id', description: 'media id', type: 'number'})
     @UseGuards(StageGuard)
     @Post('/:communityId/play/:id')
     public playMedia(
         @Param('communityId') communityId: string,
         @Param('id') id: string,
+        @Body() request: MediaPlayRequest,
     ){
-
+        return this._stageService.play(communityId, id, request)
     }
 
+    @ApiOperation({description:'pause media control' })
+    @ApiBody({type: MediaPauseRequest})
+    @ApiParam({name: 'communityId', description: 'community id', type: 'uuid'})
+    @ApiParam({name: 'id', description: 'media id', type: 'number'})
     @UseGuards(StageGuard)
     @Post('/:communityId/pause/:id')
     public pauseMedia(
         @Param('communityId') communityId: string,
         @Param('id') id: string,
+        @Body() request: MediaPauseRequest,
     ){
-
+        return this._stageService.pause(communityId, id, request)
     }
-
-
 }

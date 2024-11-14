@@ -17,7 +17,7 @@ import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 
 @Controller('/playlist')
 export class PlaylistController {
-    @Inject(ProviderName.SSE_EVENT_SUBJECT_FACTORY)
+    @Inject(ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY)
     private readonly _eventSubjectFactory: EventSubjectFactory
 
     @ApiTags(...['sse'])

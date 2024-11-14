@@ -27,11 +27,6 @@ export function isValidMessage(logger: Logger, msg: {}, dlExchange: EXCHANGES): 
         return false
     }
 
-    if (msg['event'] !== 'track.updated') {
-        handleError(logger, 'Invalid event type: ' + msg['event'], dlExchange)
-        return false
-    }
-
     return true
 }
 

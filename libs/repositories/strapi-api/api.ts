@@ -2694,6 +2694,223 @@ export type AuthSendEmailConfirmationPost200ResponseSentEnum = typeof AuthSendEm
 /**
  * 
  * @export
+ * @interface Campaign
+ */
+export interface Campaign {
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Campaign
+     */
+    'qoutas': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Campaign
+     */
+    'reusable': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof Campaign
+     */
+    'codeAmounts': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Campaign
+     */
+    'coinPerVoucher': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'endDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'createdAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'updatedAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    'publishedAt'?: string;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @memberof Campaign
+     */
+    'createdBy'?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
+    /**
+     * 
+     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @memberof Campaign
+     */
+    'updatedBy'?: AlbumImageDataAttributesFolderDataAttributesParent;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignListResponse
+ */
+export interface CampaignListResponse {
+    /**
+     * 
+     * @type {Array<CampaignListResponseDataItem>}
+     * @memberof CampaignListResponse
+     */
+    'data'?: Array<CampaignListResponseDataItem>;
+    /**
+     * 
+     * @type {AlbumListResponseMeta}
+     * @memberof CampaignListResponse
+     */
+    'meta'?: AlbumListResponseMeta;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignListResponseDataItem
+ */
+export interface CampaignListResponseDataItem {
+    /**
+     * 
+     * @type {number}
+     * @memberof CampaignListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Campaign}
+     * @memberof CampaignListResponseDataItem
+     */
+    'attributes'?: Campaign;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignRequest
+ */
+export interface CampaignRequest {
+    /**
+     * 
+     * @type {CampaignRequestData}
+     * @memberof CampaignRequest
+     */
+    'data': CampaignRequestData;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignRequestData
+ */
+export interface CampaignRequestData {
+    /**
+     * 
+     * @type {string}
+     * @memberof CampaignRequestData
+     */
+    'name': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CampaignRequestData
+     */
+    'qoutas': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CampaignRequestData
+     */
+    'reusable': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof CampaignRequestData
+     */
+    'codeAmounts': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CampaignRequestData
+     */
+    'coinPerVoucher': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CampaignRequestData
+     */
+    'startDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CampaignRequestData
+     */
+    'endDate'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignResponse
+ */
+export interface CampaignResponse {
+    /**
+     * 
+     * @type {CampaignResponseDataObject}
+     * @memberof CampaignResponse
+     */
+    'data'?: CampaignResponseDataObject;
+    /**
+     * 
+     * @type {object}
+     * @memberof CampaignResponse
+     */
+    'meta'?: object;
+}
+/**
+ * 
+ * @export
+ * @interface CampaignResponseDataObject
+ */
+export interface CampaignResponseDataObject {
+    /**
+     * 
+     * @type {number}
+     * @memberof CampaignResponseDataObject
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {Campaign}
+     * @memberof CampaignResponseDataObject
+     */
+    'attributes'?: Campaign;
+}
+/**
+ * 
+ * @export
  * @interface CoinPackage
  */
 export interface CoinPackage {
@@ -4788,235 +5005,6 @@ export interface UsersPostRequest {
      */
     'password': string;
 }
-/**
- * 
- * @export
- * @interface Voucher
- */
-export interface Voucher {
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'code': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Voucher
-     */
-    'quotas': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'startDate'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'endDate'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Voucher
-     */
-    'coinAmounts': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Voucher
-     */
-    'purchasable'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'createdAt'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'updatedAt'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Voucher
-     */
-    'publishedAt'?: string;
-    /**
-     * 
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
-     * @memberof Voucher
-     */
-    'createdBy'?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
-    /**
-     * 
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof Voucher
-     */
-    'updatedBy'?: AlbumImageDataAttributesFolderDataAttributesParent;
-}
-/**
- * 
- * @export
- * @interface VoucherListResponse
- */
-export interface VoucherListResponse {
-    /**
-     * 
-     * @type {Array<VoucherListResponseDataItem>}
-     * @memberof VoucherListResponse
-     */
-    'data'?: Array<VoucherListResponseDataItem>;
-    /**
-     * 
-     * @type {AlbumListResponseMeta}
-     * @memberof VoucherListResponse
-     */
-    'meta'?: AlbumListResponseMeta;
-}
-/**
- * 
- * @export
- * @interface VoucherListResponseDataItem
- */
-export interface VoucherListResponseDataItem {
-    /**
-     * 
-     * @type {number}
-     * @memberof VoucherListResponseDataItem
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {Voucher}
-     * @memberof VoucherListResponseDataItem
-     */
-    'attributes'?: Voucher;
-}
-/**
- * 
- * @export
- * @interface VoucherRequest
- */
-export interface VoucherRequest {
-    /**
-     * 
-     * @type {VoucherRequestData}
-     * @memberof VoucherRequest
-     */
-    'data': VoucherRequestData;
-}
-/**
- * 
- * @export
- * @interface VoucherRequestData
- */
-export interface VoucherRequestData {
-    /**
-     * 
-     * @type {string}
-     * @memberof VoucherRequestData
-     */
-    'code': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VoucherRequestData
-     */
-    'name'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VoucherRequestData
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof VoucherRequestData
-     */
-    'quotas': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof VoucherRequestData
-     */
-    'startDate'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VoucherRequestData
-     */
-    'endDate'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof VoucherRequestData
-     */
-    'coinAmounts': number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof VoucherRequestData
-     */
-    'purchasable'?: boolean;
-}
-/**
- * 
- * @export
- * @interface VoucherResponse
- */
-export interface VoucherResponse {
-    /**
-     * 
-     * @type {VoucherResponseDataObject}
-     * @memberof VoucherResponse
-     */
-    'data'?: VoucherResponseDataObject;
-    /**
-     * 
-     * @type {object}
-     * @memberof VoucherResponse
-     */
-    'meta'?: object;
-}
-/**
- * 
- * @export
- * @interface VoucherResponseDataObject
- */
-export interface VoucherResponseDataObject {
-    /**
-     * 
-     * @type {number}
-     * @memberof VoucherResponseDataObject
-     */
-    'id'?: number;
-    /**
-     * 
-     * @type {Voucher}
-     * @memberof VoucherResponseDataObject
-     */
-    'attributes'?: Voucher;
-}
 
 /**
  * AlbumApi - axios parameter creator
@@ -5949,6 +5937,474 @@ export class ArtistApi extends BaseAPI {
      */
     public putArtistsId(id: number, artistRequest: ArtistRequest, options?: RawAxiosRequestConfig) {
         return ArtistApiFp(this.configuration).putArtistsId(id, artistRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * CampaignApi - axios parameter creator
+ * @export
+ */
+export const CampaignApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCampaignsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteCampaignsId', 'id', id)
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCampaigns: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/campaigns`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount;
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage;
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize;
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart;
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit;
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields;
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate;
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters;
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCampaignsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getCampaignsId', 'id', id)
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postCampaigns: async (campaignRequest: CampaignRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'campaignRequest' is not null or undefined
+            assertParamExists('postCampaigns', 'campaignRequest', campaignRequest)
+            const localVarPath = `/campaigns`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(campaignRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putCampaignsId: async (id: number, campaignRequest: CampaignRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putCampaignsId', 'id', id)
+            // verify required parameter 'campaignRequest' is not null or undefined
+            assertParamExists('putCampaignsId', 'campaignRequest', campaignRequest)
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(campaignRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * CampaignApi - functional programming interface
+ * @export
+ */
+export const CampaignApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = CampaignApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteCampaignsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCampaignsId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.deleteCampaignsId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.getCampaigns']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getCampaignsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCampaignsId(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.getCampaignsId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postCampaigns(campaignRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.postCampaigns']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putCampaignsId(id, campaignRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.putCampaignsId']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * CampaignApi - factory interface
+ * @export
+ */
+export const CampaignApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = CampaignApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteCampaignsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteCampaignsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<CampaignListResponse> {
+            return localVarFp.getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getCampaignsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<CampaignResponse> {
+            return localVarFp.getCampaignsId(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): AxiosPromise<CampaignResponse> {
+            return localVarFp.postCampaigns(campaignRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} id 
+         * @param {CampaignRequest} campaignRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): AxiosPromise<CampaignResponse> {
+            return localVarFp.putCampaignsId(id, campaignRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * CampaignApi - object-oriented interface
+ * @export
+ * @class CampaignApi
+ * @extends {BaseAPI}
+ */
+export class CampaignApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CampaignApi
+     */
+    public deleteCampaignsId(id: number, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).deleteCampaignsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CampaignApi
+     */
+    public getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CampaignApi
+     */
+    public getCampaignsId(id: number, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).getCampaignsId(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {CampaignRequest} campaignRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CampaignApi
+     */
+    public postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).postCampaigns(campaignRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} id 
+     * @param {CampaignRequest} campaignRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof CampaignApi
+     */
+    public putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).putCampaignsId(id, campaignRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -10422,474 +10878,6 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      */
     public usersPost(usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig) {
         return UsersPermissionsUsersRolesApiFp(this.configuration).usersPost(usersPostRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
- * VoucherApi - axios parameter creator
- * @export
- */
-export const VoucherApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteVouchersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteVouchersId', 'id', id)
-            const localVarPath = `/vouchers/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
-         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
-         * @param {number} [paginationPage] Page number (default: 0)
-         * @param {number} [paginationPageSize] Page size (default: 25)
-         * @param {number} [paginationStart] Offset value (default: 0)
-         * @param {number} [paginationLimit] Number of entities to return (default: 25)
-         * @param {string} [fields] Fields to return (ex: title,author)
-         * @param {string} [populate] Relations to return
-         * @param {{ [key: string]: any; }} [filters] Filters to apply
-         * @param {string} [locale] Locale to apply
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVouchers: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/vouchers`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (sort !== undefined) {
-                localVarQueryParameter['sort'] = sort;
-            }
-
-            if (paginationWithCount !== undefined) {
-                localVarQueryParameter['pagination[withCount]'] = paginationWithCount;
-            }
-
-            if (paginationPage !== undefined) {
-                localVarQueryParameter['pagination[page]'] = paginationPage;
-            }
-
-            if (paginationPageSize !== undefined) {
-                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize;
-            }
-
-            if (paginationStart !== undefined) {
-                localVarQueryParameter['pagination[start]'] = paginationStart;
-            }
-
-            if (paginationLimit !== undefined) {
-                localVarQueryParameter['pagination[limit]'] = paginationLimit;
-            }
-
-            if (fields !== undefined) {
-                localVarQueryParameter['fields'] = fields;
-            }
-
-            if (populate !== undefined) {
-                localVarQueryParameter['populate'] = populate;
-            }
-
-            if (filters !== undefined) {
-                localVarQueryParameter['filters'] = filters;
-            }
-
-            if (locale !== undefined) {
-                localVarQueryParameter['locale'] = locale;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVouchersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getVouchersId', 'id', id)
-            const localVarPath = `/vouchers/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        postVouchers: async (voucherRequest: VoucherRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'voucherRequest' is not null or undefined
-            assertParamExists('postVouchers', 'voucherRequest', voucherRequest)
-            const localVarPath = `/vouchers`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(voucherRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        putVouchersId: async (id: number, voucherRequest: VoucherRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('putVouchersId', 'id', id)
-            // verify required parameter 'voucherRequest' is not null or undefined
-            assertParamExists('putVouchersId', 'voucherRequest', voucherRequest)
-            const localVarPath = `/vouchers/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(voucherRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * VoucherApi - functional programming interface
- * @export
- */
-export const VoucherApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = VoucherApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async deleteVouchersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteVouchersId(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['VoucherApi.deleteVouchersId']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
-         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
-         * @param {number} [paginationPage] Page number (default: 0)
-         * @param {number} [paginationPageSize] Page size (default: 25)
-         * @param {number} [paginationStart] Offset value (default: 0)
-         * @param {number} [paginationLimit] Number of entities to return (default: 25)
-         * @param {string} [fields] Fields to return (ex: title,author)
-         * @param {string} [populate] Relations to return
-         * @param {{ [key: string]: any; }} [filters] Filters to apply
-         * @param {string} [locale] Locale to apply
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['VoucherApi.getVouchers']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getVouchersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getVouchersId(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['VoucherApi.getVouchersId']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.postVouchers(voucherRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['VoucherApi.postVouchers']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VoucherResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.putVouchersId(id, voucherRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['VoucherApi.putVouchersId']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-    }
-};
-
-/**
- * VoucherApi - factory interface
- * @export
- */
-export const VoucherApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = VoucherApiFp(configuration)
-    return {
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        deleteVouchersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
-            return localVarFp.deleteVouchersId(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
-         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
-         * @param {number} [paginationPage] Page number (default: 0)
-         * @param {number} [paginationPageSize] Page size (default: 25)
-         * @param {number} [paginationStart] Offset value (default: 0)
-         * @param {number} [paginationLimit] Number of entities to return (default: 25)
-         * @param {string} [fields] Fields to return (ex: title,author)
-         * @param {string} [populate] Relations to return
-         * @param {{ [key: string]: any; }} [filters] Filters to apply
-         * @param {string} [locale] Locale to apply
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<VoucherListResponse> {
-            return localVarFp.getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVouchersId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
-            return localVarFp.getVouchersId(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
-            return localVarFp.postVouchers(voucherRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {number} id 
-         * @param {VoucherRequest} voucherRequest 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig): AxiosPromise<VoucherResponse> {
-            return localVarFp.putVouchersId(id, voucherRequest, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * VoucherApi - object-oriented interface
- * @export
- * @class VoucherApi
- * @extends {BaseAPI}
- */
-export class VoucherApi extends BaseAPI {
-    /**
-     * 
-     * @param {number} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof VoucherApi
-     */
-    public deleteVouchersId(id: number, options?: RawAxiosRequestConfig) {
-        return VoucherApiFp(this.configuration).deleteVouchersId(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
-     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
-     * @param {number} [paginationPage] Page number (default: 0)
-     * @param {number} [paginationPageSize] Page size (default: 25)
-     * @param {number} [paginationStart] Offset value (default: 0)
-     * @param {number} [paginationLimit] Number of entities to return (default: 25)
-     * @param {string} [fields] Fields to return (ex: title,author)
-     * @param {string} [populate] Relations to return
-     * @param {{ [key: string]: any; }} [filters] Filters to apply
-     * @param {string} [locale] Locale to apply
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof VoucherApi
-     */
-    public getVouchers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: { [key: string]: any; }, locale?: string, options?: RawAxiosRequestConfig) {
-        return VoucherApiFp(this.configuration).getVouchers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {number} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof VoucherApi
-     */
-    public getVouchersId(id: number, options?: RawAxiosRequestConfig) {
-        return VoucherApiFp(this.configuration).getVouchersId(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {VoucherRequest} voucherRequest 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof VoucherApi
-     */
-    public postVouchers(voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig) {
-        return VoucherApiFp(this.configuration).postVouchers(voucherRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {number} id 
-     * @param {VoucherRequest} voucherRequest 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof VoucherApi
-     */
-    public putVouchersId(id: number, voucherRequest: VoucherRequest, options?: RawAxiosRequestConfig) {
-        return VoucherApiFp(this.configuration).putVouchersId(id, voucherRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

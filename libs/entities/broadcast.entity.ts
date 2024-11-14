@@ -20,8 +20,7 @@ export class Broadcast {
     @Column()
     public message: string
 
-    // TODO:: sticker id and user id could be in transaction ?
-    @Column()
+    @Column({ nullable: true })
     public stickerId: number
 
     @JoinColumn()

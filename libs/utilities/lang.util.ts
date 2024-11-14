@@ -16,3 +16,11 @@ export enum Lang {
 export function blurProfileName(name: string): string {
     return `${name.charAt(0)}${name.charAt(1)}******`
 }
+
+export function wildCardQuery(query: string): string {
+    if (!query) {
+        return ''
+    }
+
+    return `%${query}%`
+}

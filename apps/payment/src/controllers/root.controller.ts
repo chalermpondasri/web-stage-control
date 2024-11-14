@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Get,
     Inject,
+    Param,
     Post,
     UseGuards,
 } from '@nestjs/common'
@@ -13,6 +15,7 @@ import {
     ApiBearerAuth,
     ApiBody,
     ApiOperation,
+    ApiParam,
     ApiResponse,
 } from '@nestjs/swagger'
 import { CheckoutPackageResponse } from '../services/dto/checkout-package.response'
@@ -40,6 +43,21 @@ export class RootController {
         @Body() body: CheckoutPackageRequest,
     ) {
         return this._paymentService.checkoutPackage(body)
+    }
+
+
+    @ApiBearerAuth()
+    @ApiOperation({description: 'get ongoing checkout by id'})
+    @ApiParam({
+        name: 'id'
+    })
+    @ApiResponse({
+        type: CheckoutPackageResponse,
+    })
+    @UseGuards(GenericUserGuard)
+    @Get('/checkout/:id')
+    public getCheckoutById(@Param('id') id: string) {
+        return this._paymentService.getCheckoutById(id)
     }
 
 }

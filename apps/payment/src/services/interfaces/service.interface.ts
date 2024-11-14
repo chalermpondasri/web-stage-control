@@ -5,6 +5,8 @@ import { CheckoutPackageRequest } from '../dto/checkout-package.request'
 
 export interface IPaymentService {
     checkoutPackage(request: CheckoutPackageRequest): Observable<CheckoutPackageResponse>
+
+    getCheckoutById(id: string): Observable<CheckoutPackageResponse>
 }
 
 export interface IPackageService {

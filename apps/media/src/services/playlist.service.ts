@@ -3,6 +3,7 @@ import {
     map,
     mergeMap,
     Observable,
+    of,
     throwError,
 } from 'rxjs'
 import { PlayingTrackDto } from '@libs/common/models/media/playing-track.dto'
@@ -28,7 +29,6 @@ import {
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { plainToInstance } from 'class-transformer'
 import { Locale } from '@libs/common/models'
-import dayjs from 'dayjs'
 
 export class PlaylistService implements IPlaylistService {
     public constructor(
@@ -81,35 +81,32 @@ export class PlaylistService implements IPlaylistService {
     }
 
     public getNowPlaying(communityId: string): Observable<PlayingTrackDto> {
-        throw new HttpException(null,HttpStatus.NO_CONTENT)
 
-        // const promise = this._playlistRepository.findOneBy({communityId, queueState: QueueState.PLAYING})
-        // return from(this._communityRepository.findOneBy({ id: communityId,  })).pipe(
-        //     mergeMap(community => {
-        //
-        //         if (!community) {
-        //             return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
-        //         }
-        //
-        //         return from(this._playlistRepository.findOneBy({
-        //             queueState: QueueState.PLAYING,
-        //             communityId,
-        //         }))
-        //     }),
-        //     map((result) => {
-        //
-        //         return plainToInstance(PlayingTrackDto, {
-        //             trackId: 99,
-        //             title: plainToInstance(Locale, { en: 'Golden Hours', th: 'Golden Hours' }),
-        //             artists: ['Billkin'],
-        //
-        //             playedAt: dayjs().subtract(2, 'minutes').toDate(),
-        //             trackDuration: 4 * 60,
-        //             coverImage: 'https://placehold.co/400?text=Billkin Cover Image',
-        //             artistImage: 'https://placehold.co/400?text=Billkin',
-        //
-        //         })
-        //     }),
-        // )
+        return from(this._playlistRepository.findOneBy({communityId, queueState: QueueState.PLAYING})).pipe(
+            mergeMap(playing => {
+                if(!playing) {
+                    return throwError(() => new HttpException(null,HttpStatus.NO_CONTENT))
+                }
+                return of(playing)
+            }),
+            map(playing => {
+                const data: PlayingTrackDto = {
+                    artistImage: playing.coverImage,
+                    artists: playing.artist.split(','),
+                    coverImage: playing.coverImage,
+                    playedAt: playing.playedAt,
+                    title: {
+                        th: playing.title,
+                        en: playing.title,
+                        cn: null,
+                    },
+                    trackDuration: playing.duration,
+                    trackId: playing.trackId
+
+                }
+                return plainToInstance(PlayingTrackDto, data)
+            })
+        )
+
     }
 }

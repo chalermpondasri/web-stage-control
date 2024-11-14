@@ -10,6 +10,9 @@ import { User } from '@libs/entities/user.entity'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
+import { StageService } from '../services/stage.service'
+import { Stage } from '@libs/entities/stage.entity'
+import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -59,5 +62,22 @@ export const boostServiceProvider = {
             eventSubject,
             albumElasticRepository,
             )
+    }
+}
+
+export const stageServiceProvider = {
+    provide: ProviderName.STAGE_SERVICE,
+    inject: [
+        ProviderName.STAGE_REPOSITORY,
+        ProviderName.TOKENIZATION_SERVICE,
+    ],
+    useFactory: (
+        stageRepository: Repository<Stage>,
+        tokenizationService: ITokenizationService,
+    ) => {
+        return new StageService(
+            stageRepository,
+            tokenizationService,
+        )
     }
 }

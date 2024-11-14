@@ -9,3 +9,9 @@ export class TokenDto {
     @ApiProperty()
     public refreshToken: string
 }
+
+export class AccessTokenDto {
+    @Expose()
+    @ApiProperty()
+    accessToken: string
+}

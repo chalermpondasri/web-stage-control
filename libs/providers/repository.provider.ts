@@ -4,8 +4,6 @@ import { EnvironmentConfig } from '@libs/common/models'
 import { Admin } from '@libs/entities/admin.entity'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
-import { Payment } from '@libs/entities/payment.entity'
-import { Playlist } from '@libs/entities/playlist.entity'
 import { User } from '@libs/entities/user.entity'
 import { Voucher } from '@libs/entities/voucher.entity'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
@@ -15,6 +13,9 @@ import { LineRepository } from '@libs/repositories/line.repository'
 import { Provider } from '@nestjs/common'
 import { AxiosInstance } from 'axios'
 import { DataSource } from 'typeorm'
+import { Playlist } from '@libs/entities/playlist.entity'
+import { Payment } from '@libs/entities/payment.entity'
+import { Stage } from '@libs/entities/stage.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -66,6 +67,13 @@ export const ormRepositoryProviders: Provider[] = [
         ],
         useFactory: (ds: DataSource) => ds.getRepository(Voucher),
     },
+    {
+        provide: ProviderName.STAGE_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(Stage)
+    }
 ]
 
 export const lineRepositoryProvider: Provider = {

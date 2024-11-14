@@ -63,6 +63,7 @@
         "decimal.js": "^10.4.3",
         "dotenv": "^16.4.5",
         "elastic-apm-node": "^4.8.0",
+        "generate-password": "^1.7.1",
         "husky": "^8.0.3",
         "jsonwebtoken": "^9.0.2",
         "pg": "^8.13.0",

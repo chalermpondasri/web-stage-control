@@ -1,7 +1,10 @@
 import { Jwt } from 'jsonwebtoken'
 
+export interface TokenizationOptions  {
+    lifetime: boolean
+}
 export interface ITokenizationService {
-    createAccessToken(data: object): string
+    createAccessToken(data: object, opts?: TokenizationOptions): string
     createRefreshToken(data: object): string
     verifyAccessToken(token: string): Jwt
     verifyRefreshToken(token: string): Jwt

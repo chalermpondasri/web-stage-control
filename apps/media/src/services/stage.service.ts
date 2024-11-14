@@ -6,6 +6,7 @@ import {
     map,
     mergeMap,
     Observable,
+    of,
     tap,
     throwError,
 } from 'rxjs'
@@ -47,7 +48,7 @@ export class StageService implements IStageService {
 
         const playingTrackOpts: FindOptionsWhere<Playlist> = {
             communityId,
-            queueState: Not(QueueState.PLAYING),
+            queueState: QueueState.PLAYING,
             trackId: Not(Number(mediaId)),
         }
 
@@ -60,6 +61,8 @@ export class StageService implements IStageService {
                         from(this._playlistRepository.delete(playingTrack)),
                     ])
                 }
+
+                return of(null)
             }),
             mergeMap(() => from(this._playlistRepository.findOneBy(findOneOpts)).pipe(
                 mergeMap(track => {

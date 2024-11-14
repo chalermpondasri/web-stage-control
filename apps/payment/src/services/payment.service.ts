@@ -86,7 +86,7 @@ export class PaymentService implements IPaymentService {
                         packageId: data.coinPackageId,
                         total: data.total,
                         coinGain: data.coinGain,
-                        coinBOnus: data.coinBonus,
+                        coinBonus: data.coinBonus,
                         qrData: 'Lorem-Ipsum-Dolor-Sit-Amet',
                         paymentStatus: data.paymentStatus,
                     })

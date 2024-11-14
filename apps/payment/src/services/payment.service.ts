@@ -55,7 +55,7 @@ export class PaymentService implements IPaymentService {
                         transactionId: data.transactionId,
                         expireAt: data.expiredAt,
                         packageId: data.coinPackageId,
-                        total: data.total,
+                        total: data.total.toNumber(),
                         coinGain: data.coinGain,
                         coinBonus: data.coinBonus,
                         qrData: 'Lorem-Ipsum-Dolor-Sit-Amet',

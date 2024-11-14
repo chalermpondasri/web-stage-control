@@ -56,9 +56,11 @@ export class StageService implements IStageService {
             mergeMap(playingTrack => {
                 if (!!playingTrack) {
                     playingTrack.queueState = QueueState.PLAYED
+                    const id = playingTrack.id
+                    delete playingTrack.id
                     return forkJoin([
                         from(this._playedMediaRepository.save(playingTrack)),
-                        from(this._playlistRepository.delete(playingTrack)),
+                        from(this._playlistRepository.delete({id})),
                     ])
                 }
 

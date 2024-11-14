@@ -13,7 +13,11 @@ import {
 } from 'typeorm'
 import { Community } from '@libs/entities/community.entity'
 import { IPlaylistService } from './interfaces/service.interface'
-import { BadRequestException } from '@nestjs/common'
+import {
+    BadRequestException,
+    HttpException,
+    HttpStatus,
+} from '@nestjs/common'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { Playlist } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
@@ -77,32 +81,35 @@ export class PlaylistService implements IPlaylistService {
     }
 
     public getNowPlaying(communityId: string): Observable<PlayingTrackDto> {
-        return from(this._communityRepository.findOneBy({ id: communityId })).pipe(
-            mergeMap(community => {
+        throw new HttpException(null,HttpStatus.NO_CONTENT)
 
-                if (!community) {
-                    return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
-                }
-
-                return from(this._playlistRepository.findOneBy({
-                    queueState: QueueState.PLAYING,
-                    communityId,
-                }))
-            }),
-            map((result) => {
-
-                return plainToInstance(PlayingTrackDto, {
-                    trackId: 99,
-                    title: plainToInstance(Locale, { en: 'Golden Hours', th: 'Golden Hours' }),
-                    artists: ['Billkin'],
-
-                    playedAt: dayjs().subtract(2, 'minutes').toDate(),
-                    trackDuration: 4 * 60,
-                    coverImage: 'https://placehold.co/400?text=Billkin Cover Image',
-                    artistImage: 'https://placehold.co/400?text=Billkin',
-
-                })
-            }),
-        )
+        // const promise = this._playlistRepository.findOneBy({communityId, queueState: QueueState.PLAYING})
+        // return from(this._communityRepository.findOneBy({ id: communityId,  })).pipe(
+        //     mergeMap(community => {
+        //
+        //         if (!community) {
+        //             return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
+        //         }
+        //
+        //         return from(this._playlistRepository.findOneBy({
+        //             queueState: QueueState.PLAYING,
+        //             communityId,
+        //         }))
+        //     }),
+        //     map((result) => {
+        //
+        //         return plainToInstance(PlayingTrackDto, {
+        //             trackId: 99,
+        //             title: plainToInstance(Locale, { en: 'Golden Hours', th: 'Golden Hours' }),
+        //             artists: ['Billkin'],
+        //
+        //             playedAt: dayjs().subtract(2, 'minutes').toDate(),
+        //             trackDuration: 4 * 60,
+        //             coverImage: 'https://placehold.co/400?text=Billkin Cover Image',
+        //             artistImage: 'https://placehold.co/400?text=Billkin',
+        //
+        //         })
+        //     }),
+        // )
     }
 }

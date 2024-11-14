@@ -20,3 +20,7 @@ export interface IStageService {
     play(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
     pause(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
 }
+
+export interface IMediaService {
+    getMediaDetail(mediaId: string): Observable<any>
+}

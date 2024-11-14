@@ -7,6 +7,7 @@ import {
 import { CommunityController } from '../controllers/community.controller'
 import {
     boostServiceProvider,
+    mediaServiceProvider,
     playlistServiceProvider,
     stageServiceProvider,
 } from '../providers/service.provider'
@@ -16,6 +17,7 @@ import { RequestContextMiddleware } from '@libs/providers/request-context.provid
 import { BoostController } from '../controllers/boost.controller'
 import { PlaylistController } from '../controllers/playlist.controller'
 import { RouteInfo } from '@nestjs/common/interfaces'
+import { RootController } from '../controllers/root.controller'
 
 @Module({
     imports: [
@@ -26,11 +28,13 @@ import { RouteInfo } from '@nestjs/common/interfaces'
         CommunityController,
         BoostController,
         PlaylistController,
+        RootController,
     ],
     providers: [
         playlistServiceProvider,
         boostServiceProvider,
         stageServiceProvider,
+        mediaServiceProvider,
     ],
 })
 export class MainModule implements NestModule {

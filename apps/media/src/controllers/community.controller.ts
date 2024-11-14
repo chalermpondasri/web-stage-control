@@ -66,6 +66,7 @@ export class CommunityController {
         return this._playlistService.getPlaylist(communityId)
     }
 
+
     @ApiOperation({description:'register stage device using authorization code' })
     @ApiBody({
         type: StageRegisterRequest,

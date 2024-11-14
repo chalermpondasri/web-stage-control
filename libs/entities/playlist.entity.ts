@@ -65,4 +65,10 @@ export class Playlist {
     @UpdateDateColumn()
     public updatedAt: Date
 
+    @Column({nullable: true, type: 'timestamptz' })
+    public playedAt: Date
+
 }
+
+@Entity({comment: 'play history'})
+export class PlayedMedia extends Playlist{}

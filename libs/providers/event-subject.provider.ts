@@ -12,8 +12,8 @@ export const eventSubjectProvider: Provider = {
     useFactory: () => new Subject<MessageEvent>(),
 }
 
-export const eventSubjectFactoryProvider: Provider = {
-    provide: ProviderName.SSE_EVENT_SUBJECT_FACTORY,
+export const playlistSubjectFactoryProvider: Provider = {
+    provide: ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
     useFactory: () => new EventSubjectFactory()
 }
 

@@ -4,6 +4,7 @@ import { PlayingTrackDto } from '@libs/common/models/media/playing-track.dto'
 import { BoostRequest } from '@libs/common/models/media/boost.request'
 import { StageRegisterRequest } from '@libs/common/models/community/stage-register.request'
 import { AccessTokenDto } from '@libs/common/models/common/token.dto'
+import { MediaPlayRequest } from '@libs/common/models/media/media-play.request'
 
 export interface IPlaylistService {
     getPlaylist(communityId: string): Observable<PlaylistDto>
@@ -16,4 +17,6 @@ export interface IBoostService {
 
 export interface IStageService {
     registerStage(request: StageRegisterRequest): Observable<AccessTokenDto>
+    play(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
+    pause(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
 }

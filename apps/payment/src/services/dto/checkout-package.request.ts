@@ -2,6 +2,7 @@ import {
     IsNotEmpty,
     IsNumber,
     IsPositive,
+    Min,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -20,6 +21,7 @@ export class CheckoutPackageRequest {
     public coinGain: number
 
     @ApiProperty()
-    @IsPositive()
+    @IsNumber()
+    @Min(0)
     public coinBonus: number
 }

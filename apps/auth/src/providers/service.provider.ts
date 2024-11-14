@@ -16,6 +16,7 @@ import { User } from '@libs/entities/user.entity'
 import { Subject } from 'rxjs'
 import { UserService } from '../services/user.service'
 import { RequestContext } from '@libs/providers/request-context.provider'
+import { Stage } from '@libs/entities/stage.entity'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -27,6 +28,7 @@ export const authenticationServiceProvider: Provider = {
         ProviderName.LINE_REPOSITORY,
         ProviderName.USER_REPOSITORY,
         ProviderName.COMMUNITY_REPOSITORY,
+        ProviderName.STAGE_REPOSITORY,
     ],
     useFactory: (
         sseSubject: Subject<MessageEvent>,
@@ -36,6 +38,7 @@ export const authenticationServiceProvider: Provider = {
         lineRepository: ILineRepository,
         userRepository: Repository<User>,
         communityRepository: Repository<Community>,
+        stageRepository: Repository<Stage>,
     ) => {
         return new AuthenticationService(
             sseSubject,
@@ -45,6 +48,7 @@ export const authenticationServiceProvider: Provider = {
             lineRepository,
             userRepository,
             communityRepository,
+            stageRepository,
         )
     },
 }

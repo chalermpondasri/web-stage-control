@@ -43,6 +43,7 @@ import _ from 'lodash'
 import fs from 'node:fs'
 import path from 'path'
 import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
+import { Stage } from '@libs/entities/stage.entity'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -55,6 +56,7 @@ export class AuthenticationService implements IAuthenticationService {
         private readonly _lineRepository: ILineRepository,
         private readonly _userRepository: Repository<User>,
         private readonly _communityRepository: Repository<Community>,
+        private readonly _stageRepository: Repository<Stage>,
     ) {
         this._logger = new Logger(AuthenticationService.name)
     }
@@ -97,7 +99,18 @@ export class AuthenticationService implements IAuthenticationService {
                     startDate: new Date(),
                     endDate: dayjs().add(1, 'year').toDate(),
                 })
-                return from(this._communityRepository.save(model))
+
+
+                return from(this._communityRepository.save(model)).pipe(
+                    mergeMap(comm => {
+                        const stageModel = this._stageRepository.create({
+                            communityId: comm.id,
+
+                        })
+
+                        return from(this._stageRepository.save(stageModel))
+                    })
+                )
             }),
             map(result => {
                 return {

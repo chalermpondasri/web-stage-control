@@ -11,6 +11,7 @@ import {
 import { Admin } from '@libs/entities/admin.entity'
 import { Playlist } from '@libs/entities/playlist.entity'
 import { Broadcast } from './broadcast.entity'
+import { Stage } from '@libs/entities/stage.entity'
 
 @Entity({
     comment: 'community entity',
@@ -42,6 +43,9 @@ export class Community {
     
     @OneToMany(() => Broadcast, target => target)
     public broadcasts: Promise<Broadcast[]>
+
+    @OneToMany(() => Stage, stage => stage.community)
+    public stages: Promise<Stage[]>
 
     @CreateDateColumn()
     public createdAt: Date

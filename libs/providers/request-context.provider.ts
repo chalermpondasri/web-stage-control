@@ -92,6 +92,7 @@ export class RequestContextMiddleware implements NestMiddleware {
     }
 
     public use(req: Request, res: Response, next: NextFunction) {
+        console.log(`middleware ------------`)
         return of(req)
             .pipe(
                 tap((r) => {

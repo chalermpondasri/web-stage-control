@@ -1,6 +1,9 @@
 import { Jwt } from 'jsonwebtoken'
 import { JwtSignerService } from '../../../apps/auth/src/services/jwt-signer.service'
-import { ITokenizationService } from './tokenization-service.interface'
+import {
+    ITokenizationService,
+    TokenizationOptions,
+} from './tokenization-service.interface'
 
 export class TokenizationService implements ITokenizationService {
     private readonly _accessTokenSigner: JwtSignerService
@@ -16,8 +19,8 @@ export class TokenizationService implements ITokenizationService {
         this._refreshTokenSigner = new JwtSignerService(refreshSecret)
     }
 
-    public createAccessToken(data: object): string {
-        return this._accessTokenSigner.sign(data, this._accessTokenTTL)
+    public createAccessToken(data: object, opts: TokenizationOptions): string {
+        return this._accessTokenSigner.sign(data, !!opts?.lifetime ? '36500d' :this._accessTokenTTL)
     }
 
     public createRefreshToken(data: object): string {

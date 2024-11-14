@@ -8,6 +8,7 @@ import { User } from '@libs/entities/user.entity'
 import { Provider } from '@nestjs/common'
 import { DataSource } from 'typeorm'
 import { Payment } from '@libs/entities/payment.entity'
+import { Stage } from '@libs/entities/stage.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
@@ -18,6 +19,7 @@ export const ormEntityProvider: Provider = {
         Playlist,
         Broadcast,
         Payment,
+        Stage,
     ],
 }
 export const ormDatasourceProvider: Provider = {

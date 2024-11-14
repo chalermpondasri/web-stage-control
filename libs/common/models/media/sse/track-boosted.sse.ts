@@ -1,6 +1,11 @@
 import { Locale } from '@libs/common/models'
 import { ApiProperty } from '@nestjs/swagger'
 
+
+export class TrackBoostedAlbum {
+    @ApiProperty({type: Locale})
+    albumName: Locale
+}
 export class TrackBoostedTrack {
     @ApiProperty()
     public trackId: number
@@ -12,7 +17,11 @@ export class TrackBoostedTrack {
     public coverImage: string
     @ApiProperty()
     public totalCoins: number
+
+    @ApiProperty({type: TrackBoostedAlbum})
+    public album: TrackBoostedAlbum
 }
+
 
 export class TrackBoostedSse {
     @ApiProperty()

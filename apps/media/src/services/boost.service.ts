@@ -112,6 +112,9 @@ export class BoostService implements IBoostService {
                                 },
                                 artists: list.artist.split(','),
                                 totalCoins: list.totalBoost,
+                                album: {
+                                    albumName: list.albumName,
+                                }
                             }
                         }
                         this._playlistSubjectEvent.push(request.communityId, 'ITEM_UPDATE', data)

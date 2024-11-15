@@ -96,16 +96,16 @@ export class PlaylistService implements IPlaylistService {
                     coverImage: playing.coverImage,
                     playedAt: playing.playedAt,
                     title: {
-                        th: playing.title,
-                        en: playing.title,
-                        cn: null,
+                        th: playing.title || null,
+                        en: playing.title || null,
+                        cn: playing.title || null,
                     },
                     trackDuration: playing.duration,
                     trackId: playing.trackId,
                     album: {
-                        albumId: playing.albumId,
-                        albumName: playing.albumName,
-                        albumImageUrl: playing.albumImageUrl
+                        albumId: playing.albumId || null,
+                        albumName: playing.albumName || null,
+                        albumImageUrl: playing.albumImageUrl || null,
                     }
 
                 }

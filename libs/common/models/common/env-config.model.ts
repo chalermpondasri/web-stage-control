@@ -104,6 +104,10 @@ export class EnvironmentConfig {
     @IsNotEmpty()
     public declare readonly RDB_DBNAME: string
 
+    @IsOptional()
+    @Transform(({ value }) => value === 'true')
+    public readonly RDB_LOG: boolean = true
+
     @IsNotEmpty()
     public declare readonly ADS_SECRET: string
     @IsNotEmpty()

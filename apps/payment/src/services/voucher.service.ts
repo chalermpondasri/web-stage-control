@@ -122,6 +122,27 @@ export class VoucherService {
             throw new BadRequestException(ErrorEnum.VOUCHER_CODE_USED)
         }
 
+        const userId = this._requestContext?.identityInfo?.userId
+        if (!userId) {
+            throw new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID)
+        }
+
+        const payment = await this._paymentRepository.findOne({
+            where: {
+                userId,
+                voucher: {
+                    code: voucher.code,
+                },
+                campaignId: voucher.campaignId,
+                type: PaymentType.VOUCHER,
+                paymentStatus: PaymentStatus.PAID,
+            },
+        })
+
+        if (payment) {
+            throw new BadRequestException(ErrorEnum.VOUCHER_CODE_USED)
+        }
+
         return voucher
     }
 

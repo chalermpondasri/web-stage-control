@@ -45,7 +45,7 @@ export const ormDatasourceProvider: Provider = {
             migrationsTableName: 'migration_billboard',
             applicationName: 'billboard',
             database: config.RDB_DBNAME,
-            logging: config.NODE_ENV !== 'production' ? 'all' : false,
+            logging: config.NODE_ENV !== 'production' ? (config.RDB_LOG ? 'all' : false) : false,
             synchronize: config.NODE_ENV !== 'production',
         }).initialize()
     },

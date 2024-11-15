@@ -101,7 +101,12 @@ export class PlaylistService implements IPlaylistService {
                         cn: null,
                     },
                     trackDuration: playing.duration,
-                    trackId: playing.trackId
+                    trackId: playing.trackId,
+                    album: {
+                        albumId: playing.albumId,
+                        albumName: playing.albumName,
+                        albumImageUrl: playing.albumImageUrl
+                    }
 
                 }
                 return plainToInstance(PlayingTrackDto, data)

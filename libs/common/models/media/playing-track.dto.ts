@@ -1,6 +1,7 @@
 import { Locale } from '@libs/common/models'
 import { Expose } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+import { AlbumQueueTrackDto } from '@libs/common/models/media/queue-track.dto'
 
 export class PlayingTrackDto {
 
@@ -33,4 +34,7 @@ export class PlayingTrackDto {
     @ApiProperty()
     @Expose()
     public playedAt: Date
+
+    @ApiProperty({type: AlbumQueueTrackDto})
+    public album: AlbumQueueTrackDto
 }

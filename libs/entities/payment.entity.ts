@@ -1,7 +1,7 @@
 import { PaymentStatus } from '@libs/common/constants/payment-status.enum'
 import { DecimalValueTransformer } from '@libs/utilities/transformers/decimal-transformer.util'
 import Decimal from 'decimal.js'
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 import { Voucher } from './voucher.entity'
 
 export enum PaymentType {
@@ -50,6 +50,7 @@ export class Payment {
     @Column({ type: 'varchar', default: PaymentType.COIN_PACKAGE })
     public type: PaymentType
 
+    @JoinColumn()
     @ManyToOne(() => Voucher, (voucher) => voucher.payments)
     public voucher: Voucher
 

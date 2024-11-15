@@ -24,3 +24,13 @@ export function wildCardQuery(query: string): string {
 
     return `%${query}%`
 }
+
+export function maskName(name: string) {
+    if (name.length <= 4) {
+        return '****'
+    }
+    const firstPart = name.slice(0, 2)
+    const lastPart = name.slice(-2)
+    const stars = '*'.repeat(name.length - 5)
+    return firstPart + stars + lastPart
+}

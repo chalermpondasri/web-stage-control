@@ -4,10 +4,12 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
 import { Community } from './community.entity'
+import { Transaction } from './transaction.entity'
 import { User } from './user.entity'
 
 @Entity({
@@ -31,7 +33,21 @@ export class Broadcast {
     @ManyToOne(() => User, (user) => user.id)
     public createdBy: User
 
-    // TODO:: add transaction
+    @Column({ default: false })
+    public isContainsBadWords: boolean
+
+    @Column({ default: false })
+    public isShowProfileImage: boolean
+
+    @Column({ default: false })
+    public isShowProfileName: boolean
+
+    @JoinColumn()
+    @OneToOne(() => Transaction, (transaction) => transaction.broadcast)
+    public transaction: Transaction
+
+    @Column({ default: 0 })
+    public cost: number
 
     @CreateDateColumn()
     public createdAt: Date

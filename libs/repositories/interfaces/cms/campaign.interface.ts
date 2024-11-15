@@ -1,7 +1,7 @@
 export interface CampaignCMS {
     id: number
     name: string
-    qoutas: number
+    quotas: number
     reusable: boolean
     codeAmounts: number
     coinPerVoucher: number

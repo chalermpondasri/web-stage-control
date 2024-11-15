@@ -1,10 +1,12 @@
 import { ProviderName } from '@libs/common/constants/providerName'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
+import { Transaction } from '@libs/entities/transaction.entity'
+import { User } from '@libs/entities/user.entity'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { Provider } from '@nestjs/common'
 import { BroadcastService } from 'apps/broadcast/src/domains/broadcast/broadcast.service'
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 import { RequestContext } from './request-context.provider'
 import { StrapiClient } from './strapi-client.provider'
 
@@ -16,6 +18,9 @@ export const broadcastServiceProvider: Provider = {
         ProviderName.BROADCAST_REPOSITORY,
         ProviderName.COMMUNITY_REPOSITORY,
         ProviderName.REQUEST_CONTEXT,
+        ProviderName.USER_REPOSITORY,
+        ProviderName.TRANSACTION_REPOSITORY,
+        ProviderName.ORM_DATASOURCE,
     ],
     useFactory: (
         strapiClient: StrapiClient,
@@ -23,6 +28,9 @@ export const broadcastServiceProvider: Provider = {
         broadcastRepository: Repository<Broadcast>,
         communityRepository: Repository<Community>,
         requestContext: RequestContext,
+        userRepository: Repository<User>,
+        transactionRepository: Repository<Transaction>,
+        dataSource: DataSource,
     ) => {
         return new BroadcastService(
             strapiClient,
@@ -30,6 +38,9 @@ export const broadcastServiceProvider: Provider = {
             broadcastRepository,
             communityRepository,
             requestContext,
+            userRepository,
+            transactionRepository,
+            dataSource,
         )
     },
 }

@@ -21,7 +21,7 @@ export class CreateBroadcastMessageRequest {
     @IsOptional()
     @IsNumber()
     @Min(0)
-    public stickerId: number
+    public stickerId?: number
 
     @IsBoolean()
     @ApiProperty({
@@ -29,7 +29,7 @@ export class CreateBroadcastMessageRequest {
         description: 'The profile image to be broadcasted',
         default: 'true',
     })
-    public isShowProfileImage: boolean
+    public isShowProfileImage?: boolean
 
     @IsBoolean()
     @ApiProperty({
@@ -37,5 +37,5 @@ export class CreateBroadcastMessageRequest {
         description: 'The profile name to be broadcasted',
         default: 'false',
     })
-    public isShowProfileName: boolean
+    public isShowProfileName?: boolean
 }

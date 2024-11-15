@@ -178,8 +178,8 @@ export class VoucherService {
     private async checkCampaignQuota(voucher: Voucher, campaign: CampaignResponseDataObject): Promise<void> {
         const vouchers = await this._voucherRepository.findBy({ campaignId: campaign.id })
         const amountUsed = vouchers.reduce((acc, v) => acc + v.amountUsed, 0)
-        if (amountUsed >= campaign.attributes.qoutas) {
-            throw new BadRequestException(ErrorEnum.CAMPAIGN_QOUTA_REACHED)
+        if (amountUsed >= campaign.attributes.quotas) {
+            throw new BadRequestException(ErrorEnum.CAMPAIGN_QUOTA_REACHED)
         }
     }
 

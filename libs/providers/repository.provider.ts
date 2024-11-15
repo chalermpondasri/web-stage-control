@@ -19,6 +19,7 @@ import {
 } from '@libs/entities/playlist.entity'
 import { Payment } from '@libs/entities/payment.entity'
 import { Stage } from '@libs/entities/stage.entity'
+import { Transaction } from '@libs/entities/transaction.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -75,7 +76,7 @@ export const ormRepositoryProviders: Provider[] = [
         inject: [
             ProviderName.ORM_DATASOURCE,
         ],
-        useFactory: (ds: DataSource) => ds.getRepository(Stage)
+        useFactory: (ds: DataSource) => ds.getRepository(Stage),
     },
     {
         provide: ProviderName.PLAYED_MEDIA_REPOSITORY,
@@ -83,7 +84,14 @@ export const ormRepositoryProviders: Provider[] = [
             ProviderName.ORM_DATASOURCE,
         ],
         useFactory: (ds: DataSource) => ds.getRepository(PlayedMedia),
-    }
+    },
+    {
+        provide: ProviderName.TRANSACTION_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(Transaction),
+    },
 ]
 
 export const lineRepositoryProvider: Provider = {

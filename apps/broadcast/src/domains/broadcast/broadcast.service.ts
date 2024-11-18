@@ -187,6 +187,8 @@ export class BroadcastService {
                 throw error
             } finally {
                 await queryRunner.release()
+
+                this._logger.log('Whole operation took: ' + (Date.now() - startTime) + 'ms')
             }
         })
     }

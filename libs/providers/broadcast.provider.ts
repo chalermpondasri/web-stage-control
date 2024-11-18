@@ -10,6 +10,8 @@ import { DataSource, Repository } from 'typeorm'
 import { RequestContext } from './request-context.provider'
 import { StrapiClient } from './strapi-client.provider'
 
+let broadcastService: BroadcastService = null
+
 export const broadcastServiceProvider: Provider = {
     provide: ProviderName.BROADCAST_SERVICE,
     inject: [
@@ -32,7 +34,10 @@ export const broadcastServiceProvider: Provider = {
         transactionRepository: Repository<Transaction>,
         dataSource: DataSource,
     ) => {
-        return new BroadcastService(
+        if (broadcastService) {
+            return broadcastService
+        }
+        broadcastService = new BroadcastService(
             strapiClient,
             broadcastSseService,
             broadcastRepository,

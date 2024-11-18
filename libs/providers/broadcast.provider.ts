@@ -47,6 +47,7 @@ export const broadcastServiceProvider: Provider = {
             transactionRepository,
             dataSource,
         )
+        return broadcastService
     },
 }
 

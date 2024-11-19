@@ -42,8 +42,6 @@ export class BroadcastService {
         this._initializeFilters()
         this._loadThaiWords()
         this._loadThaiCurseWords()
-
-        thaiCut.addon(this._thWords)
     }
 
     private async _initializeFilters() {
@@ -63,6 +61,8 @@ export class BroadcastService {
             .filter(function (w) {
                 return w.length > 1
             })
+
+        thaiCut.addon(this._thWords)
     }
 
     private _loadThaiCurseWords() {

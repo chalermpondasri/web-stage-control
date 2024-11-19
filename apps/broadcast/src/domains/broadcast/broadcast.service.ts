@@ -47,10 +47,14 @@ export class BroadcastService {
     }
 
     private async _initializeFilters() {
-        this.badwords = new BadWordsNext({ data: en })
+        if (!this.badwords) this.badwords = new BadWordsNext({ data: en })
     }
 
     private _loadThaiWords() {
+        if (this._thWords.length > 0) {
+            return
+        }
+
         this._thWords = fs
             .readFileSync(path.join('assets', 'words_th.txt'), {
                 encoding: 'utf-8',
@@ -62,6 +66,10 @@ export class BroadcastService {
     }
 
     private _loadThaiCurseWords() {
+        if (this._thCurseWords.length > 0) {
+            return
+        }
+
         this._thCurseWords = fs
             .readFileSync(path.join('assets', 'curse_words_th.txt'), {
                 encoding: 'utf-8',

@@ -34,10 +34,7 @@ export const broadcastServiceProvider: Provider = {
         transactionRepository: Repository<Transaction>,
         dataSource: DataSource,
     ) => {
-        if (broadcastService) {
-            return broadcastService
-        }
-        broadcastService = new BroadcastService(
+        return new BroadcastService(
             strapiClient,
             broadcastSseService,
             broadcastRepository,
@@ -47,7 +44,6 @@ export const broadcastServiceProvider: Provider = {
             transactionRepository,
             dataSource,
         )
-        return broadcastService
     },
 }
 

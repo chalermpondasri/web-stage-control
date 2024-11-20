@@ -142,12 +142,21 @@ export class AuthenticationService implements IAuthenticationService {
                 const { sub, name, picture } = decoded
                 return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
+
                         if (!!user) {
-                            //TODO for testing purpose
                             user.remainCoins = 9999
-                            return fromPromise(this._userRepository.save(user))
                         }
-                        const entity = this._userRepository.create({
+
+                        if(!!user && user.picture === null) {
+                            return fromPromise(this._downloadImage(user.id, picture)).pipe(
+                                mergeMap(() => {
+                                    user.picture = `/static/${user.id}`
+                                    return fromPromise(this._userRepository.save(user))
+                                }),
+                            )
+                        }
+
+                        const entity  = this._userRepository.create({
                             lineId: sub,
                             name,
                             picture: null,
@@ -155,6 +164,7 @@ export class AuthenticationService implements IAuthenticationService {
                             acceptedConsent: null,
                             setting: { showProfile: true, showName: true },
                         })
+
                         return fromPromise(this._userRepository.save(entity)).pipe(
                             mergeMap(user => {
                                 return fromPromise(this._downloadImage(user.id, picture)).pipe(

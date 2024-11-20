@@ -23,9 +23,7 @@ import path from 'path'
 import { UpdateProfileRequest } from '@libs/common/models/user/update-profile.request'
 
 @ApiTags(...['user', 'me'])
-@ApiBearerAuth()
 @Controller('/users/me')
-@UseGuards(GenericUserGuard)
 export class MeController {
     public constructor(
         @Inject(ProviderName.USER_SERVICE)
@@ -33,6 +31,7 @@ export class MeController {
     ) {
     }
 
+    @ApiBearerAuth()
     @ApiOperation({
         description: 'Get user profile',
     })
@@ -40,15 +39,18 @@ export class MeController {
         type: UserProfileDto,
     })
     @Get('/')
+    @UseGuards(GenericUserGuard)
     public getUserProfile() {
         return this._userService.getUserProfile()
 
     }
 
+    @ApiBearerAuth()
     @ApiResponse({
         type: UserProfileDto,
     })
     @Patch('/')
+    @UseGuards(GenericUserGuard)
     public updateUser(
         @Body() request: UpdateProfileRequest,
     ) {

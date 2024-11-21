@@ -1,8 +1,11 @@
 import {
     Body,
     Controller,
+    Get,
     Inject,
+    Param,
     Post,
+    StreamableFile,
     UseGuards,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants/providerName'
@@ -21,6 +24,8 @@ import { TokenDto } from '@libs/common/models/common/token.dto'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { UnacceptedConsentGuard } from '@libs/guards/unaccepted-consent.guard'
 import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
+import { createReadStream } from 'fs'
+import path from 'path'
 
 @ApiTags('user')
 @Controller('/users')
@@ -100,5 +105,16 @@ export class UserController {
         @Body() body: UpdateConsentRequest,
     ) {
         return this._userService.updateUserConsent(body)
+    }
+
+    @ApiTags(...['user', 'resource'])
+    @Get('/images/static/:filename')
+    public getUserImage(
+        @Param('filename') filename: string,
+    ) {
+        return new StreamableFile(
+            createReadStream(path.resolve(`./static/${filename}`)),
+            { type: 'image/jpg' },
+        )
     }
 }

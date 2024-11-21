@@ -5,6 +5,7 @@ import {
     Inject,
     Param,
     Post,
+    Query,
     UseGuards,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants'
@@ -19,6 +20,9 @@ import {
     ApiResponse,
 } from '@nestjs/swagger'
 import { CheckoutPackageResponse } from '../services/dto/checkout-package.response'
+import { Pagination } from '@libs/common/models'
+import { PaymentHistoryDto } from '../services/dto/payment-history.dto'
+import { ApiOkListResponse } from '@libs/utilities/decorators/api-ok-list-response.decorator'
 
 @Controller('/')
 export class RootController {
@@ -59,5 +63,17 @@ export class RootController {
     public getCheckoutById(@Param('id') id: string) {
         return this._paymentService.getCheckoutById(id)
     }
+
+    @ApiBearerAuth()
+    @ApiOperation({description: 'get payment history, see PaymentHistoryDto for more information'})
+    @ApiOkListResponse(PaymentHistoryDto)
+    @UseGuards(GenericUserGuard)
+    @Get()
+    public getPaymentHistory(
+        @Query() pagination: Pagination
+    ) {
+        return this._paymentService.getPaymentHistories(pagination)
+    }
+
 
 }

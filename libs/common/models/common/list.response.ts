@@ -3,18 +3,22 @@ import { Expose } from 'class-transformer'
 
 export class ListResponse<T> {
     @Expose()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+    })
     public total = 0
 
     @Expose()
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+    })
     public limit = 0
 
     @Expose()
-    @ApiProperty()
+    @ApiProperty({type: Number, default: 1})
     public page = 1
 
     @Expose()
-    @ApiProperty()
+    @ApiProperty({type: Array})
     public data: T[] = []
 }

@@ -27,6 +27,4 @@ RUN npm run build:auth \
     && npm run build:media \
     && npm run build:payment
 
-USER node
 CMD ["node", "dist/apps/auth"]
-

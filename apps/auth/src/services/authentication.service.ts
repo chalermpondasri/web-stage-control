@@ -142,6 +142,27 @@ export class AuthenticationService implements IAuthenticationService {
                 const { sub, name, picture } = decoded
                 return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
                     mergeMap(user => {
+                        if(!user) {
+                            const entity  = this._userRepository.create({
+                                lineId: sub,
+                                name,
+                                picture: null,
+                                isConsentAccepted: false,
+                                acceptedConsent: null,
+                                setting: { showProfile: true, showName: true },
+                            })
+
+                            return fromPromise(this._userRepository.save(entity)).pipe(
+                                mergeMap(user => {
+                                    return fromPromise(this._downloadImage(user.id, picture)).pipe(
+                                        mergeMap(() => {
+                                            user.picture = `/static/${user.id}`
+                                            return fromPromise(this._userRepository.save(user))
+                                        }),
+                                    )
+                                }),
+                            )
+                        }
 
                         if (!!user) {
                             user.remainCoins = 9999
@@ -156,25 +177,7 @@ export class AuthenticationService implements IAuthenticationService {
                             )
                         }
 
-                        const entity  = this._userRepository.create({
-                            lineId: sub,
-                            name,
-                            picture: null,
-                            isConsentAccepted: false,
-                            acceptedConsent: null,
-                            setting: { showProfile: true, showName: true },
-                        })
-
-                        return fromPromise(this._userRepository.save(entity)).pipe(
-                            mergeMap(user => {
-                                return fromPromise(this._downloadImage(user.id, picture)).pipe(
-                                    mergeMap(() => {
-                                        user.picture = `/static/${user.id}`
-                                        return fromPromise(this._userRepository.save(user))
-                                    }),
-                                )
-                            }),
-                        )
+                        return of(user)
                     }),
                 )
             }),

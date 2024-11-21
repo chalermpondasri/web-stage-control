@@ -4,30 +4,24 @@ import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
 import { Transaction, TransactionType } from '@libs/entities/transaction.entity'
 import { User } from '@libs/entities/user.entity'
+import { CurseWordFilterer } from '@libs/helpers/curse-word-filterer.helper'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { StickerListResponseDataItem, StickerResponseDataObject } from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
 import { detectLanguage, Lang, maskName } from '@libs/utilities/lang.util'
 import { BadRequestException, Logger, MessageEvent, NotFoundException, Sse } from '@nestjs/common'
-import en from 'assets/en.json'
-import BadWordsNext from 'bad-words-next'
 import dayjs from 'dayjs'
-import fs from 'fs'
 import padStart from 'lodash/padStart'
-import path from 'path'
 import qs from 'qs'
 import { catchError, defer, from, map, mergeMap, Observable, switchMap, throwError } from 'rxjs'
-import thaiCut from 'thai-cut-slim'
 import { DataSource, Repository } from 'typeorm'
 import { v7 as uuidv7 } from 'uuid'
 import { CreateBroadcastMessageRequest, GetStickerRequest } from './dtos/broadcast.dto'
 export class BroadcastService {
     private readonly _logger = new Logger(BroadcastService.name)
-    private _thWords: string[] = []
-    private _thCurseWords: string[] = []
-    private badwords: BadWordsNext
     private _fixedCost: number = 10
+    private _curseWordFilterer: CurseWordFilterer = CurseWordFilterer.getInstance()
 
     constructor(
         private readonly _strapiClient: StrapiClient,
@@ -38,47 +32,7 @@ export class BroadcastService {
         private readonly _userRepository: Repository<User>,
         private readonly _transactionRepository: Repository<Transaction>,
         private readonly dataSource: DataSource,
-    ) {
-        this._initializeFilters()
-        this._loadThaiWords()
-        this._loadThaiCurseWords()
-    }
-
-    private async _initializeFilters() {
-        if (!this.badwords) this.badwords = new BadWordsNext({ data: en })
-    }
-
-    private _loadThaiWords() {
-        if (this._thWords.length > 0) {
-            return
-        }
-
-        this._thWords = fs
-            .readFileSync(path.join('assets', 'words_th.txt'), {
-                encoding: 'utf-8',
-            })
-            .split(/[\r\n]+/)
-            .filter(function (w) {
-                return w.length > 1
-            })
-
-        thaiCut.addon(this._thWords)
-    }
-
-    private _loadThaiCurseWords() {
-        if (this._thCurseWords.length > 0) {
-            return
-        }
-
-        this._thCurseWords = fs
-            .readFileSync(path.join('assets', 'curse_words_th.txt'), {
-                encoding: 'utf-8',
-            })
-            .split(/[\r\n]+/)
-            .filter(function (w) {
-                return w.length > 1
-            })
-    }
+    ) {}
 
     public getAllStickers(request: GetStickerRequest): Observable<ListResponse<StickerListResponseDataItem>> {
         return from(
@@ -137,7 +91,7 @@ export class BroadcastService {
 
         const startTime = Date.now()
         if (isContainThai) {
-            filteredMessage = this.censorThaiCurseWords(body.message)
+            filteredMessage = this._curseWordFilterer.censorThaiCurseWords(body.message)
             if (filteredMessage !== body.message) {
                 isContainsBadWords = true
             }
@@ -145,7 +99,7 @@ export class BroadcastService {
         this._logger.log(`Thai censoring took ${Date.now() - startTime}ms`)
 
         const startTime2 = Date.now()
-        filteredMessage = this.badwords.filter(filteredMessage)
+        filteredMessage = this._curseWordFilterer.censorEnglishCurseWords(filteredMessage)
         if (filteredMessage !== body.message) {
             isContainsBadWords = true
         }
@@ -349,17 +303,6 @@ export class BroadcastService {
                 return this._broadcastSseService.getStream(communityId)
             }),
         )
-    }
-
-    private censorThaiCurseWords(message: string): string {
-        const words = thaiCut.cut(message)
-        words.forEach((word) => {
-            if (this._thCurseWords.includes(word)) {
-                message = message.replace(new RegExp(word, 'g'), '***')
-            }
-        })
-
-        return message
     }
 
     private _generateTransactionId(broadcast: Broadcast): string {

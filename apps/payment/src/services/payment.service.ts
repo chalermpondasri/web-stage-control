@@ -13,7 +13,10 @@ import {
     of,
     throwError,
 } from 'rxjs'
-import { Repository } from 'typeorm'
+import {
+    In,
+    Repository,
+} from 'typeorm'
 import { IPaymentService } from './interfaces/service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { CheckoutPackageResponse } from './dto/checkout-package.response'
@@ -23,6 +26,11 @@ import { PaymentStatus } from '@libs/common/constants/payment-status.enum'
 import { plainToInstance } from 'class-transformer'
 import { CheckoutPackageRequest } from './dto/checkout-package.request'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import {
+    ListResponse,
+    Pagination,
+} from '@libs/common/models'
+import { PaymentHistoryDto } from './dto/payment-history.dto'
 
 export class PaymentService implements IPaymentService {
     private readonly _logger: LoggerService
@@ -35,6 +43,39 @@ export class PaymentService implements IPaymentService {
         this._logger = new Logger(PaymentService.name)
     }
 
+    public getPaymentHistories(pagination: Pagination): Observable<ListResponse<PaymentHistoryDto>> {
+        const userId = this._requestContext.identityInfo.userId
+        return from(this._paymentRepository.findAndCount({
+            where: {
+                userId,
+                paymentStatus: In([PaymentStatus.PAID, PaymentStatus.CANCELLED, PaymentStatus.REJECTED]),
+            },
+            order: {updatedAt: 'desc'},
+            take: pagination.toTake(),
+            skip: pagination.toSkip(),
+        })).pipe(
+            map(([result, total]) => {
+                const dto = new ListResponse<PaymentHistoryDto>()
+                dto.total = total
+                dto.page = pagination.page
+                dto.limit = pagination.limit
+                dto.data = result.map(v => {
+                    const data: PaymentHistoryDto = {
+                        paymentType: 'QR_PAYMENT',
+                        transactionType: 'TOPUP',
+                        transactionId: v.transactionId,
+                        coinGain: v.coinGain,
+                        price: v.total.toNumber(),
+                        timestamp: v.updatedAt,
+                    }
+                    return plainToInstance(PaymentHistoryDto, data)
+                })
+
+                return dto
+            })
+        )
+    }
+
     public getCheckoutById(id: string): Observable<CheckoutPackageResponse> {
         const userId = this._requestContext.identityInfo.userId
         return from(this._paymentRepository.findOneBy({
@@ -43,7 +84,7 @@ export class PaymentService implements IPaymentService {
             paymentStatus: PaymentStatus.PENDING,
         })).pipe(
             mergeMap(result => {
-                if(!result) {
+                if (!result) {
                     return throwError(() => new BadRequestException(ErrorEnum.CHECKOUT_INVALID_PACKAGE))
                 }
 
@@ -61,14 +102,14 @@ export class PaymentService implements IPaymentService {
                         qrData: 'Lorem-Ipsum-Dolor-Sit-Amet',
                         paymentStatus: data.paymentStatus,
                     })
-            })
+            }),
         )
 
     }
 
     public checkoutPackage(body: CheckoutPackageRequest): Observable<CheckoutPackageResponse> {
 
-        const {packageId} = body
+        const { packageId } = body
 
         const ts = dayjs()
         const expiredAt = ts.add(15, 'minutes')
@@ -77,13 +118,12 @@ export class PaymentService implements IPaymentService {
             .reduce((acc, v) => acc + parseInt(v, 16), 0)
         const transactionId = `${ts.format('YYYYMMDDHHmmssSSS')}-TA${_.padStart(String(packageId), 2, '0')}${(Number(ts.format('SSS')) + idSum) % 1000}`
 
-
         return from(this._strapiClient.coinPackage.getCoinPackagesId(packageId)).pipe(
-            mergeMap(({data}) => {
+            mergeMap(({ data }) => {
 
-                const {price, coins, bonus, purchasable} = data.data.attributes
+                const { price, coins, bonus, purchasable } = data.data.attributes
 
-                if(!purchasable ||
+                if (!purchasable ||
                     price !== body.price ||
                     coins !== body.coinGain ||
                     bonus !== body.coinBonus
@@ -125,6 +165,5 @@ export class PaymentService implements IPaymentService {
         )
 
     }
-
 
 }

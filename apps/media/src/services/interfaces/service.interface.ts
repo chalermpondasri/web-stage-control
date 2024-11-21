@@ -19,6 +19,8 @@ export interface IStageService {
     registerStage(request: StageRegisterRequest): Observable<AccessTokenDto>
     play(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
     pause(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
+    freeze(communityId: string): void
+    unfreeze(communityId: string): void
 }
 
 export interface IMediaService {

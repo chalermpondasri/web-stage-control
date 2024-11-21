@@ -39,6 +39,13 @@ export class StageService implements IStageService {
     ) {
     }
 
+    public freeze(communityId: string) {
+        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {} )
+    }
+    public unfreeze(communityId: string) {
+        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {} )
+    }
+
     public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<any> {
         const findOneOpts: FindOptionsWhere<Playlist> = {
             communityId,
@@ -88,6 +95,7 @@ export class StageService implements IStageService {
                         playedAt: request.timestamp,
                     }
                     this._playlistSubject.push(communityId, 'ITEM_PLAYING', plainToInstance(PlaybackPlaySse, playedItem))
+                    this.unfreeze(communityId)
                 }),
             )),
         )

@@ -9,8 +9,7 @@ import { BroadcastService } from 'apps/broadcast/src/domains/broadcast/broadcast
 import { DataSource, Repository } from 'typeorm'
 import { RequestContext } from './request-context.provider'
 import { StrapiClient } from './strapi-client.provider'
-
-let broadcastService: BroadcastService = null
+import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 
 export const broadcastServiceProvider: Provider = {
     provide: ProviderName.BROADCAST_SERVICE,
@@ -23,6 +22,7 @@ export const broadcastServiceProvider: Provider = {
         ProviderName.USER_REPOSITORY,
         ProviderName.TRANSACTION_REPOSITORY,
         ProviderName.ORM_DATASOURCE,
+        ProviderName.COIN_DEDUCTION_REPOSITORY,
     ],
     useFactory: (
         strapiClient: StrapiClient,
@@ -33,6 +33,7 @@ export const broadcastServiceProvider: Provider = {
         userRepository: Repository<User>,
         transactionRepository: Repository<Transaction>,
         dataSource: DataSource,
+        coinDeductionRepository: Repository<CoinDeduction>,
     ) => {
         return new BroadcastService(
             strapiClient,
@@ -43,6 +44,7 @@ export const broadcastServiceProvider: Provider = {
             userRepository,
             transactionRepository,
             dataSource,
+            coinDeductionRepository,
         )
     },
 }

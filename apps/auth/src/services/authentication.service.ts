@@ -198,10 +198,6 @@ export class AuthenticationService implements IAuthenticationService {
         return plainToInstance(TokenDto, { accessToken, refreshToken })
     }
 
-    public subscribeSse(): Observable<MessageEvent> {
-        return this._sseSubject
-    }
-
     public refreshToken(request: RefreshTokenRequest): Observable<TokenDto> {
         return of(this._tokenizationService.verifyRefreshToken(request.refreshToken)).pipe(
             mergeMap((data) => {

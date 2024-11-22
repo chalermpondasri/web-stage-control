@@ -2,22 +2,58 @@ import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { ListResponse } from '@libs/common/models'
 import { Broadcast } from '@libs/entities/broadcast.entity'
 import { Community } from '@libs/entities/community.entity'
-import { Transaction, TransactionType } from '@libs/entities/transaction.entity'
+import {
+    Transaction,
+    TransactionType,
+} from '@libs/entities/transaction.entity'
 import { User } from '@libs/entities/user.entity'
 import { CurseWordFilterer } from '@libs/helpers/curse-word-filterer.helper'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { StrapiClient } from '@libs/providers/strapi-client.provider'
-import { StickerListResponseDataItem, StickerResponseDataObject } from '@libs/repositories/strapi-api'
+import {
+    StickerListResponseDataItem,
+    StickerResponseDataObject,
+} from '@libs/repositories/strapi-api'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
-import { detectLanguage, Lang, maskName } from '@libs/utilities/lang.util'
-import { BadRequestException, Logger, MessageEvent, NotFoundException, Sse } from '@nestjs/common'
+import {
+    detectLanguage,
+    Lang,
+    maskName,
+} from '@libs/utilities/lang.util'
+import {
+    BadRequestException,
+    Logger,
+    MessageEvent,
+    NotFoundException,
+    Sse,
+} from '@nestjs/common'
 import dayjs from 'dayjs'
 import padStart from 'lodash/padStart'
 import qs from 'qs'
-import { catchError, defer, from, map, mergeMap, Observable, switchMap, throwError } from 'rxjs'
-import { DataSource, Repository } from 'typeorm'
+import {
+    catchError,
+    defer,
+    from,
+    map,
+    mergeMap,
+    Observable,
+    switchMap,
+    throwError,
+} from 'rxjs'
+import {
+    DataSource,
+    Repository,
+} from 'typeorm'
 import { v7 as uuidv7 } from 'uuid'
-import { CreateBroadcastMessageRequest, GetStickerRequest } from './dtos/broadcast.dto'
+import {
+    CreateBroadcastMessageRequest,
+    GetStickerRequest,
+} from './dtos/broadcast.dto'
+import {
+    CoinDeduction,
+    DeductionEvent,
+} from '@libs/entities/coin-deduction.entity'
+
 export class BroadcastService {
     private readonly _logger = new Logger(BroadcastService.name)
     private _fixedCost: number = 10
@@ -32,7 +68,9 @@ export class BroadcastService {
         private readonly _userRepository: Repository<User>,
         private readonly _transactionRepository: Repository<Transaction>,
         private readonly dataSource: DataSource,
-    ) {}
+        private readonly _coinDeductionRepository: Repository<CoinDeduction>,
+    ) {
+    }
 
     public getAllStickers(request: GetStickerRequest): Observable<ListResponse<StickerListResponseDataItem>> {
         return from(
@@ -248,11 +286,25 @@ export class BroadcastService {
             coinAmount: broadcastCost,
             createdBy: { id: user.id },
         })
+        const coinDeduction = this._coinDeductionRepository.create({
+            communityId: broadcast.communityId,
+            userId: user.id,
+            deductedAt: new Date(),
+            deductedCoin: broadcastCost,
+            deductionEvent: DeductionEvent.BROADCAST,
+        })
+
         await queryRunner.manager.save(transaction)
         await queryRunner.manager.decrement(User, { id: user.id }, 'remainCoins', transaction.coinAmount)
-        await this._broadcastRepository.update(broadcast.id, {
-            transaction: { transactionId: transaction.transactionId },
-        })
+        await queryRunner.manager.save(coinDeduction)
+        await this._broadcastRepository.update(
+            broadcast.id,
+            {
+                transaction: {
+                    transactionId: transaction.transactionId,
+                },
+            },
+        )
     }
 
     private _sendBroadcastEvent(

@@ -20,6 +20,7 @@ import {
 import { Payment } from '@libs/entities/payment.entity'
 import { Stage } from '@libs/entities/stage.entity'
 import { Transaction } from '@libs/entities/transaction.entity'
+import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -92,6 +93,13 @@ export const ormRepositoryProviders: Provider[] = [
         ],
         useFactory: (ds: DataSource) => ds.getRepository(Transaction),
     },
+    {
+        provide: ProviderName.COIN_DEDUCTION_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(CoinDeduction),
+    }
 ]
 
 export const lineRepositoryProvider: Provider = {

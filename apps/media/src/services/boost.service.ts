@@ -8,7 +8,6 @@ import {
     throwError,
 } from 'rxjs'
 import { IBoostService } from './interfaces/service.interface'
-import { StrapiClient } from '@libs/providers/strapi-client.provider'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { User } from '@libs/entities/user.entity'
 import {
@@ -28,31 +27,46 @@ import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
 import { TrackBoostedSse } from '@libs/common/models/media/sse/track-boosted.sse'
 import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
+import {
+    CoinDeduction,
+    DeductionEvent,
+} from '@libs/entities/coin-deduction.entity'
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
     public constructor(
-        private readonly _cmsRepository: StrapiClient,
         private readonly _requestContext: RequestContext,
         private readonly _userRepository: Repository<User>,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _trackElasticRepository: TrackElasticRepository,
         private readonly _playlistSubjectEvent: EventSubjectFactory,
         private readonly _albumElasticRepository: AlbumElasticRepository,
+        private readonly _coinDeductionRepository: Repository<CoinDeduction>
     ) {
         this._logger = new Logger(BoostService.name)
 
     }
 
     public boostMedia(request: BoostRequest): Observable<{success:boolean}> {
-        return from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId })).pipe(
+        const { userId } = this._requestContext.identityInfo
+        return from(this._userRepository.findOneBy({ id: userId })).pipe(
             mergeMap(user => {
                 if (user.remainCoins < request.boostCoin) {
                     return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
                 }
 
-                return from(this._userRepository.decrement({ id: this._requestContext.identityInfo.userId }, 'remainCoins', request.boostCoin)).pipe(
-                    map(() => user),
+                return from(this._userRepository.decrement({ id: userId }, 'remainCoins', request.boostCoin)).pipe(
+                    mergeMap(() => {
+                        const model = this._coinDeductionRepository.create({
+                            communityId: request.communityId,
+                            trackId: request.trackId,
+                            userId: user.id,
+                            deductedAt: new Date(),
+                            deductedCoin: request.boostCoin,
+                            deductionEvent: DeductionEvent.BOOST,
+                        })
+                        return from(this._coinDeductionRepository.save(model))
+                    }),
                 )
             }),
             mergeMap(() => {

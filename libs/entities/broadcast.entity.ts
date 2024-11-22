@@ -25,6 +25,8 @@ export class Broadcast {
     @Column({ nullable: true })
     public stickerId: number
 
+    public communityId: string
+
     @JoinColumn()
     @ManyToOne(() => Community, (community) => community.broadcasts)
     public community: Community

@@ -18,6 +18,7 @@ import { Stage } from '@libs/entities/stage.entity'
 import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 import { Provider } from '@nestjs/common'
 import { MediaService } from '../services/media.service'
+import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -41,31 +42,31 @@ export const playlistServiceProvider = {
 export const boostServiceProvider = {
     provide: ProviderName.BOOST_SERVICE,
     inject: [
-        ProviderName.STRAPI_CLIENT,
         ProviderName.REQUEST_CONTEXT,
         ProviderName.USER_REPOSITORY,
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.TRACK_REPOSITORY,
         ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
         ProviderName.ALBUM_REPOSITORY,
+        ProviderName.COIN_DEDUCTION_REPOSITORY,
     ],
     useFactory: (
-        client: StrapiClient,
         requestContext: RequestContext,
         userRepository: Repository<User>,
         playlistRepository: Repository<Playlist>,
         trackElasticRepository: TrackElasticRepository,
         eventSubject: EventSubjectFactory,
         albumElasticRepository: AlbumElasticRepository,
+        coinDeductionRepository: Repository<CoinDeduction>
     ) => {
         return new BoostService(
-            client,
             requestContext,
             userRepository,
             playlistRepository,
             trackElasticRepository,
             eventSubject,
             albumElasticRepository,
+            coinDeductionRepository,
             )
     }
 }

@@ -17,6 +17,8 @@ import { Subject } from 'rxjs'
 import { UserService } from '../services/user.service'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { Stage } from '@libs/entities/stage.entity'
+import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
+import { RankingService } from '../services/ranking.service'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -74,4 +76,17 @@ export const userServiceProvider: Provider = {
         tokenizationService: ITokenizationService,
         requestContext: RequestContext,
     ) => new UserService(userRepository,  tokenizationService, requestContext),
+}
+
+export const rankingServiceProvider: Provider = {
+    provide: ProviderName.RANKING_SERVICE,
+    inject: [
+        ProviderName.COIN_DEDUCTION_REPOSITORY,
+    ],
+    useFactory: (
+        coinDeductionRepository: Repository<CoinDeduction>,
+    ) => {
+        return new RankingService(coinDeductionRepository)
+    }
+
 }

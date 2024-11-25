@@ -36,7 +36,7 @@ export class RankingService implements IRankingService {
         const today = dayjs()
         const startOfWeek = today.startOf('week')
 
-        let yesterday = today.subtract(0, 'day').endOf('day')
+        let yesterday = today.subtract(1, 'day').endOf('day')
 
         if (yesterday.isBefore(startOfWeek)) {
             yesterday = startOfWeek.endOf('day')

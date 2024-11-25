@@ -46,7 +46,7 @@ export class MainModule implements NestModule {
             },
             {
                 path: '/(.*)',
-                method: RequestMethod.ALL,
+                method: RequestMethod.GET,
             }
         ]
         consumer.apply(RequestContextMiddleware)

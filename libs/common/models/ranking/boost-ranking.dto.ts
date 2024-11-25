@@ -17,5 +17,7 @@ export class BoostRankingDto {
     public endDate: Date
     @ApiProperty({type:UserRankingDto })
     public ranking: UserRankingDto[]
+    @ApiProperty()
+    public location: string
 
 }

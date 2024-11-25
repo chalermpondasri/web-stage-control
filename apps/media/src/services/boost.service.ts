@@ -48,14 +48,17 @@ export class BoostService implements IBoostService {
     }
 
     public boostMedia(request: BoostRequest): Observable<{success:boolean}> {
-        const { userId } = this._requestContext.identityInfo
+        const userId = this._requestContext.identityInfo.userId
         return from(this._userRepository.findOneBy({ id: userId })).pipe(
             mergeMap(user => {
                 if (user.remainCoins < request.boostCoin) {
                     return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
                 }
 
-                return from(this._userRepository.decrement({ id: userId }, 'remainCoins', request.boostCoin)).pipe(
+                const promise = this._userRepository.decrement({ id: userId }, 'remainCoins', request.boostCoin)
+
+                return from(promise).pipe(
+                    tap(updateResult => this._logger.log(updateResult)),
                     mergeMap(() => {
                         const model = this._coinDeductionRepository.create({
                             communityId: request.communityId,

@@ -79,7 +79,9 @@ export const requestContextProvider: Provider = {
     useClass: RequestContext,
 }
 
-@Injectable()
+@Injectable({
+    scope: Scope.REQUEST,
+})
 export class RequestContextMiddleware implements NestMiddleware {
     public constructor(
         @Inject(ProviderName.REQUEST_CONTEXT)

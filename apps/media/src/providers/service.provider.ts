@@ -39,7 +39,7 @@ export const playlistServiceProvider = {
     }
 }
 
-export const boostServiceProvider = {
+export const boostServiceProvider: Provider = {
     provide: ProviderName.BOOST_SERVICE,
     inject: [
         ProviderName.REQUEST_CONTEXT,

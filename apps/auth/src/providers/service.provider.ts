@@ -82,11 +82,16 @@ export const rankingServiceProvider: Provider = {
     provide: ProviderName.RANKING_SERVICE,
     inject: [
         ProviderName.COIN_DEDUCTION_REPOSITORY,
+        ProviderName.COMMUNITY_REPOSITORY,
     ],
     useFactory: (
         coinDeductionRepository: Repository<CoinDeduction>,
+        communityRepository: Repository<Community>,
     ) => {
-        return new RankingService(coinDeductionRepository)
+        return new RankingService(
+            coinDeductionRepository,
+            communityRepository,
+        )
     }
 
 }

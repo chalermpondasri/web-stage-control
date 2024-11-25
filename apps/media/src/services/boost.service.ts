@@ -1,5 +1,6 @@
 import { BoostRequest } from '@libs/common/models/media/boost.request'
 import {
+    concatMap,
     from,
     map,
     mergeMap,
@@ -34,6 +35,7 @@ import {
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
+
     public constructor(
         private readonly _requestContext: RequestContext,
         private readonly _userRepository: Repository<User>,
@@ -41,24 +43,22 @@ export class BoostService implements IBoostService {
         private readonly _trackElasticRepository: TrackElasticRepository,
         private readonly _playlistSubjectEvent: EventSubjectFactory,
         private readonly _albumElasticRepository: AlbumElasticRepository,
-        private readonly _coinDeductionRepository: Repository<CoinDeduction>
+        private readonly _coinDeductionRepository: Repository<CoinDeduction>,
     ) {
         this._logger = new Logger(BoostService.name)
 
     }
 
-    public boostMedia(request: BoostRequest): Observable<{success:boolean}> {
-        const userId = this._requestContext.identityInfo.userId
-        return from(this._userRepository.findOneBy({ id: userId })).pipe(
-            mergeMap(user => {
+    public boostMedia(request: BoostRequest): Observable<{ success: boolean }> {
+        return from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId })).pipe(
+            concatMap(user => {
                 if (user.remainCoins < request.boostCoin) {
                     return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
                 }
 
-                const promise = this._userRepository.decrement({ id: userId }, 'remainCoins', request.boostCoin)
+                const promise = this._userRepository.decrement({ id: user.id }, 'remainCoins', request.boostCoin)
 
                 return from(promise).pipe(
-                    tap(updateResult => this._logger.log(updateResult)),
                     mergeMap(() => {
                         const model = this._coinDeductionRepository.create({
                             communityId: request.communityId,
@@ -84,14 +84,14 @@ export class BoostService implements IBoostService {
                     mergeMap(playlist => {
                         if (!!playlist) {
                             return from(this._playlistRepository.increment(findExistingOpts, 'totalBoost', request.boostCoin)).pipe(
-                                mergeMap(() => from(this._playlistRepository.findOneBy(findExistingOpts)))
+                                mergeMap(() => from(this._playlistRepository.findOneBy(findExistingOpts))),
                             )
                         }
 
                         return this._trackElasticRepository.searchTrackById(request.trackId).pipe(
                             mergeMap(result => {
-                                const track = <TrackES> result.hits.hits[0]._source
-                               return this._albumElasticRepository.getTrackRelatedData(track, true, true)
+                                const track = <TrackES>result.hits.hits[0]._source
+                                return this._albumElasticRepository.getTrackRelatedData(track, true, true)
                             }),
                             mergeMap(result => {
                                 const track = result
@@ -106,7 +106,7 @@ export class BoostService implements IBoostService {
                                 model.duration = track.duration
                                 model.queueState = QueueState.QUEUED
                                 model.albumId = track?.album_id
-                                model.albumName = {en: track?.album?.name_en, th: track?.album?.name_th, cn: null}
+                                model.albumName = { en: track?.album?.name_en, th: track?.album?.name_th, cn: null }
                                 model.albumImageUrl = track?.album?.image?.url
 
                                 return this._playlistRepository.save(model)
@@ -115,7 +115,7 @@ export class BoostService implements IBoostService {
                     }),
                     tap(list => {
                         const data: TrackBoostedSse = {
-                            trackId:list.trackId,
+                            trackId: list.trackId,
                             timestamp: (new Date()).toISOString(),
                             totalCoins: list.totalBoost,
                             boostedBy: request.boostCoin,
@@ -131,12 +131,12 @@ export class BoostService implements IBoostService {
                                 totalCoins: list.totalBoost,
                                 album: {
                                     albumName: list.albumName,
-                                }
-                            }
+                                },
+                            },
                         }
                         this._playlistSubjectEvent.push(request.communityId, 'ITEM_UPDATE', data)
                     }),
-                    map(() => ({success: true})),
+                    map(() => ({ success: true })),
                 )
             }),
         )

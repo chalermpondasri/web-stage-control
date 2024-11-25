@@ -45,9 +45,15 @@ export class MainModule implements NestModule {
                 method: RequestMethod.ALL,
             },
             {
+
+                path: '/playlist/(.*)',
+                method: RequestMethod.ALL,
+            },
+            {
                 path: '/(.*)',
                 method: RequestMethod.GET,
-            }
+            },
+
         ]
         consumer.apply(RequestContextMiddleware)
             .exclude(...excludeRouteInfo)

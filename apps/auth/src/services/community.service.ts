@@ -3,18 +3,24 @@ import { ICommunityService } from './interfaces/community-service.interface'
 import { Repository } from 'typeorm'
 import { Community } from '@libs/entities/community.entity'
 import {
+    catchError,
+    from,
     map,
     mergeMap,
     Observable,
     of,
     throwError,
 } from 'rxjs'
-import { BadRequestException } from '@nestjs/common'
+import {
+    BadRequestException,
+    Logger,
+} from '@nestjs/common'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
 import dayjs from 'dayjs'
 import { plainToInstance } from 'class-transformer'
 
 export class CommunityService implements ICommunityService {
+    private readonly _logger: Logger = new Logger(CommunityService.name)
     public constructor(
         private readonly _communityRepository: Repository<Community>
     ) {
@@ -26,7 +32,12 @@ export class CommunityService implements ICommunityService {
                     return throwError(() => new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND))
                 }
 
-                return this._communityRepository.findOneBy({id: communityId})
+                return from(this._communityRepository.findOneBy({id: communityId})).pipe(
+                    catchError((err) => throwError(() => {
+                        this._logger.error(err)
+                        return new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND)
+                    }))
+                )
             }),
             map(community => {
                 const communityDto: CommunityDto = {

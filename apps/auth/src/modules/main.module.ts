@@ -7,6 +7,7 @@ import { OrmModule } from '@libs/modules/orm.module'
 import { GlobalModule } from '@libs/modules/global.module'
 import {
     authenticationServiceProvider,
+    communityServiceProvider,
     rankingServiceProvider,
     tokenizationServiceProvider,
     userServiceProvider,
@@ -17,6 +18,7 @@ import { UserController } from '../controllers/user.controller'
 import { RequestContextMiddleware } from '@libs/providers/request-context.provider'
 import { MeController } from '../controllers/me.controller'
 import { RankingController } from '../controllers/ranking.controller'
+import { CommunityController } from '../controllers/community.controller'
 
 @Module({
     imports: [
@@ -29,12 +31,14 @@ import { RankingController } from '../controllers/ranking.controller'
         tokenizationServiceProvider,
         userServiceProvider,
         rankingServiceProvider,
+        communityServiceProvider,
     ],
     controllers: [
         AdminController,
         UserController,
         MeController,
         RankingController,
+        CommunityController,
     ],
 })
 export class MainModule implements NestModule {

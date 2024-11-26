@@ -19,6 +19,7 @@ import { RequestContext } from '@libs/providers/request-context.provider'
 import { Stage } from '@libs/entities/stage.entity'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 import { RankingService } from '../services/ranking.service'
+import { CommunityService } from '../services/community.service'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -75,7 +76,7 @@ export const userServiceProvider: Provider = {
         userRepository: Repository<User>,
         tokenizationService: ITokenizationService,
         requestContext: RequestContext,
-    ) => new UserService(userRepository,  tokenizationService, requestContext),
+    ) => new UserService(userRepository, tokenizationService, requestContext),
 }
 
 export const rankingServiceProvider: Provider = {
@@ -92,6 +93,16 @@ export const rankingServiceProvider: Provider = {
             coinDeductionRepository,
             communityRepository,
         )
-    }
+    },
 
+}
+
+export const communityServiceProvider: Provider = {
+    provide: ProviderName.COMMUNITY_SERVICE,
+    inject: [
+        ProviderName.COMMUNITY_REPOSITORY,
+    ],
+    useFactory: (
+        communityRepository: Repository<Community>,
+    ) => new CommunityService(communityRepository),
 }

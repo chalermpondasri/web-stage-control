@@ -25,10 +25,13 @@ export class NotificationService implements INotificationService {
                     ['support@wealthup.co.th'],
                     '[UMU][Suggestion] Music Suggestion',
                     `
-                    text: ${request.text}\nadditional
-                    note: ${request.additionalNote}
-                    
+                    text: ${request.text}<br/>
+                    additional note: ${request.additionalNote}<br/>
+                    --
+                   <br/> 
                     from: ${user.name} (id: ${user.id}) (line: ${user.lineId})
+                    <br/>
+                    <br/>
                     `,
                 )
             }),

@@ -13,11 +13,13 @@ import {
 import { IStageService } from './interfaces/service.interface'
 import {
     FindOptionsWhere,
-    Not,
     Repository,
 } from 'typeorm'
 import { Stage } from '@libs/entities/stage.entity'
-import { UnauthorizedException } from '@nestjs/common'
+import {
+    BadRequestException,
+    UnauthorizedException,
+} from '@nestjs/common'
 import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 import { plainToInstance } from 'class-transformer'
 import { MediaPlayRequest } from '@libs/common/models/media/media-play.request'
@@ -28,6 +30,7 @@ import {
 } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { PlaybackPlaySse } from '@libs/common/models/media/sse/playback-play.sse'
+import { ErrorEnum } from '@libs/common/constants/error.enum'
 
 export class StageService implements IStageService {
     public constructor(
@@ -47,20 +50,24 @@ export class StageService implements IStageService {
     }
 
     public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<any> {
-        const findOneOpts: FindOptionsWhere<Playlist> = {
+        const targetTrackOpts: FindOptionsWhere<Playlist> = {
             communityId,
-            trackId: Number(mediaId),
+            id: request.transactionId,
             queueState: QueueState.QUEUED,
         }
 
         const playingTrackOpts: FindOptionsWhere<Playlist> = {
             communityId,
             queueState: QueueState.PLAYING,
-            trackId: Not(Number(mediaId)),
         }
 
         return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
             mergeMap(playingTrack => {
+
+                if(!!playingTrack && playingTrack.id === request.transactionId) {
+                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
+                }
+
                 if (!!playingTrack) {
                     playingTrack.queueState = QueueState.PLAYED
                     const id = playingTrack.id
@@ -73,11 +80,17 @@ export class StageService implements IStageService {
 
                 return of(null)
             }),
-            mergeMap(() => from(this._playlistRepository.findOneBy(findOneOpts)).pipe(
+            mergeMap(() => from(this._playlistRepository.findOneBy(targetTrackOpts)).pipe(
                 mergeMap(track => {
+                    if(!track) {
+                        return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
+                    }
+
                     track.queueState = QueueState.PLAYING
                     track.playedAt = request.timestamp
+
                     return from(this._playlistRepository.save(track))
+
                 }),
                 tap(newTrack => {
 

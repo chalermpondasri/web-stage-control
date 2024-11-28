@@ -7,6 +7,10 @@ export class PlayingTrackDto {
 
     @ApiProperty()
     @Expose()
+    public transactionId: string
+
+    @ApiProperty()
+    @Expose()
     public trackId: number
 
     @ApiProperty({

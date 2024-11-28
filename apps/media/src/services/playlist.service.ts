@@ -56,11 +56,12 @@ export class PlaylistService implements IPlaylistService {
                 }
                 return from(this._playlistRepository.findAndCount(opts))
             }),
-            map(([playlist, total]) => {
+            map(([playlist]) => {
 
                 const dto = new PlaylistDto()
                 dto.communityId = communityId
                 dto.queue = playlist.map(p => plainToInstance(QueueTrackDto, {
+                    transactionId: p.id,
                     trackId: p.trackId,
                     title: plainToInstance(Locale, { en: p.title, th: p.title }),
                     artists: p.artist,
@@ -91,6 +92,7 @@ export class PlaylistService implements IPlaylistService {
             }),
             map(playing => {
                 const data: PlayingTrackDto = {
+                    transactionId: playing.id,
                     artistImage: playing.coverImage,
                     artists: playing.artist.split(','),
                     coverImage: playing.coverImage,

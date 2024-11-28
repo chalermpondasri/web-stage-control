@@ -28,6 +28,9 @@ export class TrackBoostedSse {
     public timestamp: string
 
     @ApiProperty()
+    public transactionId: string
+
+    @ApiProperty()
     public trackId: number
 
     @ApiProperty()

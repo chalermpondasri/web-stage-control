@@ -9,10 +9,12 @@ import {
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants'
 import {
+    IBoostService,
     IPlaylistService,
     IStageService,
 } from '../services/interfaces/service.interface'
 import {
+    ApiBearerAuth,
     ApiBody,
     ApiOperation,
     ApiParam,
@@ -28,6 +30,8 @@ import {
     MediaPauseRequest,
     MediaPlayRequest,
 } from '@libs/common/models/media/media-play.request'
+import { GenericUserGuard } from '@libs/guards/generic-user.guard'
+import { BoostRequest } from '@libs/common/models/media/boost.request'
 
 @ApiTags(...['community'])
 @Controller('/communities')
@@ -38,6 +42,8 @@ export class CommunityController {
         private readonly _playlistService: IPlaylistService,
         @Inject(ProviderName.STAGE_SERVICE)
         private readonly _stageService: IStageService,
+        @Inject(ProviderName.BOOST_SERVICE)
+        private readonly _boostService: IBoostService,
     ) {
     }
 
@@ -109,4 +115,23 @@ export class CommunityController {
     ){
         return this._stageService.pause(communityId, id, request)
     }
+
+
+
+    @ApiTags('media')
+    @ApiBearerAuth(GenericUserGuard.name)
+    @ApiOperation({description:'boost select track with user coin'})
+    @ApiBody({
+        type: BoostRequest,
+    })
+    @ApiResponse({example: {success: true}})
+    @UseGuards(GenericUserGuard)
+    @Post('/:communityId/boost')
+    public boostMedia(
+        @Param('communityId')communityId: string,
+        @Body() request: BoostRequest
+    ) {
+        return this._boostService.boostMedia(communityId,request)
+    }
+
 }

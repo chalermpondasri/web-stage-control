@@ -1,12 +1,14 @@
 import {
+    IsOptional,
     IsPositive,
     IsUUID,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class BoostRequest {
-    @ApiProperty()
+    @ApiProperty({deprecated: true, description:'using community id from param instead'})
     @IsUUID()
+    @IsOptional()
     public communityId: string
 
     @ApiProperty()

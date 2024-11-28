@@ -1,10 +1,12 @@
 import { BoostRequest } from '@libs/common/models/media/boost.request'
 import {
     concatMap,
+    forkJoin,
     from,
     map,
     mergeMap,
     Observable,
+    of,
     tap,
     throwError,
 } from 'rxjs'
@@ -12,7 +14,6 @@ import { IBoostService } from './interfaces/service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { User } from '@libs/entities/user.entity'
 import {
-    FindOptionsWhere,
     Repository,
 } from 'typeorm'
 import {
@@ -32,6 +33,7 @@ import {
     CoinDeduction,
     DeductionEvent,
 } from '@libs/entities/coin-deduction.entity'
+import { isUUID } from 'class-validator'
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
@@ -49,19 +51,47 @@ export class BoostService implements IBoostService {
 
     }
 
-    public boostMedia(request: BoostRequest): Observable<{ success: boolean }> {
-        return from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId })).pipe(
-            concatMap(user => {
-                if (user.remainCoins < request.boostCoin) {
-                    return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
-                }
+    public boostMedia(communityId: string, request: BoostRequest): Observable<{ success: boolean }> {
 
+        communityId = communityId || request.communityId
+        if (!isUUID(communityId)) {
+            throw new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND)
+        }
+
+        const checkUserRemainCoin = () => from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId }))
+            .pipe(
+                concatMap(user => {
+                        if (user.remainCoins < request.boostCoin) {
+                            return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
+                        }
+                        return of(user)
+                    },
+                ),
+            )
+
+        const checkPlaylistAvailabilities = () => from(this._playlistRepository.findOneBy({
+            communityId,
+            trackId: request.trackId,
+            queueState: QueueState.QUEUED,
+        })).pipe(
+            mergeMap(playlist => {
+                if (!playlist) {
+                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
+                }
+                return of(playlist)
+            }),
+        )
+
+        return forkJoin([
+            checkUserRemainCoin(), checkPlaylistAvailabilities(),
+        ]).pipe(
+            mergeMap(([user, playlist]) => {
                 const promise = this._userRepository.decrement({ id: user.id }, 'remainCoins', request.boostCoin)
 
                 return from(promise).pipe(
                     mergeMap(() => {
                         const model = this._coinDeductionRepository.create({
-                            communityId: request.communityId,
+                            communityId: communityId,
                             trackId: request.trackId,
                             userId: user.id,
                             deductedAt: new Date(),
@@ -70,24 +100,12 @@ export class BoostService implements IBoostService {
                         })
                         return from(this._coinDeductionRepository.save(model))
                     }),
+                    map(() => ({ user, playlist })),
                 )
             }),
-            mergeMap(() => {
-
-                const findExistingOpts: FindOptionsWhere<Playlist> = {
-                    communityId: request.communityId,
-                    queueState: QueueState.QUEUED,
-                    trackId: request.trackId,
-                }
-
-                return from(this._playlistRepository.findOneBy(findExistingOpts)).pipe(
-                    mergeMap(playlist => {
-                        if (!!playlist) {
-                            return from(this._playlistRepository.increment(findExistingOpts, 'totalBoost', request.boostCoin)).pipe(
-                                mergeMap(() => from(this._playlistRepository.findOneBy(findExistingOpts))),
-                            )
-                        }
-
+            mergeMap(({ user, playlist }) => {
+                return from(this._playlistRepository.increment({ id: playlist.id }, 'totalBoost', request.boostCoin)).pipe(
+                    mergeMap(() => {
                         return this._trackElasticRepository.searchTrackById(request.trackId).pipe(
                             mergeMap(result => {
                                 const track = <TrackES>result.hits.hits[0]._source
@@ -97,7 +115,7 @@ export class BoostService implements IBoostService {
                                 const track = result
 
                                 const model = this._playlistRepository.create()
-                                model.communityId = request.communityId
+                                model.communityId = communityId
                                 model.coverImage = track.image?.url
                                 model.trackId = track.id
                                 model.title = track.name_th ?? track.name_en
@@ -115,6 +133,7 @@ export class BoostService implements IBoostService {
                     }),
                     tap(list => {
                         const data: TrackBoostedSse = {
+                            transactionId: list.id,
                             trackId: list.trackId,
                             timestamp: (new Date()).toISOString(),
                             totalCoins: list.totalBoost,
@@ -134,11 +153,12 @@ export class BoostService implements IBoostService {
                                 },
                             },
                         }
-                        this._playlistSubjectEvent.push(request.communityId, 'ITEM_UPDATE', data)
+                        this._playlistSubjectEvent.push(communityId, 'ITEM_UPDATE', data)
                     }),
-                    map(() => ({ success: true })),
+
                 )
             }),
+            map(() => ({ success: true })),
         )
     }
 }

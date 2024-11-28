@@ -27,19 +27,21 @@ export class BoostController {
     }
 
     @ApiBearerAuth(GenericUserGuard.name)
-    @ApiOperation({description:'boost select track with user coin'})
+    @ApiOperation({
+        description: 'boost select track with user coin, this method is deprecated and will be remove' ,
+        deprecated: true,
+    })
     @ApiBody({
         type: BoostRequest,
     })
-    @ApiResponse({example: {success: true}})
+    @ApiResponse({ example: { success: true } })
     @UseGuards(GenericUserGuard)
     @Post('/')
     public boostMedia(
-        @Body() request: BoostRequest
+        @Body() request: BoostRequest,
     ) {
-        return this._boostService.boostMedia(request)
+        return this._boostService.boostMedia(request.communityId, request)
     }
-
 
 
 }

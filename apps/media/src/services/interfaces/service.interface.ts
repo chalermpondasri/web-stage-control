@@ -15,7 +15,7 @@ export interface IPlaylistService {
 }
 
 export interface IBoostService {
-    boostMedia(request: BoostRequest):Observable<any>
+    boostMedia(communityId: string, request: BoostRequest):Observable<any>
 }
 
 export interface IStageService {

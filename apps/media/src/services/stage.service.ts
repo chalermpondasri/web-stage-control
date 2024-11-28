@@ -95,6 +95,7 @@ export class StageService implements IStageService {
                 tap(newTrack => {
 
                     const playedItem: PlaybackPlaySse = {
+                        transactionId: newTrack.id,
                         artistImage: newTrack.coverImage,
                         artists: newTrack.artist.split(','),
                         coverImage: newTrack.coverImage,

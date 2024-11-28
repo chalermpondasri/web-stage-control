@@ -8,6 +8,7 @@ import {
     MediaPauseRequest,
     MediaPlayRequest,
 } from '@libs/common/models/media/media-play.request'
+import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
 
 export interface IPlaylistService {
     getPlaylist(communityId: string): Observable<PlaylistDto>
@@ -16,6 +17,7 @@ export interface IPlaylistService {
 
 export interface IBoostService {
     boostMedia(communityId: string, request: BoostRequest):Observable<any>
+    addToQueue(communityId: string, request: AddToQueueRequest):Observable<any>
 }
 
 export interface IStageService {

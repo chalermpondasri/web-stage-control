@@ -13,9 +13,7 @@ import {
 import { IBoostService } from './interfaces/service.interface'
 import { RequestContext } from '@libs/providers/request-context.provider'
 import { User } from '@libs/entities/user.entity'
-import {
-    Repository,
-} from 'typeorm'
+import { Repository } from 'typeorm'
 import {
     BadRequestException,
     Logger,
@@ -34,6 +32,7 @@ import {
     DeductionEvent,
 } from '@libs/entities/coin-deduction.entity'
 import { isUUID } from 'class-validator'
+import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
@@ -51,23 +50,122 @@ export class BoostService implements IBoostService {
 
     }
 
-    public boostMedia(communityId: string, request: BoostRequest): Observable<{ success: boolean }> {
-
-        communityId = communityId || request.communityId
-        if (!isUUID(communityId)) {
-            throw new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND)
-        }
-
-        const checkUserRemainCoin = () => from(this._userRepository.findOneBy({ id: this._requestContext.identityInfo.userId }))
+    private _checkUserRemainCoin(userId: string, coinToUse: number): Observable<User>{
+        return  from(this._userRepository.findOneBy({ id: userId }))
             .pipe(
                 concatMap(user => {
-                        if (user.remainCoins < request.boostCoin) {
+                        if (user.remainCoins <coinToUse) {
                             return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
                         }
                         return of(user)
                     },
                 ),
             )
+    }
+
+    public addToQueue(communityId: string, request: AddToQueueRequest): Observable<any> {
+
+        const checkIfNotExistInPlaylist = () => from(this._playlistRepository.findOneBy({
+            communityId,
+            trackId: request.trackId,
+            queueState: QueueState.QUEUED,
+        })).pipe(
+            mergeMap(playlist => {
+                if (!!playlist) {
+                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_EXISTED))
+                }
+                return of(null)
+            }),
+        )
+
+        if (!isUUID(communityId)) {
+            throw new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND)
+        }
+
+        return forkJoin([
+            this._checkUserRemainCoin(this._requestContext.identityInfo.userId, request.boostCoin),
+            checkIfNotExistInPlaylist(),
+        ]).pipe(
+            mergeMap(([user]) => {
+                return from(this._userRepository.decrement({ id: user.id }, 'remainCoins', request.boostCoin)).pipe(
+                    mergeMap(() => {
+                        const model = this._coinDeductionRepository.create({
+                            communityId: communityId,
+                            trackId: request.trackId,
+                            userId: user.id,
+                            deductedAt: new Date(),
+                            deductedCoin: request.boostCoin,
+                            deductionEvent: DeductionEvent.BOOST,
+                        })
+                        return from(this._coinDeductionRepository.save(model))
+                    }),
+                    map(() => ({ user })),
+                )
+            }),
+            mergeMap(({user}) => {
+                return this._trackElasticRepository.searchTrackById(request.trackId).pipe(
+                    mergeMap(result => {
+                        const track = <TrackES>result.hits.hits[0]._source
+                        return this._albumElasticRepository.getTrackRelatedData(track, true, true)
+                    }),
+                    map(track => ({user, track}))
+                )
+            }),
+            mergeMap(({user, track}) => {
+                const model = this._playlistRepository.create({
+                    communityId,
+                    coverImage:  track.image?.url,
+                    trackId: track.id,
+                    title: track.name_th ?? track.name_en,
+                    artist: !!track.artists ? track.artists.map(t => t.name_th).join(',') : '',
+                    totalBoost: request.boostCoin,
+                    duration: track.duration,
+                    queueState: QueueState.QUEUED,
+                    albumId: track?.album_id,
+                    albumName: { en: track?.album?.name_en, th: track?.album?.name_th, cn: null },
+                    albumImageUrl: track?.album?.image?.url
+                })
+                return this._playlistRepository.save(model)
+            }),
+            tap((list => {
+                this._propagateTrackBoostSSE(communityId, list)
+            })),
+            map(() => ({success: true}))
+
+        )
+
+    }
+    public _propagateTrackBoostSSE( communityId: string,list: Playlist) {
+        const data: TrackBoostedSse = {
+            transactionId: list.id,
+            trackId: list.trackId,
+            timestamp: (new Date()).toISOString(),
+            totalCoins: list.totalBoost,
+            boostedBy: list.totalBoost,
+            track: {
+                trackId: list.trackId,
+                coverImage: list.coverImage,
+                title: {
+                    th: list.title,
+                    en: list.title,
+                    cn: null,
+                },
+                artists: list.artist.split(','),
+                totalCoins: list.totalBoost,
+                album: {
+                    albumName: list.albumName,
+                },
+            },
+        }
+        this._playlistSubjectEvent.push(communityId, 'ITEM_UPDATE', data)
+    }
+
+    public boostMedia(communityId: string, request: BoostRequest): Observable<{ success: boolean }> {
+
+        communityId = communityId || request.communityId
+        if (!isUUID(communityId)) {
+            throw new BadRequestException(ErrorEnum.COMMUNITY_NOT_FOUND)
+        }
 
         const checkPlaylistAvailabilities = () => from(this._playlistRepository.findOneBy({
             communityId,
@@ -83,7 +181,8 @@ export class BoostService implements IBoostService {
         )
 
         return forkJoin([
-            checkUserRemainCoin(), checkPlaylistAvailabilities(),
+            this._checkUserRemainCoin(this._requestContext.identityInfo.userId, request.boostCoin),
+            checkPlaylistAvailabilities(),
         ]).pipe(
             mergeMap(([user, playlist]) => {
                 const promise = this._userRepository.decrement({ id: user.id }, 'remainCoins', request.boostCoin)
@@ -131,31 +230,9 @@ export class BoostService implements IBoostService {
                             }),
                         )
                     }),
-                    tap(list => {
-                        const data: TrackBoostedSse = {
-                            transactionId: list.id,
-                            trackId: list.trackId,
-                            timestamp: (new Date()).toISOString(),
-                            totalCoins: list.totalBoost,
-                            boostedBy: request.boostCoin,
-                            track: {
-                                trackId: list.trackId,
-                                coverImage: list.coverImage,
-                                title: {
-                                    th: list.title,
-                                    en: list.title,
-                                    cn: null,
-                                },
-                                artists: list.artist.split(','),
-                                totalCoins: list.totalBoost,
-                                album: {
-                                    albumName: list.albumName,
-                                },
-                            },
-                        }
-                        this._playlistSubjectEvent.push(communityId, 'ITEM_UPDATE', data)
-                    }),
-
+                    tap((list => {
+                        this._propagateTrackBoostSSE(communityId, list)
+                    })),
                 )
             }),
             map(() => ({ success: true })),

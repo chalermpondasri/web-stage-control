@@ -32,6 +32,7 @@ import {
 } from '@libs/common/models/media/media-play.request'
 import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import { BoostRequest } from '@libs/common/models/media/boost.request'
+import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
 
 @ApiTags(...['community'])
 @Controller('/communities')
@@ -116,8 +117,6 @@ export class CommunityController {
         return this._stageService.pause(communityId, id, request)
     }
 
-
-
     @ApiTags('media')
     @ApiBearerAuth(GenericUserGuard.name)
     @ApiOperation({description:'boost select track with user coin'})
@@ -132,6 +131,22 @@ export class CommunityController {
         @Body() request: BoostRequest
     ) {
         return this._boostService.boostMedia(communityId,request)
+    }
+
+    @ApiTags('media')
+    @ApiBearerAuth(GenericUserGuard.name)
+    @ApiOperation({description:'add new select track with user coin'})
+    @ApiBody({
+        type: AddToQueueRequest,
+    })
+    @ApiResponse({example: {success: true}})
+    @UseGuards(GenericUserGuard)
+    @Post('/:communityId/add')
+    public addMedia(
+        @Param('communityId')communityId: string,
+        @Body() request: AddToQueueRequest
+    ) {
+        return this._boostService.addToQueue(communityId, request)
     }
 
 }

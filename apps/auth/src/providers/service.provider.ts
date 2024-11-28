@@ -20,6 +20,8 @@ import { Stage } from '@libs/entities/stage.entity'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 import { RankingService } from '../services/ranking.service'
 import { CommunityService } from '../services/community.service'
+import { NotificationService } from '../services/notification.service'
+import { IMailer } from '@libs/providers/mailer/interfaces/mailer.interface'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -105,4 +107,22 @@ export const communityServiceProvider: Provider = {
     useFactory: (
         communityRepository: Repository<Community>,
     ) => new CommunityService(communityRepository),
+}
+
+export const notifierServiceProvider: Provider = {
+    provide: ProviderName.NOTIFICATION_SERVICE,
+    inject: [
+        ProviderName.REQUEST_CONTEXT,
+        ProviderName.USER_REPOSITORY,
+        ProviderName.MAILER_SERVICE,
+    ],
+    useFactory: (
+        requestContext: RequestContext,
+        userRepository: Repository<User>,
+        mailerService: IMailer,
+    ) => new NotificationService(
+        requestContext,
+        userRepository,
+        mailerService,
+    )
 }

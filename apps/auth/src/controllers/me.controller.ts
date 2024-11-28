@@ -4,12 +4,17 @@ import {
     Get,
     Inject,
     Patch,
+    Post,
     UseGuards,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants'
-import { IUserService } from '../services/interfaces/user-service.interface'
+import {
+    INotificationService,
+    IUserService,
+} from '../services/interfaces/user-service.interface'
 import {
     ApiBearerAuth,
+    ApiBody,
     ApiOperation,
     ApiResponse,
     ApiTags,
@@ -17,6 +22,7 @@ import {
 import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 import { UpdateProfileRequest } from '@libs/common/models/user/update-profile.request'
+import { SuggestionRequest } from '@libs/common/models/user/suggestion.request'
 
 @ApiTags(...['user', 'me'])
 @Controller('/users/me')
@@ -24,6 +30,8 @@ export class MeController {
     public constructor(
         @Inject(ProviderName.USER_SERVICE)
         private readonly _userService: IUserService,
+        @Inject(ProviderName.NOTIFICATION_SERVICE)
+        private readonly _notificationService: INotificationService,
     ) {
     }
 
@@ -51,5 +59,17 @@ export class MeController {
         @Body() request: UpdateProfileRequest,
     ) {
         return this._userService.updateUserProfile(request)
+    }
+
+    @ApiOperation({ description: 'send a suggestion' })
+    @ApiBody({ type: SuggestionRequest })
+    @ApiBearerAuth()
+    @UseGuards(GenericUserGuard)
+    @Post('/suggestions')
+    public doSuggestions(
+        @Body() suggestions: SuggestionRequest,
+    ) {
+        return this._notificationService.sendSuggestion(suggestions)
+
     }
 }

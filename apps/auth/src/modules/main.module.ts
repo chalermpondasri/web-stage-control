@@ -8,6 +8,7 @@ import { GlobalModule } from '@libs/modules/global.module'
 import {
     authenticationServiceProvider,
     communityServiceProvider,
+    notifierServiceProvider,
     rankingServiceProvider,
     tokenizationServiceProvider,
     userServiceProvider,
@@ -19,11 +20,13 @@ import { RequestContextMiddleware } from '@libs/providers/request-context.provid
 import { MeController } from '../controllers/me.controller'
 import { RankingController } from '../controllers/ranking.controller'
 import { CommunityController } from '../controllers/community.controller'
+import { MailerModule } from '@libs/modules/mailer.module'
 
 @Module({
     imports: [
         GlobalModule,
         OrmModule,
+        MailerModule,
     ],
     providers: [
         encryptionServiceProvider,
@@ -32,6 +35,7 @@ import { CommunityController } from '../controllers/community.controller'
         userServiceProvider,
         rankingServiceProvider,
         communityServiceProvider,
+        notifierServiceProvider,
     ],
     controllers: [
         AdminController,

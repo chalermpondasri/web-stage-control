@@ -204,32 +204,7 @@ export class BoostService implements IBoostService {
             }),
             mergeMap(({ user, playlist }) => {
                 return from(this._playlistRepository.increment({ id: playlist.id }, 'totalBoost', request.boostCoin)).pipe(
-                    mergeMap(() => {
-                        return this._trackElasticRepository.searchTrackById(request.trackId).pipe(
-                            mergeMap(result => {
-                                const track = <TrackES>result.hits.hits[0]._source
-                                return this._albumElasticRepository.getTrackRelatedData(track, true, true)
-                            }),
-                            mergeMap(result => {
-                                const track = result
-
-                                const model = this._playlistRepository.create()
-                                model.communityId = communityId
-                                model.coverImage = track.image?.url
-                                model.trackId = track.id
-                                model.title = track.name_th ?? track.name_en
-                                model.artist = !!track.artists ? track.artists.map(t => t.name_th).join(',') : ''
-                                model.totalBoost = request.boostCoin
-                                model.duration = track.duration
-                                model.queueState = QueueState.QUEUED
-                                model.albumId = track?.album_id
-                                model.albumName = { en: track?.album?.name_en, th: track?.album?.name_th, cn: null }
-                                model.albumImageUrl = track?.album?.image?.url
-
-                                return this._playlistRepository.save(model)
-                            }),
-                        )
-                    }),
+                    mergeMap(() => this._playlistRepository.findOneBy({id: playlist.id})),
                     tap((list => {
                         this._propagateTrackBoostSSE(communityId, list)
                     })),

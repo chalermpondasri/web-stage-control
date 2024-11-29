@@ -22,6 +22,7 @@ import { RankingService } from '../services/ranking.service'
 import { CommunityService } from '../services/community.service'
 import { NotificationService } from '../services/notification.service'
 import { IMailer } from '@libs/providers/mailer/interfaces/mailer.interface'
+import { IBadWordService } from '@libs/providers/bad-word.provider'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -73,12 +74,14 @@ export const userServiceProvider: Provider = {
         ProviderName.USER_REPOSITORY,
         ProviderName.TOKENIZATION_SERVICE,
         ProviderName.REQUEST_CONTEXT,
+        ProviderName.BAD_WORD_SERVICE,
     ],
     useFactory: (
         userRepository: Repository<User>,
         tokenizationService: ITokenizationService,
         requestContext: RequestContext,
-    ) => new UserService(userRepository, tokenizationService, requestContext),
+        badWordService: IBadWordService,
+    ) => new UserService(userRepository, tokenizationService, requestContext, badWordService),
 }
 
 export const rankingServiceProvider: Provider = {
@@ -124,5 +127,5 @@ export const notifierServiceProvider: Provider = {
         requestContext,
         userRepository,
         mailerService,
-    )
+    ),
 }

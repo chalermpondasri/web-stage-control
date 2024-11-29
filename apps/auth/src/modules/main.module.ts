@@ -21,6 +21,7 @@ import { MeController } from '../controllers/me.controller'
 import { RankingController } from '../controllers/ranking.controller'
 import { CommunityController } from '../controllers/community.controller'
 import { MailerModule } from '@libs/modules/mailer.module'
+import { badWordProvider } from '@libs/providers/bad-word.provider'
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { MailerModule } from '@libs/modules/mailer.module'
         rankingServiceProvider,
         communityServiceProvider,
         notifierServiceProvider,
+        badWordProvider
     ],
     controllers: [
         AdminController,

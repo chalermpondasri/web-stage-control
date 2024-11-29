@@ -54,7 +54,7 @@ export class BoostService implements IBoostService {
         return  from(this._userRepository.findOneBy({ id: userId }))
             .pipe(
                 concatMap(user => {
-                        if (user.remainCoins <coinToUse) {
+                        if (user.remainCoins < coinToUse) {
                             return throwError(() => new BadRequestException(ErrorEnum.BOOST_INSUFFICIENT_COIN))
                         }
                         return of(user)

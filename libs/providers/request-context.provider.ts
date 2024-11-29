@@ -17,10 +17,12 @@ import {
     Response,
 } from 'express'
 import {
+    catchError,
     from,
     mergeMap,
     of,
     tap,
+    throwError,
 } from 'rxjs'
 import { get } from 'lodash'
 import { IResult } from 'ua-parser-js'
@@ -114,13 +116,14 @@ export class RequestContextMiddleware implements NestMiddleware {
                     }
                     const userId = get(data.payload, 'id', null)
                     if(isNil(userId)) {
-                        throw new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID)
+                        return throwError(() => new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID))
                     }
-                    return from(this._userRepository.findOneBy({ id: userId })).pipe(
+                    return from(this._userRepository.findOneByOrFail({ id: userId })).pipe(
                         tap(result => {
                             this._rc.identityInfo.userId = result.id
                             this._rc.identityInfo.token = token
                         }),
+                        catchError(() => throwError(() => new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID)))
                     )
                 }),
             )

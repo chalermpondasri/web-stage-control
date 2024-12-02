@@ -82,6 +82,9 @@ export class BadWordService implements IBadWordService {
     public censorThaiCurseWords(message: string): Observable<string> {
         const words = thaiCut.cut(message) as string[]
         const startTime = new Date()
+        if(words.length === 0) {
+            return this.censorEnglishCurseWords(message)
+        }
         this._logger.debug(`Start censor : ${startTime.toISOString()}`)
         return from(words).pipe(
             reduce((acc, value) => {

@@ -5,6 +5,7 @@ import { RequestContextMiddleware } from '@libs/providers/request-context.provid
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { tokenizationServiceProvider, userServiceProvider } from 'apps/auth/src/providers/service.provider'
 import { BroadcastController } from '../controllers/broadcast.controller'
+import { badWordProvider } from '@libs/providers/bad-word.provider'
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { BroadcastController } from '../controllers/broadcast.controller'
         broadcastServiceProvider,
         tokenizationServiceProvider,
         userServiceProvider,
+        badWordProvider
     ],
 })
 export class BroadcastModule implements NestModule {

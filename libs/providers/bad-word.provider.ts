@@ -10,7 +10,7 @@ import path from 'path'
 import thaiCut from 'thai-cut-slim'
 import en from '../../assets/en.json'
 import {
-    from,
+    from, mergeMap,
     Observable,
     of,
     reduce,
@@ -91,9 +91,14 @@ export class BadWordService implements IBadWordService {
                 const newText = this._badWords.filter(value)
                 if (newText !== value) {
                     acc = message.replace(new RegExp(value, 'g'), newText)
+                } else {
+                    acc = message
                 }
-                return this._badWords.filter(acc)
+                return acc
             }, ''),
+            mergeMap((msg: string) => {
+                return this.censorEnglishCurseWords(msg)
+            }),
             tap(() => {
                 const endTime = new Date()
                 this._logger.debug(`End censor : ${endTime.toISOString()} : Using time : ${endTime.valueOf() - startTime.valueOf()} ms`)

@@ -199,7 +199,7 @@ export class AuthenticationService implements IAuthenticationService {
     public doLineWebLogin(code: string): Observable<TokenDto> {
         return from(this._lineRepository.issueAccessToken({ code })).pipe(
             mergeMap(result => {
-                const decoded = <JwtPayload>decode(result.access_token)
+                const decoded = <JwtPayload>decode(result.id_token)
                 const { sub, name, picture } = decoded
                 return this._createUserIfNotfound({
                     lineId: sub,

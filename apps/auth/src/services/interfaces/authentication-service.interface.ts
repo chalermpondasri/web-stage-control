@@ -5,6 +5,7 @@ import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.requ
 export interface IAuthenticationService {
     createUser(username: string, password: string): Observable<any>
     doLogin(username: string, password: string): Observable<TokenDto>
-    doLineLogin(code: string): Observable<TokenDto>
+    doLineWebLogin(code: string): Observable<TokenDto>
+    doLineMobileLogin(accessToken: string): Observable<TokenDto>
     refreshToken(request: RefreshTokenRequest): Observable<TokenDto>
 }

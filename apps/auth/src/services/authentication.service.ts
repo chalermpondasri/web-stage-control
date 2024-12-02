@@ -135,57 +135,78 @@ export class AuthenticationService implements IAuthenticationService {
         })
     }
 
-    public doLineLogin(code: string): Observable<TokenDto> {
-        return from(this._lineRepository.verifyToken({ code })).pipe(
+    public doLineMobileLogin(accessToken: string): Observable<TokenDto> {
+        return from(this._lineRepository.getUserProfile(accessToken)).pipe(
             mergeMap(response => {
-                const decoded = <JwtPayload>decode(response.id_token)
-                const { sub, name, picture } = decoded
-                return from(this._userRepository.findOneBy({ lineId: decoded.sub })).pipe(
-                    mergeMap(user => {
-                        if(!user) {
-                            const entity  = this._userRepository.create({
-                                lineId: sub,
-                                name,
-                                picture: null,
-                                isConsentAccepted: false,
-                                acceptedConsent: null,
-                                setting: { showProfile: true, showName: true },
-                            })
+                return this._createUserIfNotfound({
+                    lineId: response.userId,
+                    name: response.displayName,
+                    picture: response.pictureUrl,
+                })
+            })
+        )
+    }
 
-                            return fromPromise(this._userRepository.save(entity)).pipe(
-                                mergeMap(user => {
-                                    return fromPromise(this._downloadImage(user.id, picture)).pipe(
-                                        mergeMap(() => {
-                                            user.picture = `/static/${user.id}`
-                                            return fromPromise(this._userRepository.save(user))
-                                        }),
-                                    )
-                                }),
-                            )
-                        }
+    private _createUserIfNotfound({lineId, name, picture}:{lineId: string, name: string, picture: string}): Observable<TokenDto> {
+        return from(this._userRepository.findOneBy({ lineId})).pipe(
+            mergeMap(user => {
+                if(!user) {
+                    const entity  = this._userRepository.create({
+                        lineId,
+                        name,
+                        picture: null,
+                        isConsentAccepted: false,
+                        acceptedConsent: null,
+                        setting: { showProfile: true, showName: true },
+                    })
 
-                        if (!!user) {
-                            user.remainCoins = 9999
-                        }
-
-                        if(!!user && user.picture === null) {
+                    return fromPromise(this._userRepository.save(entity)).pipe(
+                        mergeMap(user => {
                             return fromPromise(this._downloadImage(user.id, picture)).pipe(
                                 mergeMap(() => {
                                     user.picture = `/static/${user.id}`
                                     return fromPromise(this._userRepository.save(user))
                                 }),
                             )
-                        }
+                        }),
+                    )
+                }
 
-                        return of(user)
-                    }),
-                )
+                if (!!user) {
+                    user.remainCoins = 9999
+                }
+
+                if(!!user && user.picture === null) {
+                    return fromPromise(this._downloadImage(user.id, picture)).pipe(
+                        mergeMap(() => {
+                            user.picture = `/static/${user.id}`
+                            return fromPromise(this._userRepository.save(user))
+                        }),
+                    )
+                }
+
+                return of(user)
             }),
             map((user: User) => this._generateUserToken(user)),
             catchError(err => {
                 this._logger.error(err)
                 return throwError(() => new UnauthorizedException())
             }),
+        )
+    }
+
+
+    public doLineWebLogin(code: string): Observable<TokenDto> {
+        return from(this._lineRepository.issueAccessToken({ code })).pipe(
+            mergeMap(result => {
+                const decoded = <JwtPayload>decode(result.access_token)
+                const { sub, name, picture } = decoded
+                return this._createUserIfNotfound({
+                    lineId: sub,
+                    name,
+                    picture,
+                })
+            })
         )
     }
 

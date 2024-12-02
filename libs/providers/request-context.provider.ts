@@ -123,7 +123,7 @@ export class RequestContextMiddleware implements NestMiddleware {
                             this._rc.identityInfo.userId = result.id
                             this._rc.identityInfo.token = token
                         }),
-                        catchError(() => throwError(() => new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID)))
+                        catchError(() => of(true))
                     )
                 }),
             )

@@ -1,23 +1,30 @@
 import {
     ILineRepository,
     IVerifyTokenPayload,
-    IVerifyTokenResponse,
+    ILineAccessTokenResponse,
+    ILineUserProfileResponse,
+    ILineVerifyTokenResponse,
 } from '@libs/repositories/interfaces/line.interface'
 import { AxiosInstance } from 'axios'
 import { EnvironmentConfig } from '@libs/common/models'
 import qs from 'qs'
+import {
+    from,
+    map,
+    Observable,
+} from 'rxjs'
 
 export class LineRepository implements ILineRepository {
     public constructor(
         private readonly _httpClient: AxiosInstance,
         private readonly _config: EnvironmentConfig,
     ) {
-        this._httpClient.defaults.baseURL = `https://api.line.me/oauth2/v2.1`
+        this._httpClient.defaults.baseURL = `https://api.line.me`
 
     }
 
-    public async verifyToken(payload: IVerifyTokenPayload): Promise<IVerifyTokenResponse> {
-        const data  = {
+    public issueAccessToken(payload: IVerifyTokenPayload): Observable<ILineAccessTokenResponse> {
+        const data = {
             code: payload.code,
             client_id: this._config.LINE_CLIENT_ID,
             client_secret: this._config.LINE_CLIENT_SECRET,
@@ -25,10 +32,31 @@ export class LineRepository implements ILineRepository {
             grant_type: 'authorization_code',
         }
 
-        const result = await this._httpClient.post(`/token`, qs.stringify(data))
+        return from(this._httpClient.post(`/oauth2/v2.1/token`, qs.stringify(data))).pipe(
+            map(result => result.data)
+        )
 
-        return result.data
+    }
 
+    public verifyAccessToken(lineAccessToken: string): Observable<ILineVerifyTokenResponse> {
+
+        return from(this._httpClient.get(`/oauth2/v2.1/verify`, {
+            params: { access_token: lineAccessToken },
+        })).pipe(
+            map(result => result.data)
+        )
+
+    }
+
+    public getUserProfile(accessToken: string): Observable<ILineUserProfileResponse> {
+        return from(this._httpClient.request({
+            url: '/v2/profile',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })).pipe(
+            map(result => result.data)
+        )
     }
 
 }

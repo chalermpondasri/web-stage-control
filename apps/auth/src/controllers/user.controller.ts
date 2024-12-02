@@ -17,7 +17,10 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger'
-import { LineLoginRequest } from '@libs/common/models/user/line-login.request'
+import {
+    AuthenticationType,
+    LineLoginRequest,
+} from '@libs/common/models/user/line-login.request'
 import { UpdateConsentRequest } from '@libs/common/models/user/update-consent.request'
 import { IUserService } from '../services/interfaces/user-service.interface'
 import { TokenDto } from '@libs/common/models/common/token.dto'
@@ -62,7 +65,13 @@ export class UserController {
     public userLoginWithLINE(
         @Body() body: LineLoginRequest,
     ) {
-        return this._authenticationService.doLineLogin(body.authorizationCode)
+
+        if(body.type === AuthenticationType.AUTHORIZATION_CODE) {
+            return this._authenticationService.doLineWebLogin(body.authorizationCode)
+        }
+
+        return this._authenticationService.doLineMobileLogin(body.authorizationCode)
+
     }
 
     @ApiTags(...['authentication'])

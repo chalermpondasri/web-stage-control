@@ -48,7 +48,6 @@ export class PlaylistService implements IPlaylistService {
 
                 const opts: FindManyOptions<Playlist> = {
                     where: { communityId: communityId, queueState: QueueState.QUEUED },
-                    take: 10,
                     order: {
                         totalBoost: 'desc',
                         updatedAt: 'desc',

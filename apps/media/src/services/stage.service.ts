@@ -31,6 +31,8 @@ import {
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { PlaybackPlaySse } from '@libs/common/models/media/sse/playback-play.sse'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 export class StageService implements IStageService {
     public constructor(
@@ -39,14 +41,16 @@ export class StageService implements IStageService {
         private readonly _playlistSubject: EventSubjectFactory,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _playedMediaRepository: Repository<PlayedMedia>,
+        private readonly _loggingDiscordService: IDiscordAdapter,
     ) {
     }
 
     public freeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {} )
+        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {})
     }
+
     public unfreeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {} )
+        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {})
     }
 
     public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<any> {
@@ -64,7 +68,7 @@ export class StageService implements IStageService {
         return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
             mergeMap(playingTrack => {
 
-                if(!!playingTrack && playingTrack.id === request.transactionId) {
+                if (!!playingTrack && playingTrack.id === request.transactionId) {
                     return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
                 }
 
@@ -74,7 +78,7 @@ export class StageService implements IStageService {
                     delete playingTrack.id
                     return forkJoin([
                         from(this._playedMediaRepository.save(playingTrack)),
-                        from(this._playlistRepository.delete({id})),
+                        from(this._playlistRepository.delete({ id })),
                     ])
                 }
 
@@ -82,7 +86,7 @@ export class StageService implements IStageService {
             }),
             mergeMap(() => from(this._playlistRepository.findOneBy(targetTrackOpts)).pipe(
                 mergeMap(track => {
-                    if(!track) {
+                    if (!track) {
                         return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
                     }
 
@@ -154,4 +158,8 @@ export class StageService implements IStageService {
         )
     }
 
+    public loggingMessage(body: StageLoggingRequest): Observable<boolean> {
+        const content = `[${body.subject}] : ${body.message}`
+        return this._loggingDiscordService.sendMessage(content)
+    }
 }

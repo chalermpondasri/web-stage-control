@@ -33,6 +33,7 @@ import {
 import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import { BoostRequest } from '@libs/common/models/media/boost.request'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 @ApiTags(...['community'])
 @Controller('/communities')
@@ -149,4 +150,11 @@ export class CommunityController {
         return this._boostService.addToQueue(communityId, request)
     }
 
+    @ApiOperation({description: 'logging to discord' })
+    @ApiBody({type: StageLoggingRequest})
+    @UseGuards(StageGuard)
+    @Post('/:communityId/logging')
+    public logStageError() {
+        return
+    }
 }

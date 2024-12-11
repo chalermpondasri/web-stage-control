@@ -31,6 +31,8 @@ import {
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { PlaybackPlaySse } from '@libs/common/models/media/sse/playback-play.sse'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 export class StageService implements IStageService {
     public constructor(
@@ -39,6 +41,7 @@ export class StageService implements IStageService {
         private readonly _playlistSubject: EventSubjectFactory,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _playedMediaRepository: Repository<PlayedMedia>,
+        private readonly _loggingDiscordService: IDiscordAdapter
     ) {
     }
 
@@ -153,5 +156,12 @@ export class StageService implements IStageService {
             }),
         )
     }
+
+    public loggingMessage(body: StageLoggingRequest): Observable<boolean> {
+        const content = `[${body.subject}] : ${body.message}`
+        return this._loggingDiscordService.sendMessage(content)
+    }
+
+
 
 }

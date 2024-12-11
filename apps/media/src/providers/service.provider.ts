@@ -19,6 +19,7 @@ import { ITokenizationService } from '@libs/providers/tokenization/tokenization-
 import { Provider } from '@nestjs/common'
 import { MediaService } from '../services/media.service'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
+import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -29,14 +30,14 @@ export const playlistServiceProvider = {
     useFactory: (
         communityRepository: Repository<Community>,
         playlistRepository: Repository<Playlist>,
-        strapiClient: StrapiClient
-        ) => {
+        strapiClient: StrapiClient,
+    ) => {
         return new PlaylistService(
             communityRepository,
             playlistRepository,
             strapiClient,
         )
-    }
+    },
 }
 
 export const boostServiceProvider: Provider = {
@@ -57,7 +58,7 @@ export const boostServiceProvider: Provider = {
         trackElasticRepository: TrackElasticRepository,
         eventSubject: EventSubjectFactory,
         albumElasticRepository: AlbumElasticRepository,
-        coinDeductionRepository: Repository<CoinDeduction>
+        coinDeductionRepository: Repository<CoinDeduction>,
     ) => {
         return new BoostService(
             requestContext,
@@ -67,8 +68,8 @@ export const boostServiceProvider: Provider = {
             eventSubject,
             albumElasticRepository,
             coinDeductionRepository,
-            )
-    }
+        )
+    },
 }
 
 export const stageServiceProvider = {
@@ -79,6 +80,7 @@ export const stageServiceProvider = {
         ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.PLAYED_MEDIA_REPOSITORY,
+        ProviderName.LOGGING_DISCORD,
     ],
     useFactory: (
         stageRepository: Repository<Stage>,
@@ -86,6 +88,7 @@ export const stageServiceProvider = {
         playlistSubject: EventSubjectFactory,
         playlistRepository: Repository<Playlist>,
         playedMediaRepository: Repository<PlayedMedia>,
+        loggingDiscord: IDiscordAdapter,
     ) => {
         return new StageService(
             stageRepository,
@@ -93,8 +96,9 @@ export const stageServiceProvider = {
             playlistSubject,
             playlistRepository,
             playedMediaRepository,
+            loggingDiscord,
         )
-    }
+    },
 }
 
 export const mediaServiceProvider: Provider = {
@@ -102,9 +106,9 @@ export const mediaServiceProvider: Provider = {
     inject: [
         ProviderName.STRAPI_CLIENT,
     ],
-    useFactory: (client: StrapiClient) =>  {
+    useFactory: (client: StrapiClient) => {
         return new MediaService(
             client,
         )
-    }
+    },
 }

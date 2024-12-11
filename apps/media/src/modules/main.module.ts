@@ -18,6 +18,7 @@ import { BoostController } from '../controllers/boost.controller'
 import { PlaylistController } from '../controllers/playlist.controller'
 import { RouteInfo } from '@nestjs/common/interfaces'
 import { RootController } from '../controllers/root.controller'
+import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider'
 
 @Module({
     imports: [
@@ -35,6 +36,7 @@ import { RootController } from '../controllers/root.controller'
         boostServiceProvider,
         stageServiceProvider,
         mediaServiceProvider,
+        loggingDiscordProvider,
     ],
 })
 export class MainModule implements NestModule {

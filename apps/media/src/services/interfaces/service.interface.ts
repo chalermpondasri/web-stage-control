@@ -9,6 +9,7 @@ import {
     MediaPlayRequest,
 } from '@libs/common/models/media/media-play.request'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 export interface IPlaylistService {
     getPlaylist(communityId: string): Observable<PlaylistDto>
@@ -26,6 +27,7 @@ export interface IStageService {
     pause(communityId: string, mediaId: string,request: MediaPauseRequest): Observable<any>
     freeze(communityId: string): void
     unfreeze(communityId: string): void
+    loggingMessage(body: StageLoggingRequest): Observable<boolean>
 }
 
 export interface IMediaService {

@@ -55,6 +55,10 @@ export class MainModule implements NestModule {
                 path: '/(.*)',
                 method: RequestMethod.GET,
             },
+            {
+                path: '/communities/(.*)/logging',
+                method: RequestMethod.POST,
+            }
 
         ]
         consumer.apply(RequestContextMiddleware)

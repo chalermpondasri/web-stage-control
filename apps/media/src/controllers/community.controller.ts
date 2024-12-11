@@ -154,7 +154,9 @@ export class CommunityController {
     @ApiBody({type: StageLoggingRequest})
     @UseGuards(StageGuard)
     @Post('/:communityId/logging')
-    public logStageError() {
-        return
+    public logStageError(
+        @Body() body: StageLoggingRequest
+    ) {
+        return this._stageService.loggingMessage(body)
     }
 }

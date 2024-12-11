@@ -119,4 +119,7 @@ export class EnvironmentConfig {
     public LINE_CLIENT_SECRET: string
     @IsNotEmpty()
     public LINE_REDIRECT_URI: string
+
+    @IsNotEmpty()
+    public DISCORD_LOGGING_STAGE: string
 }

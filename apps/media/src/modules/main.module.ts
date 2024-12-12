@@ -21,6 +21,7 @@ import { RouteInfo } from '@nestjs/common/interfaces'
 import { RootController } from '../controllers/root.controller'
 import { AdsController } from '../controllers/ads.controller'
 import { CacheModule } from '@libs/modules/cache.module'
+import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider'
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { CacheModule } from '@libs/modules/cache.module'
         boostServiceProvider,
         stageServiceProvider,
         mediaServiceProvider,
+        loggingDiscordProvider,
         adsServiceProvider,
     ],
 })
@@ -59,6 +61,10 @@ export class MainModule implements NestModule {
                 path: '/(.*)',
                 method: RequestMethod.GET,
             },
+            {
+                path: '/communities/(.*)/logging',
+                method: RequestMethod.POST,
+            }
 
         ]
         consumer.apply(RequestContextMiddleware)

@@ -12,9 +12,11 @@ import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.reques
 import { AdvertisementListResponseDataItem } from '@libs/repositories/strapi-api'
 import { ProgressUpdateRequest } from '@libs/common/models/community/progress-update.request'
 import { SuccessDto } from '@libs/common/models/common/success.dto'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 export interface IAdFilter {
     communityId?: string
 }
+
 export interface IPlaylistService {
     getPlaylist(communityId: string): Observable<PlaylistDto>
     getNowPlaying(communityId: string): Observable<PlayingTrackDto>
@@ -32,6 +34,7 @@ export interface IStageService {
     freeze(communityId: string): void
     unfreeze(communityId: string): void
     progressUpdate(communityId: string, progressUpdateRequest: ProgressUpdateRequest): Observable<SuccessDto>
+    loggingMessage(body: StageLoggingRequest): Observable<boolean>
 }
 
 export interface IMediaService {

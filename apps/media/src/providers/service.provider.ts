@@ -22,6 +22,7 @@ import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
 import { AdsService } from '../services/ads.service'
 import { ICacheService } from '@libs/providers/redis'
 import { IAdsService } from '../services/interfaces/service.interface'
+import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -32,14 +33,14 @@ export const playlistServiceProvider = {
     useFactory: (
         communityRepository: Repository<Community>,
         playlistRepository: Repository<Playlist>,
-        strapiClient: StrapiClient
-        ) => {
+        strapiClient: StrapiClient,
+    ) => {
         return new PlaylistService(
             communityRepository,
             playlistRepository,
             strapiClient,
         )
-    }
+    },
 }
 
 export const boostServiceProvider: Provider = {
@@ -60,7 +61,7 @@ export const boostServiceProvider: Provider = {
         trackElasticRepository: TrackElasticRepository,
         eventSubject: EventSubjectFactory,
         albumElasticRepository: AlbumElasticRepository,
-        coinDeductionRepository: Repository<CoinDeduction>
+        coinDeductionRepository: Repository<CoinDeduction>,
     ) => {
         return new BoostService(
             requestContext,
@@ -70,8 +71,8 @@ export const boostServiceProvider: Provider = {
             eventSubject,
             albumElasticRepository,
             coinDeductionRepository,
-            )
-    }
+        )
+    },
 }
 
 export const stageServiceProvider = {
@@ -84,6 +85,7 @@ export const stageServiceProvider = {
         ProviderName.PLAYED_MEDIA_REPOSITORY,
         ProviderName.CACHE_SERVICE,
         ProviderName.ADS_SERVICE,
+        ProviderName.LOGGING_DISCORD,
     ],
     useFactory: (
         stageRepository: Repository<Stage>,
@@ -93,6 +95,7 @@ export const stageServiceProvider = {
         playedMediaRepository: Repository<PlayedMedia>,
         cacheService: ICacheService,
         adsService: IAdsService,
+        loggingDiscord: IDiscordAdapter,
     ) => {
         return new StageService(
             stageRepository,
@@ -102,8 +105,9 @@ export const stageServiceProvider = {
             playedMediaRepository,
             cacheService,
             adsService,
+            loggingDiscord,
         )
-    }
+    },
 }
 
 export const mediaServiceProvider: Provider = {
@@ -111,11 +115,11 @@ export const mediaServiceProvider: Provider = {
     inject: [
         ProviderName.STRAPI_CLIENT,
     ],
-    useFactory: (client: StrapiClient) =>  {
+    useFactory: (client: StrapiClient) => {
         return new MediaService(
             client,
         )
-    }
+    },
 }
 
 export const adsServiceProvider: Provider = {

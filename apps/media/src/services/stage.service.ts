@@ -39,6 +39,8 @@ import { ICacheService } from '@libs/providers/redis'
 import { ProgressUpdateRequest } from '@libs/common/models/community/progress-update.request'
 import { rethrow } from '@nestjs/core/helpers/rethrow'
 import { SuccessDto } from '@libs/common/models/common/success.dto'
+import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
+import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 export class StageService implements IStageService {
     public constructor(
@@ -49,6 +51,7 @@ export class StageService implements IStageService {
         private readonly _playedMediaRepository: Repository<PlayedMedia>,
         private readonly _cacheService: ICacheService,
         private readonly _adsService: IAdsService,
+        private readonly _loggingDiscordService: IDiscordAdapter,
     ) {
     }
 
@@ -93,10 +96,11 @@ export class StageService implements IStageService {
     }
 
     public freeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {} )
+        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {})
     }
+
     public unfreeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {} )
+        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {})
     }
 
     public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<any> {
@@ -115,7 +119,8 @@ export class StageService implements IStageService {
 
         return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
             mergeMap(playingTrack => {
-                if(!!playingTrack && playingTrack.id === request.transactionId) {
+
+                if (!!playingTrack && playingTrack.id === request.transactionId) {
                     return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
                 }
                 return of(playingTrack)
@@ -156,13 +161,13 @@ export class StageService implements IStageService {
                     delete playingTrack.id
                     return forkJoin([
                         from(this._playedMediaRepository.save(playingTrack)),
-                        from(this._playlistRepository.delete({id})),
+                        from(this._playlistRepository.delete({ id })),
                     ])
                 }
             }),
             mergeMap(() => from(this._playlistRepository.findOneBy(targetTrackOpts)).pipe(
                 mergeMap(track => {
-                    if(!track) {
+                    if (!track) {
                         return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
                     }
 
@@ -236,4 +241,8 @@ export class StageService implements IStageService {
         )
     }
 
+    public loggingMessage(body: StageLoggingRequest): Observable<boolean> {
+        const content = `[${body.subject}] : ${body.message}`
+        return this._loggingDiscordService.sendMessage(content)
+    }
 }

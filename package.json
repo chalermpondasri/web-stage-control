@@ -69,6 +69,7 @@
         "nodemailer": "^6.9.16",
         "pg": "^8.13.0",
         "qs": "^6.13.0",
+        "redis": "^4.7.0",
         "reflect-metadata": "^0.2.0",
         "rxjs": "^7.8.1",
         "thai-cut-slim": "^1.2.0",

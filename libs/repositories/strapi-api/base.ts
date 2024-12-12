@@ -19,7 +19,7 @@ import type { Configuration } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = "http://localhost:1337/api".replace(/\/+$/, "");
+export const BASE_PATH = "http://0.0.0.0:1337/api".replace(/\/+$/, "");
 
 /**
  *
@@ -56,7 +56,7 @@ export class BaseAPI {
             this.basePath = configuration.basePath ?? basePath;
         }
     }
-};
+}
 
 /**
  *

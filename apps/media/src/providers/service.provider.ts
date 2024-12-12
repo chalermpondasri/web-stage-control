@@ -19,6 +19,9 @@ import { ITokenizationService } from '@libs/providers/tokenization/tokenization-
 import { Provider } from '@nestjs/common'
 import { MediaService } from '../services/media.service'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
+import { AdsService } from '../services/ads.service'
+import { ICacheService } from '@libs/providers/redis'
+import { IAdsService } from '../services/interfaces/service.interface'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -79,6 +82,8 @@ export const stageServiceProvider = {
         ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.PLAYED_MEDIA_REPOSITORY,
+        ProviderName.CACHE_SERVICE,
+        ProviderName.ADS_SERVICE,
     ],
     useFactory: (
         stageRepository: Repository<Stage>,
@@ -86,6 +91,8 @@ export const stageServiceProvider = {
         playlistSubject: EventSubjectFactory,
         playlistRepository: Repository<Playlist>,
         playedMediaRepository: Repository<PlayedMedia>,
+        cacheService: ICacheService,
+        adsService: IAdsService,
     ) => {
         return new StageService(
             stageRepository,
@@ -93,6 +100,8 @@ export const stageServiceProvider = {
             playlistSubject,
             playlistRepository,
             playedMediaRepository,
+            cacheService,
+            adsService,
         )
     }
 }
@@ -106,5 +115,15 @@ export const mediaServiceProvider: Provider = {
         return new MediaService(
             client,
         )
+    }
+}
+
+export const adsServiceProvider: Provider = {
+    provide: ProviderName.ADS_SERVICE,
+    inject: [
+        ProviderName.STRAPI_CLIENT,
+    ],
+    useFactory: (strapiClient: StrapiClient) =>  {
+        return new AdsService(strapiClient)
     }
 }

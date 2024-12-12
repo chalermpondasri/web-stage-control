@@ -10,6 +10,7 @@ import {
     GenreApi,
     StickerApi,
     TrackApi,
+    AdvertisementApi,
 } from '@libs/repositories/strapi-api'
 import { Provider } from '@nestjs/common'
 
@@ -21,6 +22,7 @@ export interface StrapiClient {
     coinPackage: CoinPackageApi
     stickerApi: StickerApi
     campaignApi: CampaignApi
+    adsApi: AdvertisementApi
 }
 
 export const strapiClientProvider: Provider = {
@@ -44,6 +46,7 @@ export const strapiClientProvider: Provider = {
             coinPackage: new CoinPackageApi(apiConfig),
             campaignApi: new CampaignApi(apiConfig),
             stickerApi: new StickerApi(apiConfig),
+            adsApi: new AdvertisementApi(apiConfig),
         }
 
         return apiClient

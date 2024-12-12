@@ -1,6 +1,7 @@
 import { AccessTokenDto } from '@libs/common/models/common/token.dto'
 import { StageRegisterRequest } from '@libs/common/models/community/stage-register.request'
 import {
+    catchError,
     forkJoin,
     from,
     map,
@@ -10,7 +11,10 @@ import {
     tap,
     throwError,
 } from 'rxjs'
-import { IStageService } from './interfaces/service.interface'
+import {
+    IAdsService,
+    IStageService,
+} from './interfaces/service.interface'
 import {
     FindOptionsWhere,
     Repository,
@@ -31,6 +35,10 @@ import {
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { PlaybackPlaySse } from '@libs/common/models/media/sse/playback-play.sse'
 import { ErrorEnum } from '@libs/common/constants/error.enum'
+import { ICacheService } from '@libs/providers/redis'
+import { ProgressUpdateRequest } from '@libs/common/models/community/progress-update.request'
+import { rethrow } from '@nestjs/core/helpers/rethrow'
+import { SuccessDto } from '@libs/common/models/common/success.dto'
 
 export class StageService implements IStageService {
     public constructor(
@@ -39,7 +47,49 @@ export class StageService implements IStageService {
         private readonly _playlistSubject: EventSubjectFactory,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _playedMediaRepository: Repository<PlayedMedia>,
+        private readonly _cacheService: ICacheService,
+        private readonly _adsService: IAdsService,
     ) {
+    }
+
+    public progressUpdate(communityId: string, progressUpdateRequest: ProgressUpdateRequest): Observable<SuccessDto> {
+        const playingTrackOpts: FindOptionsWhere<Playlist> = {
+            communityId,
+            id: progressUpdateRequest.transactionId,
+            queueState: QueueState.PLAYING,
+        }
+
+        return from(this._playlistRepository.findOneByOrFail(playingTrackOpts)).pipe(
+            mergeMap(track => {
+                track.progressUpdatedAt = progressUpdateRequest.timestamp
+                track.trackProgress = progressUpdateRequest.trackProgress
+                return from(this._playlistRepository.save(track)).pipe(map(() => track))
+            }),
+            tap(track => {
+                const playedItem: PlaybackPlaySse = {
+                    transactionId: track.id,
+                    artistImage: track.coverImage,
+                    artists: track.artist.split(','),
+                    coverImage: track.coverImage,
+                    trackDuration: track.duration,
+                    trackId: track.trackId,
+                    title: {
+                        th: track.title,
+                        en: track.title,
+                        cn: null,
+                    },
+                    playedAt: track.playedAt,
+                    progressUpdatedAt: track.progressUpdatedAt,
+                    trackProgress: track.trackProgress,
+                }
+                this._playlistSubject.push(communityId, 'TRACK_PROGRESS_UPDATE', plainToInstance(PlaybackPlaySse, playedItem))
+            }),
+            map(() => ({success: true})),
+            catchError(err => {
+                console.error(err)
+                rethrow(new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
+            })
+        )
     }
 
     public freeze(communityId: string) {
@@ -61,13 +111,45 @@ export class StageService implements IStageService {
             queueState: QueueState.PLAYING,
         }
 
+        const cacheKey = `${StageService.name}_play_${communityId}`
+
         return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
             mergeMap(playingTrack => {
-
                 if(!!playingTrack && playingTrack.id === request.transactionId) {
                     return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
                 }
+                return of(playingTrack)
+            }),
+            mergeMap(playingTrack => {
+                return this._cacheService.getAndSet( cacheKey, () => {
+                    return of({
+                        trackRemainsToPlayAds: 0,
+                        adsPlayed: 0,
+                        lastPlayed: new Date().toISOString(),
+                        lastPlayedTransaction: playingTrack?.id
+                    })
+                }).pipe(
+                    mergeMap(cacheData => {
+                        // TODO - push ads to play
+                        // if(cacheData.trackRemainsToPlayAds <= 0) {
+                        //     return this._adsService.getAds({communityId}).pipe(
+                        //         map(ads => {
+                        //
+                        //         })
+                        //     )
+                        //     return throwError(() => new BadRequestException({
+                        //         message: ErrorEnum.PLAYLIST_ADS_REQUIRED,
+                        //         statusCode: HttpStatusCode.BadRequest,
+                        //         error: 'Ads Required',
+                        //         data: {},
+                        //     }))
+                        // }
 
+                        return of(playingTrack)
+                    })
+                )
+            }),
+            tap((playingTrack) => {
                 if (!!playingTrack) {
                     playingTrack.queueState = QueueState.PLAYED
                     const id = playingTrack.id
@@ -77,8 +159,6 @@ export class StageService implements IStageService {
                         from(this._playlistRepository.delete({id})),
                     ])
                 }
-
-                return of(null)
             }),
             mergeMap(() => from(this._playlistRepository.findOneBy(targetTrackOpts)).pipe(
                 mergeMap(track => {
@@ -107,6 +187,8 @@ export class StageService implements IStageService {
                             cn: null,
                         },
                         playedAt: request.timestamp,
+                        progressUpdatedAt: newTrack.progressUpdatedAt,
+                        trackProgress: newTrack.trackProgress,
                     }
                     this._playlistSubject.push(communityId, 'ITEM_PLAYING', plainToInstance(PlaybackPlaySse, playedItem))
                     this.unfreeze(communityId)

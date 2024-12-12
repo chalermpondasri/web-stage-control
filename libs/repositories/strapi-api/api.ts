@@ -12,23 +12,1151 @@
  * Do not edit the class manually.
  */
 
-import type { AxiosInstance, AxiosPromise, RawAxiosRequestConfig } from 'axios'
-import globalAxios from 'axios'
+
 import type { Configuration } from './configuration'
+import type {
+    AxiosInstance,
+    AxiosPromise,
+    RawAxiosRequestConfig,
+} from 'axios'
+import globalAxios from 'axios'
 // Some imports not used depending on template conditions
 // @ts-ignore
-import type { RequestArgs } from './base'
 import {
-    DUMMY_BASE_URL,
     assertParamExists,
     createRequestFunction,
+    DUMMY_BASE_URL,
     serializeDataIfNeeded,
+    setApiKeyToObject,
+    setBasicAuthToObject,
     setBearerAuthToObject,
+    setOAuthToObject,
     setSearchParams,
     toPathString,
 } from './common'
+import type { RequestArgs } from './base'
 // @ts-ignore
-import { BASE_PATH, BaseAPI, RequiredError, operationServerMap } from './base'
+import {
+    BASE_PATH,
+    BaseAPI,
+    COLLECTION_FORMATS,
+    operationServerMap,
+    RequiredError,
+} from './base'
+
+/**
+ *
+ * @export
+ * @interface Advertisement
+ */
+export interface Advertisement {
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'type': AdvertisementTypeEnum;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'name': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'start': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'endTime'?: string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof Advertisement
+     */
+    'communities': Array<ListListTextComponent>;
+    /**
+     *
+     * @type {AdvertisementMedia}
+     * @memberof Advertisement
+     */
+    'media': AdvertisementMedia;
+    /**
+     *
+     * @type {number}
+     * @memberof Advertisement
+     */
+    'duration': number;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Advertisement
+     */
+    'publishedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Advertisement
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Advertisement
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+export const AdvertisementTypeEnum = {
+    Video: 'video',
+    Gif: 'gif',
+    Photo: 'photo',
+} as const
+
+export type AdvertisementTypeEnum = typeof AdvertisementTypeEnum[keyof typeof AdvertisementTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface AdvertisementListResponse
+ */
+export interface AdvertisementListResponse {
+    /**
+     *
+     * @type {Array<AdvertisementListResponseDataItem>}
+     * @memberof AdvertisementListResponse
+     */
+    'data'?: Array<AdvertisementListResponseDataItem>;
+    /**
+     *
+     * @type {AdvertisementListResponseMeta}
+     * @memberof AdvertisementListResponse
+     */
+    'meta'?: AdvertisementListResponseMeta;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementListResponseDataItem
+ */
+export interface AdvertisementListResponseDataItem {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Advertisement}
+     * @memberof AdvertisementListResponseDataItem
+     */
+    'attributes'?: Advertisement;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementListResponseMeta
+ */
+export interface AdvertisementListResponseMeta {
+    /**
+     *
+     * @type {AdvertisementListResponseMetaPagination}
+     * @memberof AdvertisementListResponseMeta
+     */
+    'pagination'?: AdvertisementListResponseMetaPagination;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementListResponseMetaPagination
+ */
+export interface AdvertisementListResponseMetaPagination {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementListResponseMetaPagination
+     */
+    'page'?: number;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementListResponseMetaPagination
+     */
+    'pageSize'?: number;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementListResponseMetaPagination
+     */
+    'pageCount'?: number;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementListResponseMetaPagination
+     */
+    'total'?: number;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMedia
+ */
+export interface AdvertisementMedia {
+    /**
+     *
+     * @type {AdvertisementMediaData}
+     * @memberof AdvertisementMedia
+     */
+    'data'?: AdvertisementMediaData;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaData
+ */
+export interface AdvertisementMediaData {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaData
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributes}
+     * @memberof AdvertisementMediaData
+     */
+    'attributes'?: AdvertisementMediaDataAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributes
+ */
+export interface AdvertisementMediaDataAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'name'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'alternativeText'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'caption'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'width'?: number;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'height'?: number;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'formats'?: any;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'hash'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'ext'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'mime'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'size'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'url'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'previewUrl'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'provider'?: string;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'provider_metadata'?: any;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesRelated}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'related'?: AdvertisementMediaDataAttributesRelated;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolder}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'folder'?: AdvertisementMediaDataAttributesFolder;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'folderPath'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributes
+     */
+    'placeholder'?: string;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolder
+ */
+export interface AdvertisementMediaDataAttributesFolder {
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderData}
+     * @memberof AdvertisementMediaDataAttributesFolder
+     */
+    'data'?: AdvertisementMediaDataAttributesFolderData;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderData
+ */
+export interface AdvertisementMediaDataAttributesFolderData {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderData
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributes}
+     * @memberof AdvertisementMediaDataAttributesFolderData
+     */
+    'attributes'?: AdvertisementMediaDataAttributesFolderDataAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributes
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'name'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'pathId'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'parent'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesRelated}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'children'?: AdvertisementMediaDataAttributesRelated;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFiles}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'files'?: AdvertisementMediaDataAttributesFolderDataAttributesFiles;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'path'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFiles
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFiles {
+    /**
+     *
+     * @type {Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner>}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFiles
+     */
+    'data'?: Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner>;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInner
+     */
+    'attributes'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'name'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'alternativeText'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'caption'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'width'?: number;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'height'?: number;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'formats'?: any;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'hash'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'ext'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'mime'?: string;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'size'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'url'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'previewUrl'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'provider'?: string;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'provider_metadata'?: any;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesRelated}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'related'?: AdvertisementMediaDataAttributesRelated;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'folder'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'folderPath'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributes
+     */
+    'placeholder'?: string;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy {
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
+     */
+    'data'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
+     */
+    'attributes'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'firstname'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'lastname'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'username'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'email'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'resetPasswordToken'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'registrationToken'?: string;
+    /**
+     *
+     * @type {boolean}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'isActive'?: boolean;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'roles'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles;
+    /**
+     *
+     * @type {boolean}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'blocked'?: boolean;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'preferedLanguage'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles {
+    /**
+     *
+     * @type {Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner>}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles
+     */
+    'data'?: Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner>;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
+     */
+    'attributes'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'name'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'code'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'description'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesRelated}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'users'?: AdvertisementMediaDataAttributesRelated;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'permissions'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions {
+    /**
+     *
+     * @type {Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner>}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions
+     */
+    'data'?: Array<AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner>;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
+     */
+    'attributes'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'action'?: string;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'actionParameters'?: any;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'subject'?: string;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'properties'?: any;
+    /**
+     *
+     * @type {any}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'conditions'?: any;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'role'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesFolderDataAttributesParent
+ */
+export interface AdvertisementMediaDataAttributesFolderDataAttributesParent {
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesRelatedDataInner}
+     * @memberof AdvertisementMediaDataAttributesFolderDataAttributesParent
+     */
+    'data'?: AdvertisementMediaDataAttributesRelatedDataInner;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesRelated
+ */
+export interface AdvertisementMediaDataAttributesRelated {
+    /**
+     *
+     * @type {Array<AdvertisementMediaDataAttributesRelatedDataInner>}
+     * @memberof AdvertisementMediaDataAttributesRelated
+     */
+    'data'?: Array<AdvertisementMediaDataAttributesRelatedDataInner>;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementMediaDataAttributesRelatedDataInner
+ */
+export interface AdvertisementMediaDataAttributesRelatedDataInner {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementMediaDataAttributesRelatedDataInner
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {object}
+     * @memberof AdvertisementMediaDataAttributesRelatedDataInner
+     */
+    'attributes'?: object;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementRequest
+ */
+export interface AdvertisementRequest {
+    /**
+     *
+     * @type {AdvertisementRequestData}
+     * @memberof AdvertisementRequest
+     */
+    'data': AdvertisementRequestData;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementRequestData
+ */
+export interface AdvertisementRequestData {
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementRequestData
+     */
+    'type': AdvertisementRequestDataTypeEnum;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementRequestData
+     */
+    'name': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementRequestData
+     */
+    'start': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AdvertisementRequestData
+     */
+    'endTime'?: string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof AdvertisementRequestData
+     */
+    'communities': Array<ListListTextComponent>;
+    /**
+     *
+     * @type {AdvertisementRequestDataMedia}
+     * @memberof AdvertisementRequestData
+     */
+    'media': AdvertisementRequestDataMedia;
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementRequestData
+     */
+    'duration': number;
+}
+
+export const AdvertisementRequestDataTypeEnum = {
+    Video: 'video',
+    Gif: 'gif',
+    Photo: 'photo',
+} as const
+
+export type AdvertisementRequestDataTypeEnum = typeof AdvertisementRequestDataTypeEnum[keyof typeof AdvertisementRequestDataTypeEnum];
+
+/**
+ * @type AdvertisementRequestDataMedia
+ * @export
+ */
+export type AdvertisementRequestDataMedia = number | string;
+
+/**
+ *
+ * @export
+ * @interface AdvertisementResponse
+ */
+export interface AdvertisementResponse {
+    /**
+     *
+     * @type {AdvertisementResponseDataObject}
+     * @memberof AdvertisementResponse
+     */
+    'data'?: AdvertisementResponseDataObject;
+    /**
+     *
+     * @type {object}
+     * @memberof AdvertisementResponse
+     */
+    'meta'?: object;
+}
+
+/**
+ *
+ * @export
+ * @interface AdvertisementResponseDataObject
+ */
+export interface AdvertisementResponseDataObject {
+    /**
+     *
+     * @type {number}
+     * @memberof AdvertisementResponseDataObject
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Advertisement}
+     * @memberof AdvertisementResponseDataObject
+     */
+    'attributes'?: Advertisement;
+}
 
 /**
  *
@@ -41,875 +1169,75 @@ export interface Album {
      * @type {string}
      * @memberof Album
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
-     * @type {AlbumImage}
+     * @type {AdvertisementMedia}
      * @memberof Album
      */
-    image?: AlbumImage
+    'image'?: AdvertisementMedia;
     /**
      *
      * @type {AlbumTracks}
      * @memberof Album
      */
-    tracks?: AlbumTracks
+    'tracks'?: AlbumTracks;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Album
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof Album
-     */
-    name_th: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof Album
      */
-    name_en?: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof Album
      */
-    description?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof Album
      */
-    createdAt?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof Album
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Album
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof Album
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Album
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Album
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
-/**
- *
- * @export
- * @interface AlbumImage
- */
-export interface AlbumImage {
-    /**
-     *
-     * @type {AlbumImageData}
-     * @memberof AlbumImage
-     */
-    data?: AlbumImageData
-}
-/**
- *
- * @export
- * @interface AlbumImageData
- */
-export interface AlbumImageData {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageData
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributes}
-     * @memberof AlbumImageData
-     */
-    attributes?: AlbumImageDataAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributes
- */
-export interface AlbumImageDataAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    name?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    alternativeText?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    caption?: string
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributes
-     */
-    width?: number
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributes
-     */
-    height?: number
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributes
-     */
-    formats?: any
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    hash?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    ext?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    mime?: string
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributes
-     */
-    size?: number
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    url?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    previewUrl?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    provider?: string
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributes
-     */
-    provider_metadata?: any
-    /**
-     *
-     * @type {AlbumImageDataAttributesRelated}
-     * @memberof AlbumImageDataAttributes
-     */
-    related?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolder}
-     * @memberof AlbumImageDataAttributes
-     */
-    folder?: AlbumImageDataAttributesFolder
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    folderPath?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributes
-     */
-    placeholder?: string
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolder
- */
-export interface AlbumImageDataAttributesFolder {
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderData}
-     * @memberof AlbumImageDataAttributesFolder
-     */
-    data?: AlbumImageDataAttributesFolderData
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderData
- */
-export interface AlbumImageDataAttributesFolderData {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderData
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributes}
-     * @memberof AlbumImageDataAttributesFolderData
-     */
-    attributes?: AlbumImageDataAttributesFolderDataAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributes
- */
-export interface AlbumImageDataAttributesFolderDataAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    name?: string
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    pathId?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    parent?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesRelated}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    children?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFiles}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    files?: AlbumImageDataAttributesFolderDataAttributesFiles
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    path?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFiles
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFiles {
-    /**
-     *
-     * @type {Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInner>}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFiles
-     */
-    data?: Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInner>
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInner
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInner {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInner
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInner
-     */
-    attributes?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    name?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    alternativeText?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    caption?: string
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    width?: number
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    height?: number
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    formats?: any
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    hash?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    ext?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    mime?: string
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    size?: number
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    url?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    previewUrl?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    provider?: string
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    provider_metadata?: any
-    /**
-     *
-     * @type {AlbumImageDataAttributesRelated}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    related?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    folder?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    folderPath?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributes
-     */
-    placeholder?: string
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy {
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
-     */
-    data?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByData
-     */
-    attributes?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    firstname?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    lastname?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    username?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    email?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    resetPasswordToken?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    registrationToken?: string
-    /**
-     *
-     * @type {boolean}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    isActive?: boolean
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    roles?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles
-    /**
-     *
-     * @type {boolean}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    blocked?: boolean
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    preferedLanguage?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles {
-    /**
-     *
-     * @type {Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner>}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRoles
-     */
-    data?: Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner>
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInner
-     */
-    attributes?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    name?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    code?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    description?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesRelated}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    users?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    permissions?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions {
-    /**
-     *
-     * @type {Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner>}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissions
-     */
-    data?: Array<AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner>
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
-     */
-    id?: number
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInner
-     */
-    attributes?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
- */
-export interface AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes {
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    action?: string
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    actionParameters?: any
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    subject?: string
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    properties?: any
-    /**
-     *
-     * @type {any}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    conditions?: any
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    role?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    createdAt?: string
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedByDataAttributesRolesDataInnerAttributesPermissionsDataInnerAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesFolderDataAttributesParent
- */
-export interface AlbumImageDataAttributesFolderDataAttributesParent {
-    /**
-     *
-     * @type {AlbumImageDataAttributesRelatedDataInner}
-     * @memberof AlbumImageDataAttributesFolderDataAttributesParent
-     */
-    data?: AlbumImageDataAttributesRelatedDataInner
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesRelated
- */
-export interface AlbumImageDataAttributesRelated {
-    /**
-     *
-     * @type {Array<AlbumImageDataAttributesRelatedDataInner>}
-     * @memberof AlbumImageDataAttributesRelated
-     */
-    data?: Array<AlbumImageDataAttributesRelatedDataInner>
-}
-/**
- *
- * @export
- * @interface AlbumImageDataAttributesRelatedDataInner
- */
-export interface AlbumImageDataAttributesRelatedDataInner {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumImageDataAttributesRelatedDataInner
-     */
-    id?: number
-    /**
-     *
-     * @type {object}
-     * @memberof AlbumImageDataAttributesRelatedDataInner
-     */
-    attributes?: object
-}
+
 /**
  *
  * @export
@@ -921,14 +1249,15 @@ export interface AlbumListResponse {
      * @type {Array<AlbumListResponseDataItem>}
      * @memberof AlbumListResponse
      */
-    data?: Array<AlbumListResponseDataItem>
+    'data'?: Array<AlbumListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof AlbumListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -940,58 +1269,15 @@ export interface AlbumListResponseDataItem {
      * @type {number}
      * @memberof AlbumListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Album}
      * @memberof AlbumListResponseDataItem
      */
-    attributes?: Album
+    'attributes'?: Album;
 }
-/**
- *
- * @export
- * @interface AlbumListResponseMeta
- */
-export interface AlbumListResponseMeta {
-    /**
-     *
-     * @type {AlbumListResponseMetaPagination}
-     * @memberof AlbumListResponseMeta
-     */
-    pagination?: AlbumListResponseMetaPagination
-}
-/**
- *
- * @export
- * @interface AlbumListResponseMetaPagination
- */
-export interface AlbumListResponseMetaPagination {
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumListResponseMetaPagination
-     */
-    page?: number
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumListResponseMetaPagination
-     */
-    pageSize?: number
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumListResponseMetaPagination
-     */
-    pageCount?: number
-    /**
-     *
-     * @type {number}
-     * @memberof AlbumListResponseMetaPagination
-     */
-    total?: number
-}
+
 /**
  *
  * @export
@@ -1003,8 +1289,9 @@ export interface AlbumRequest {
      * @type {AlbumRequestData}
      * @memberof AlbumRequest
      */
-    data: AlbumRequestData
+    'data': AlbumRequestData;
 }
+
 /**
  *
  * @export
@@ -1016,49 +1303,44 @@ export interface AlbumRequestData {
      * @type {string}
      * @memberof AlbumRequestData
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof AlbumRequestData
      */
-    image?: AlbumRequestDataImage
+    'image'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof AlbumRequestData
      */
-    tracks?: Array<AlbumRequestDataImage>
+    'tracks'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof AlbumRequestData
      */
-    artists?: Array<AlbumRequestDataImage>
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumRequestData
-     */
-    name_th: string
+    'artists'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
      * @type {string}
      * @memberof AlbumRequestData
      */
-    name_en?: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof AlbumRequestData
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AlbumRequestData
+     */
+    'description'?: string;
 }
-/**
- * @type AlbumRequestDataImage
- * @export
- */
-export type AlbumRequestDataImage = number | string
 
 /**
  *
@@ -1071,14 +1353,15 @@ export interface AlbumResponse {
      * @type {AlbumResponseDataObject}
      * @memberof AlbumResponse
      */
-    data?: AlbumResponseDataObject
+    'data'?: AlbumResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof AlbumResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -1090,14 +1373,15 @@ export interface AlbumResponseDataObject {
      * @type {number}
      * @memberof AlbumResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Album}
      * @memberof AlbumResponseDataObject
      */
-    attributes?: Album
+    'attributes'?: Album;
 }
+
 /**
  *
  * @export
@@ -1109,8 +1393,9 @@ export interface AlbumTracks {
      * @type {Array<AlbumTracksDataInner>}
      * @memberof AlbumTracks
      */
-    data?: Array<AlbumTracksDataInner>
+    'data'?: Array<AlbumTracksDataInner>;
 }
+
 /**
  *
  * @export
@@ -1122,14 +1407,15 @@ export interface AlbumTracksDataInner {
      * @type {number}
      * @memberof AlbumTracksDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributes}
      * @memberof AlbumTracksDataInner
      */
-    attributes?: AlbumTracksDataInnerAttributes
+    'attributes'?: AlbumTracksDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -1141,110 +1427,111 @@ export interface AlbumTracksDataInnerAttributes {
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    duration?: number
+    'duration'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    audioFile?: AlbumTracksDataInnerAttributesAudioFile
+    'audioFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbum}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    album?: AlbumTracksDataInnerAttributesAlbum
+    'album'?: AlbumTracksDataInnerAttributesAlbum;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesGenres}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    genres?: AlbumTracksDataInnerAttributesGenres
+    'genres'?: AlbumTracksDataInnerAttributesGenres;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    playlists?: AlbumImageDataAttributesRelated
+    'playlists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumTracksDataInnerAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AlbumTracksDataInnerAttributes
+     */
+    'name_en'?: string;
     /**
      *
      * @type {any}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    mvFile?: AlbumTracksDataInnerAttributesAudioFile
+    'mvFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1256,8 +1543,9 @@ export interface AlbumTracksDataInnerAttributesAlbum {
      * @type {AlbumTracksDataInnerAttributesAlbumData}
      * @memberof AlbumTracksDataInnerAttributesAlbum
      */
-    data?: AlbumTracksDataInnerAttributesAlbumData
+    'data'?: AlbumTracksDataInnerAttributesAlbumData;
 }
+
 /**
  *
  * @export
@@ -1269,14 +1557,15 @@ export interface AlbumTracksDataInnerAttributesAlbumData {
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAlbumData
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributes}
      * @memberof AlbumTracksDataInnerAttributesAlbumData
      */
-    attributes?: AlbumTracksDataInnerAttributesAlbumDataAttributes
+    'attributes'?: AlbumTracksDataInnerAttributesAlbumDataAttributes;
 }
+
 /**
  *
  * @export
@@ -1288,74 +1577,75 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributes {
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributesArtists}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    artists?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtists
+    'artists'?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtists;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    name_th?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    name_en?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1367,8 +1657,9 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtists {
      * @type {Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInner>}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtists
      */
-    data?: Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInner>
+    'data'?: Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInner>;
 }
+
 /**
  *
  * @export
@@ -1380,14 +1671,15 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInn
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInner
      */
-    attributes?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
+    'attributes'?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -1396,89 +1688,90 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInn
 export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes {
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    albums?: AlbumImageDataAttributesRelated
+    'albums'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    coverImage?: AlbumTracksDataInnerAttributesAudioFile
+    'coverImage'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
-     */
-    name_th?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
+     */
+    'description'?: string;
     /**
      *
      * @type {any}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    playlists?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists
+    'playlists'?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1490,8 +1783,9 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInn
      * @type {Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInner>}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists
      */
-    data?: Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInner>
+    'data'?: Array<AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInner>;
 }
+
 /**
  *
  * @export
@@ -1503,14 +1797,15 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInn
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInner
      */
-    attributes?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
+    'attributes'?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -1522,62 +1817,63 @@ export interface AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInn
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    name_th?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
-     */
-    name_en?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    createdAt?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylistsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1589,8 +1885,9 @@ export interface AlbumTracksDataInnerAttributesAudioFile {
      * @type {AlbumTracksDataInnerAttributesAudioFileData}
      * @memberof AlbumTracksDataInnerAttributesAudioFile
      */
-    data?: AlbumTracksDataInnerAttributesAudioFileData
+    'data'?: AlbumTracksDataInnerAttributesAudioFileData;
 }
+
 /**
  *
  * @export
@@ -1602,14 +1899,15 @@ export interface AlbumTracksDataInnerAttributesAudioFileData {
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAudioFileData
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFileDataAttributes}
      * @memberof AlbumTracksDataInnerAttributesAudioFileData
      */
-    attributes?: AlbumTracksDataInnerAttributesAudioFileDataAttributes
+    'attributes'?: AlbumTracksDataInnerAttributesAudioFileDataAttributes;
 }
+
 /**
  *
  * @export
@@ -1621,134 +1919,135 @@ export interface AlbumTracksDataInnerAttributesAudioFileDataAttributes {
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    alternativeText?: string
+    'alternativeText'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    caption?: string
+    'caption'?: string;
     /**
      *
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    width?: number
+    'width'?: number;
     /**
      *
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    height?: number
+    'height'?: number;
     /**
      *
      * @type {any}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    formats?: any
+    'formats'?: any;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    hash?: string
+    'hash'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    ext?: string
+    'ext'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    mime?: string
+    'mime'?: string;
     /**
      *
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    size?: number
+    'size'?: number;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    url?: string
+    'url'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    previewUrl?: string
+    'previewUrl'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    provider?: string
+    'provider'?: string;
     /**
      *
      * @type {any}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    provider_metadata?: any
+    'provider_metadata'?: any;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    related?: AlbumImageDataAttributesRelated
+    'related'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    folder?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {string}
-     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
-     */
-    folderPath?: string
+    'folder'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    createdAt?: string
+    'folderPath'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    updatedAt?: string
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
-     */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
-    /**
-     *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
-     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
-     */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
      */
-    placeholder?: string
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {string}
+     * @memberof AlbumTracksDataInnerAttributesAudioFileDataAttributes
+     */
+    'placeholder'?: string;
 }
+
 /**
  *
  * @export
@@ -1760,8 +2059,9 @@ export interface AlbumTracksDataInnerAttributesGenres {
      * @type {Array<AlbumTracksDataInnerAttributesGenresDataInner>}
      * @memberof AlbumTracksDataInnerAttributesGenres
      */
-    data?: Array<AlbumTracksDataInnerAttributesGenresDataInner>
+    'data'?: Array<AlbumTracksDataInnerAttributesGenresDataInner>;
 }
+
 /**
  *
  * @export
@@ -1773,14 +2073,15 @@ export interface AlbumTracksDataInnerAttributesGenresDataInner {
      * @type {number}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesGenresDataInnerAttributes}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInner
      */
-    attributes?: AlbumTracksDataInnerAttributesGenresDataInnerAttributes
+    'attributes'?: AlbumTracksDataInnerAttributesGenresDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -1792,38 +2093,39 @@ export interface AlbumTracksDataInnerAttributesGenresDataInnerAttributes {
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof AlbumTracksDataInnerAttributesGenresDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1835,86 +2137,87 @@ export interface Artist {
      * @type {ArtistAlbums}
      * @memberof Artist
      */
-    albums?: ArtistAlbums
+    'albums'?: ArtistAlbums;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof Artist
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof Artist
      */
-    coverImage?: AlbumTracksDataInnerAttributesAudioFile
+    'coverImage'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Artist
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof Artist
-     */
-    name_th: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof Artist
      */
-    name_en?: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof Artist
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Artist
+     */
+    'description'?: string;
     /**
      *
      * @type {any}
      * @memberof Artist
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Artist
      */
-    playlists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof Artist
-     */
-    createdAt?: string
+    'playlists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof Artist
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Artist
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof Artist
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Artist
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Artist
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -1926,8 +2229,9 @@ export interface ArtistAlbums {
      * @type {Array<ArtistAlbumsDataInner>}
      * @memberof ArtistAlbums
      */
-    data?: Array<ArtistAlbumsDataInner>
+    'data'?: Array<ArtistAlbumsDataInner>;
 }
+
 /**
  *
  * @export
@@ -1939,14 +2243,15 @@ export interface ArtistAlbumsDataInner {
      * @type {number}
      * @memberof ArtistAlbumsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributes}
      * @memberof ArtistAlbumsDataInner
      */
-    attributes?: ArtistAlbumsDataInnerAttributes
+    'attributes'?: ArtistAlbumsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -1958,74 +2263,75 @@ export interface ArtistAlbumsDataInnerAttributes {
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
-     * @type {AlbumImage}
+     * @type {AdvertisementMedia}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    image?: AlbumImage
+    'image'?: AdvertisementMedia;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracks}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    tracks?: ArtistAlbumsDataInnerAttributesTracks
+    'tracks'?: ArtistAlbumsDataInnerAttributesTracks;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistAlbumsDataInnerAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    description?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    createdAt?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof ArtistAlbumsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -2037,8 +2343,9 @@ export interface ArtistAlbumsDataInnerAttributesTracks {
      * @type {Array<ArtistAlbumsDataInnerAttributesTracksDataInner>}
      * @memberof ArtistAlbumsDataInnerAttributesTracks
      */
-    data?: Array<ArtistAlbumsDataInnerAttributesTracksDataInner>
+    'data'?: Array<ArtistAlbumsDataInnerAttributesTracksDataInner>;
 }
+
 /**
  *
  * @export
@@ -2050,14 +2357,15 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInner {
      * @type {number}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInner
      */
-    attributes?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
+    'attributes'?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -2069,110 +2377,111 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes {
      * @type {number}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    duration?: number
+    'duration'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    audioFile?: AlbumTracksDataInnerAttributesAudioFile
+    'audioFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    album?: AlbumImageDataAttributesFolderDataAttributesParent
+    'album'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesGenres}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    genres?: AlbumTracksDataInnerAttributesGenres
+    'genres'?: AlbumTracksDataInnerAttributesGenres;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylists}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    playlists?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylists
+    'playlists'?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylists;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
+     */
+    'name_en'?: string;
     /**
      *
      * @type {any}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    mvFile?: AlbumTracksDataInnerAttributesAudioFile
+    'mvFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -2184,8 +2493,9 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
      * @type {Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInner>}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylists
      */
-    data?: Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInner>
+    'data'?: Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInner>;
 }
+
 /**
  *
  * @export
@@ -2197,14 +2507,15 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
      * @type {number}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInner
      */
-    attributes?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
+    'attributes'?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -2216,62 +2527,63 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    name_th?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtists}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    artists?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtists
+    'artists'?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtists;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
-     */
-    name_en?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    createdAt?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -2283,8 +2595,9 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
      * @type {Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInner>}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtists
      */
-    data?: Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInner>
+    'data'?: Array<ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInner>;
 }
+
 /**
  *
  * @export
@@ -2296,14 +2609,15 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
      * @type {number}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInner
      */
-    attributes?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
+    'attributes'?: ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -2312,89 +2626,90 @@ export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylis
 export interface ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes {
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    albums?: AlbumImageDataAttributesRelated
+    'albums'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    coverImage?: AlbumTracksDataInnerAttributesAudioFile
+    'coverImage'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
-     */
-    name_th?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
+     */
+    'description'?: string;
     /**
      *
      * @type {any}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    playlists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
-     */
-    createdAt?: string
+    'playlists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof ArtistAlbumsDataInnerAttributesTracksDataInnerAttributesPlaylistsDataInnerAttributesArtistsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -2406,14 +2721,15 @@ export interface ArtistListResponse {
      * @type {Array<ArtistListResponseDataItem>}
      * @memberof ArtistListResponse
      */
-    data?: Array<ArtistListResponseDataItem>
+    'data'?: Array<ArtistListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof ArtistListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -2425,14 +2741,15 @@ export interface ArtistListResponseDataItem {
      * @type {number}
      * @memberof ArtistListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Artist}
      * @memberof ArtistListResponseDataItem
      */
-    attributes?: Artist
+    'attributes'?: Artist;
 }
+
 /**
  *
  * @export
@@ -2444,8 +2761,9 @@ export interface ArtistRequest {
      * @type {ArtistRequestData}
      * @memberof ArtistRequest
      */
-    data: ArtistRequestData
+    'data': ArtistRequestData;
 }
+
 /**
  *
  * @export
@@ -2454,59 +2772,60 @@ export interface ArtistRequest {
 export interface ArtistRequestData {
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof ArtistRequestData
      */
-    albums?: Array<AlbumRequestDataImage>
+    'albums'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof ArtistRequestData
      */
-    image?: AlbumRequestDataImage
+    'image'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof ArtistRequestData
      */
-    coverImage?: AlbumRequestDataImage
+    'coverImage'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof ArtistRequestData
      */
-    tracks?: Array<AlbumRequestDataImage>
-    /**
-     *
-     * @type {string}
-     * @memberof ArtistRequestData
-     */
-    name_th: string
+    'tracks'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
      * @type {string}
      * @memberof ArtistRequestData
      */
-    name_en?: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof ArtistRequestData
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof ArtistRequestData
+     */
+    'description'?: string;
     /**
      *
      * @type {any}
      * @memberof ArtistRequestData
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof ArtistRequestData
      */
-    playlists?: Array<AlbumRequestDataImage>
+    'playlists'?: Array<AdvertisementRequestDataMedia>;
 }
+
 /**
  *
  * @export
@@ -2518,14 +2837,15 @@ export interface ArtistResponse {
      * @type {ArtistResponseDataObject}
      * @memberof ArtistResponse
      */
-    data?: ArtistResponseDataObject
+    'data'?: ArtistResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof ArtistResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -2537,14 +2857,15 @@ export interface ArtistResponseDataObject {
      * @type {number}
      * @memberof ArtistResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Artist}
      * @memberof ArtistResponseDataObject
      */
-    attributes?: Artist
+    'attributes'?: Artist;
 }
+
 /**
  *
  * @export
@@ -2556,20 +2877,21 @@ export interface AuthChangePasswordPostRequest {
      * @type {string}
      * @memberof AuthChangePasswordPostRequest
      */
-    password: string
+    'password': string;
     /**
      *
      * @type {string}
      * @memberof AuthChangePasswordPostRequest
      */
-    currentPassword: string
+    'currentPassword': string;
     /**
      *
      * @type {string}
      * @memberof AuthChangePasswordPostRequest
      */
-    passwordConfirmation: string
+    'passwordConfirmation': string;
 }
+
 /**
  *
  * @export
@@ -2581,15 +2903,14 @@ export interface AuthForgotPasswordPost200Response {
      * @type {string}
      * @memberof AuthForgotPasswordPost200Response
      */
-    ok?: AuthForgotPasswordPost200ResponseOkEnum
+    'ok'?: AuthForgotPasswordPost200ResponseOkEnum;
 }
 
 export const AuthForgotPasswordPost200ResponseOkEnum = {
     True: 'true',
 } as const
 
-export type AuthForgotPasswordPost200ResponseOkEnum =
-    (typeof AuthForgotPasswordPost200ResponseOkEnum)[keyof typeof AuthForgotPasswordPost200ResponseOkEnum]
+export type AuthForgotPasswordPost200ResponseOkEnum = typeof AuthForgotPasswordPost200ResponseOkEnum[keyof typeof AuthForgotPasswordPost200ResponseOkEnum];
 
 /**
  *
@@ -2602,8 +2923,9 @@ export interface AuthForgotPasswordPostRequest {
      * @type {string}
      * @memberof AuthForgotPasswordPostRequest
      */
-    email?: string
+    'email'?: string;
 }
+
 /**
  *
  * @export
@@ -2615,14 +2937,15 @@ export interface AuthLocalPostRequest {
      * @type {string}
      * @memberof AuthLocalPostRequest
      */
-    identifier?: string
+    'identifier'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthLocalPostRequest
      */
-    password?: string
+    'password'?: string;
 }
+
 /**
  *
  * @export
@@ -2634,20 +2957,21 @@ export interface AuthLocalRegisterPostRequest {
      * @type {string}
      * @memberof AuthLocalRegisterPostRequest
      */
-    username?: string
+    'username'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthLocalRegisterPostRequest
      */
-    email?: string
+    'email'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthLocalRegisterPostRequest
      */
-    password?: string
+    'password'?: string;
 }
+
 /**
  *
  * @export
@@ -2659,20 +2983,21 @@ export interface AuthResetPasswordPostRequest {
      * @type {string}
      * @memberof AuthResetPasswordPostRequest
      */
-    password?: string
+    'password'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthResetPasswordPostRequest
      */
-    passwordConfirmation?: string
+    'passwordConfirmation'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthResetPasswordPostRequest
      */
-    code?: string
+    'code'?: string;
 }
+
 /**
  *
  * @export
@@ -2684,21 +3009,20 @@ export interface AuthSendEmailConfirmationPost200Response {
      * @type {string}
      * @memberof AuthSendEmailConfirmationPost200Response
      */
-    email?: string
+    'email'?: string;
     /**
      *
      * @type {string}
      * @memberof AuthSendEmailConfirmationPost200Response
      */
-    sent?: AuthSendEmailConfirmationPost200ResponseSentEnum
+    'sent'?: AuthSendEmailConfirmationPost200ResponseSentEnum;
 }
 
 export const AuthSendEmailConfirmationPost200ResponseSentEnum = {
     True: 'true',
 } as const
 
-export type AuthSendEmailConfirmationPost200ResponseSentEnum =
-    (typeof AuthSendEmailConfirmationPost200ResponseSentEnum)[keyof typeof AuthSendEmailConfirmationPost200ResponseSentEnum]
+export type AuthSendEmailConfirmationPost200ResponseSentEnum = typeof AuthSendEmailConfirmationPost200ResponseSentEnum[keyof typeof AuthSendEmailConfirmationPost200ResponseSentEnum];
 
 /**
  *
@@ -2711,74 +3035,75 @@ export interface Campaign {
      * @type {string}
      * @memberof Campaign
      */
-    name: string
+    'name': string;
     /**
      *
      * @type {number}
      * @memberof Campaign
      */
-    quotas: number
+    'quotas': number;
     /**
      *
      * @type {boolean}
      * @memberof Campaign
      */
-    reusable: boolean
+    'reusable': boolean;
     /**
      *
      * @type {number}
      * @memberof Campaign
      */
-    codeAmounts: number
+    'codeAmounts': number;
     /**
      *
      * @type {number}
      * @memberof Campaign
      */
-    coinPerVoucher: number
+    'coinPerVoucher': number;
     /**
      *
      * @type {string}
      * @memberof Campaign
      */
-    startDate?: string
+    'startDate'?: string;
     /**
      *
      * @type {string}
      * @memberof Campaign
      */
-    endDate?: string
+    'endDate'?: string;
     /**
      *
      * @type {string}
      * @memberof Campaign
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Campaign
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Campaign
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
      * @memberof Campaign
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Campaign
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -2790,14 +3115,15 @@ export interface CampaignListResponse {
      * @type {Array<CampaignListResponseDataItem>}
      * @memberof CampaignListResponse
      */
-    data?: Array<CampaignListResponseDataItem>
+    'data'?: Array<CampaignListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof CampaignListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -2809,14 +3135,15 @@ export interface CampaignListResponseDataItem {
      * @type {number}
      * @memberof CampaignListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Campaign}
      * @memberof CampaignListResponseDataItem
      */
-    attributes?: Campaign
+    'attributes'?: Campaign;
 }
+
 /**
  *
  * @export
@@ -2828,8 +3155,9 @@ export interface CampaignRequest {
      * @type {CampaignRequestData}
      * @memberof CampaignRequest
      */
-    data: CampaignRequestData
+    'data': CampaignRequestData;
 }
+
 /**
  *
  * @export
@@ -2841,44 +3169,45 @@ export interface CampaignRequestData {
      * @type {string}
      * @memberof CampaignRequestData
      */
-    name: string
+    'name': string;
     /**
      *
      * @type {number}
      * @memberof CampaignRequestData
      */
-    quotas: number
+    'quotas': number;
     /**
      *
      * @type {boolean}
      * @memberof CampaignRequestData
      */
-    reusable: boolean
+    'reusable': boolean;
     /**
      *
      * @type {number}
      * @memberof CampaignRequestData
      */
-    codeAmounts: number
+    'codeAmounts': number;
     /**
      *
      * @type {number}
      * @memberof CampaignRequestData
      */
-    coinPerVoucher: number
+    'coinPerVoucher': number;
     /**
      *
      * @type {string}
      * @memberof CampaignRequestData
      */
-    startDate?: string
+    'startDate'?: string;
     /**
      *
      * @type {string}
      * @memberof CampaignRequestData
      */
-    endDate?: string
+    'endDate'?: string;
 }
+
 /**
  *
  * @export
@@ -2890,14 +3219,15 @@ export interface CampaignResponse {
      * @type {CampaignResponseDataObject}
      * @memberof CampaignResponse
      */
-    data?: CampaignResponseDataObject
+    'data'?: CampaignResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof CampaignResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -2909,14 +3239,15 @@ export interface CampaignResponseDataObject {
      * @type {number}
      * @memberof CampaignResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Campaign}
      * @memberof CampaignResponseDataObject
      */
-    attributes?: Campaign
+    'attributes'?: Campaign;
 }
+
 /**
  *
  * @export
@@ -2928,68 +3259,69 @@ export interface CoinPackage {
      * @type {number}
      * @memberof CoinPackage
      */
-    coins?: number
+    'coins'?: number;
     /**
      *
      * @type {number}
      * @memberof CoinPackage
      */
-    bonus?: number
+    'bonus'?: number;
     /**
      *
      * @type {number}
      * @memberof CoinPackage
      */
-    price: number
+    'price': number;
     /**
      *
      * @type {string}
      * @memberof CoinPackage
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof CoinPackage
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {boolean}
      * @memberof CoinPackage
      */
-    purchasable: boolean
+    'purchasable': boolean;
     /**
      *
      * @type {string}
      * @memberof CoinPackage
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof CoinPackage
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof CoinPackage
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
      * @memberof CoinPackage
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof CoinPackage
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3001,14 +3333,15 @@ export interface CoinPackageListResponse {
      * @type {Array<CoinPackageListResponseDataItem>}
      * @memberof CoinPackageListResponse
      */
-    data?: Array<CoinPackageListResponseDataItem>
+    'data'?: Array<CoinPackageListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof CoinPackageListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -3020,14 +3353,15 @@ export interface CoinPackageListResponseDataItem {
      * @type {number}
      * @memberof CoinPackageListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {CoinPackage}
      * @memberof CoinPackageListResponseDataItem
      */
-    attributes?: CoinPackage
+    'attributes'?: CoinPackage;
 }
+
 /**
  *
  * @export
@@ -3039,8 +3373,9 @@ export interface CoinPackageRequest {
      * @type {CoinPackageRequestData}
      * @memberof CoinPackageRequest
      */
-    data: CoinPackageRequestData
+    'data': CoinPackageRequestData;
 }
+
 /**
  *
  * @export
@@ -3052,38 +3387,39 @@ export interface CoinPackageRequestData {
      * @type {number}
      * @memberof CoinPackageRequestData
      */
-    coins?: number
+    'coins'?: number;
     /**
      *
      * @type {number}
      * @memberof CoinPackageRequestData
      */
-    bonus?: number
+    'bonus'?: number;
     /**
      *
      * @type {number}
      * @memberof CoinPackageRequestData
      */
-    price: number
+    'price': number;
     /**
      *
      * @type {string}
      * @memberof CoinPackageRequestData
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof CoinPackageRequestData
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {boolean}
      * @memberof CoinPackageRequestData
      */
-    purchasable: boolean
+    'purchasable': boolean;
 }
+
 /**
  *
  * @export
@@ -3095,14 +3431,15 @@ export interface CoinPackageResponse {
      * @type {CoinPackageResponseDataObject}
      * @memberof CoinPackageResponse
      */
-    data?: CoinPackageResponseDataObject
+    'data'?: CoinPackageResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof CoinPackageResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -3114,19 +3451,20 @@ export interface CoinPackageResponseDataObject {
      * @type {number}
      * @memberof CoinPackageResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {CoinPackage}
      * @memberof CoinPackageResponseDataObject
      */
-    attributes?: CoinPackage
+    'attributes'?: CoinPackage;
 }
+
 /**
  * @type ErrorData
  * @export
  */
-export type ErrorData = Array<object> | object
+export type ErrorData = Array<object> | object;
 
 /**
  *
@@ -3139,26 +3477,27 @@ export interface ErrorError {
      * @type {number}
      * @memberof ErrorError
      */
-    status?: number
+    'status'?: number;
     /**
      *
      * @type {string}
      * @memberof ErrorError
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof ErrorError
      */
-    message?: string
+    'message'?: string;
     /**
      *
      * @type {object}
      * @memberof ErrorError
      */
-    details?: object
+    'details'?: object;
 }
+
 /**
  *
  * @export
@@ -3170,38 +3509,39 @@ export interface Genre {
      * @type {string}
      * @memberof Genre
      */
-    name: string
+    'name': string;
     /**
      *
      * @type {string}
      * @memberof Genre
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Genre
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Genre
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
      * @memberof Genre
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Genre
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3213,14 +3553,15 @@ export interface GenreListResponse {
      * @type {Array<GenreListResponseDataItem>}
      * @memberof GenreListResponse
      */
-    data?: Array<GenreListResponseDataItem>
+    'data'?: Array<GenreListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof GenreListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -3232,14 +3573,15 @@ export interface GenreListResponseDataItem {
      * @type {number}
      * @memberof GenreListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Genre}
      * @memberof GenreListResponseDataItem
      */
-    attributes?: Genre
+    'attributes'?: Genre;
 }
+
 /**
  *
  * @export
@@ -3251,8 +3593,9 @@ export interface GenreRequest {
      * @type {GenreRequestData}
      * @memberof GenreRequest
      */
-    data: GenreRequestData
+    'data': GenreRequestData;
 }
+
 /**
  *
  * @export
@@ -3264,8 +3607,9 @@ export interface GenreRequestData {
      * @type {string}
      * @memberof GenreRequestData
      */
-    name: string
+    'name': string;
 }
+
 /**
  *
  * @export
@@ -3277,14 +3621,15 @@ export interface GenreResponse {
      * @type {GenreResponseDataObject}
      * @memberof GenreResponse
      */
-    data?: GenreResponseDataObject
+    'data'?: GenreResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof GenreResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -3296,14 +3641,35 @@ export interface GenreResponseDataObject {
      * @type {number}
      * @memberof GenreResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Genre}
      * @memberof GenreResponseDataObject
      */
-    attributes?: Genre
+    'attributes'?: Genre;
 }
+
+/**
+ *
+ * @export
+ * @interface ListListTextComponent
+ */
+export interface ListListTextComponent {
+    /**
+     *
+     * @type {number}
+     * @memberof ListListTextComponent
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof ListListTextComponent
+     */
+    'communityId'?: string;
+}
+
 /**
  *
  * @export
@@ -3315,14 +3681,15 @@ export interface ModelError {
      * @type {ErrorData}
      * @memberof ModelError
      */
-    data?: ErrorData | null
+    'data'?: ErrorData | null;
     /**
      *
      * @type {ErrorError}
      * @memberof ModelError
      */
-    error: ErrorError
+    'error': ErrorError;
 }
+
 /**
  *
  * @export
@@ -3334,62 +3701,63 @@ export interface Playlist {
      * @type {string}
      * @memberof Playlist
      */
-    name_th: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof Playlist
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {PlaylistArtists}
      * @memberof Playlist
      */
-    artists?: PlaylistArtists
+    'artists'?: PlaylistArtists;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Playlist
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof Playlist
-     */
-    name_en?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof Playlist
      */
-    createdAt?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof Playlist
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Playlist
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof Playlist
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Playlist
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Playlist
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3401,8 +3769,9 @@ export interface PlaylistArtists {
      * @type {Array<PlaylistArtistsDataInner>}
      * @memberof PlaylistArtists
      */
-    data?: Array<PlaylistArtistsDataInner>
+    'data'?: Array<PlaylistArtistsDataInner>;
 }
+
 /**
  *
  * @export
@@ -3414,14 +3783,15 @@ export interface PlaylistArtistsDataInner {
      * @type {number}
      * @memberof PlaylistArtistsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {PlaylistArtistsDataInnerAttributes}
      * @memberof PlaylistArtistsDataInner
      */
-    attributes?: PlaylistArtistsDataInnerAttributes
+    'attributes'?: PlaylistArtistsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -3433,86 +3803,87 @@ export interface PlaylistArtistsDataInnerAttributes {
      * @type {PlaylistArtistsDataInnerAttributesAlbums}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    albums?: PlaylistArtistsDataInnerAttributesAlbums
+    'albums'?: PlaylistArtistsDataInnerAttributesAlbums;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    coverImage?: AlbumTracksDataInnerAttributesAudioFile
+    'coverImage'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    tracks?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof PlaylistArtistsDataInnerAttributes
-     */
-    name_th?: string
+    'tracks'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    description?: string
+    'name_en'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof PlaylistArtistsDataInnerAttributes
+     */
+    'description'?: string;
     /**
      *
      * @type {any}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    playlists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof PlaylistArtistsDataInnerAttributes
-     */
-    createdAt?: string
+    'playlists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof PlaylistArtistsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof PlaylistArtistsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3524,8 +3895,9 @@ export interface PlaylistArtistsDataInnerAttributesAlbums {
      * @type {Array<PlaylistArtistsDataInnerAttributesAlbumsDataInner>}
      * @memberof PlaylistArtistsDataInnerAttributesAlbums
      */
-    data?: Array<PlaylistArtistsDataInnerAttributesAlbumsDataInner>
+    'data'?: Array<PlaylistArtistsDataInnerAttributesAlbumsDataInner>;
 }
+
 /**
  *
  * @export
@@ -3537,14 +3909,15 @@ export interface PlaylistArtistsDataInnerAttributesAlbumsDataInner {
      * @type {number}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInner
      */
-    attributes?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
+    'attributes'?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -3556,74 +3929,75 @@ export interface PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes {
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
-     * @type {AlbumImage}
+     * @type {AdvertisementMedia}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    image?: AlbumImage
+    'image'?: AdvertisementMedia;
     /**
      *
      * @type {PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracks}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    tracks?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracks
+    'tracks'?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracks;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    description?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    createdAt?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3635,8 +4009,9 @@ export interface PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTrac
      * @type {Array<PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInner>}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracks
      */
-    data?: Array<PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInner>
+    'data'?: Array<PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInner>;
 }
+
 /**
  *
  * @export
@@ -3648,14 +4023,15 @@ export interface PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTrac
      * @type {number}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInner
      */
-    attributes?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
+    'attributes'?: PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes;
 }
+
 /**
  *
  * @export
@@ -3667,110 +4043,111 @@ export interface PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTrac
      * @type {number}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    duration?: number
+    'duration'?: number;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    audioFile?: AlbumTracksDataInnerAttributesAudioFile
+    'audioFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    album?: AlbumImageDataAttributesFolderDataAttributesParent
+    'album'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesGenres}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    genres?: AlbumTracksDataInnerAttributesGenres
+    'genres'?: AlbumTracksDataInnerAttributesGenres;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    playlists?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists
+    'playlists'?: AlbumTracksDataInnerAttributesAlbumDataAttributesArtistsDataInnerAttributesPlaylists;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    name_en?: string
+    'name_th'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
+     */
+    'name_en'?: string;
     /**
      *
      * @type {any}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    mvFile?: AlbumTracksDataInnerAttributesAudioFile
+    'mvFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof PlaylistArtistsDataInnerAttributesAlbumsDataInnerAttributesTracksDataInnerAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3782,14 +4159,15 @@ export interface PlaylistListResponse {
      * @type {Array<PlaylistListResponseDataItem>}
      * @memberof PlaylistListResponse
      */
-    data?: Array<PlaylistListResponseDataItem>
+    'data'?: Array<PlaylistListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof PlaylistListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -3801,14 +4179,15 @@ export interface PlaylistListResponseDataItem {
      * @type {number}
      * @memberof PlaylistListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Playlist}
      * @memberof PlaylistListResponseDataItem
      */
-    attributes?: Playlist
+    'attributes'?: Playlist;
 }
+
 /**
  *
  * @export
@@ -3820,8 +4199,9 @@ export interface PlaylistRequest {
      * @type {PlaylistRequestData}
      * @memberof PlaylistRequest
      */
-    data: PlaylistRequestData
+    'data': PlaylistRequestData;
 }
+
 /**
  *
  * @export
@@ -3833,32 +4213,33 @@ export interface PlaylistRequestData {
      * @type {string}
      * @memberof PlaylistRequestData
      */
-    name_th: string
+    'name_th': string;
     /**
      *
      * @type {string}
      * @memberof PlaylistRequestData
      */
-    description?: string
+    'description'?: string;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof PlaylistRequestData
      */
-    artists?: Array<AlbumRequestDataImage>
+    'artists'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof PlaylistRequestData
      */
-    tracks?: Array<AlbumRequestDataImage>
+    'tracks'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
      * @type {string}
      * @memberof PlaylistRequestData
      */
-    name_en?: string
+    'name_en'?: string;
 }
+
 /**
  *
  * @export
@@ -3870,14 +4251,15 @@ export interface PlaylistResponse {
      * @type {PlaylistResponseDataObject}
      * @memberof PlaylistResponse
      */
-    data?: PlaylistResponseDataObject
+    'data'?: PlaylistResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof PlaylistResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -3889,14 +4271,15 @@ export interface PlaylistResponseDataObject {
      * @type {number}
      * @memberof PlaylistResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Playlist}
      * @memberof PlaylistResponseDataObject
      */
-    attributes?: Playlist
+    'attributes'?: Playlist;
 }
+
 /**
  *
  * @export
@@ -3908,80 +4291,81 @@ export interface Sticker {
      * @type {string}
      * @memberof Sticker
      */
-    name: string
+    'name': string;
     /**
      *
      * @type {number}
      * @memberof Sticker
      */
-    price: number
+    'price': number;
     /**
      *
-     * @type {AlbumImage}
+     * @type {AdvertisementMedia}
      * @memberof Sticker
      */
-    image: AlbumImage
-    /**
-     *
-     * @type {string}
-     * @memberof Sticker
-     */
-    startDate?: string
+    'image': AdvertisementMedia;
     /**
      *
      * @type {string}
      * @memberof Sticker
      */
-    endDate?: string
+    'startDate'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Sticker
+     */
+    'endDate'?: string;
     /**
      *
      * @type {boolean}
      * @memberof Sticker
      */
-    purchasable: boolean
+    'purchasable': boolean;
     /**
      *
      * @type {boolean}
      * @memberof Sticker
      */
-    isFree: boolean
+    'isFree': boolean;
     /**
      *
      * @type {string}
      * @memberof Sticker
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof Sticker
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Sticker
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Sticker
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Sticker
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Sticker
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -3993,14 +4377,15 @@ export interface StickerListResponse {
      * @type {Array<StickerListResponseDataItem>}
      * @memberof StickerListResponse
      */
-    data?: Array<StickerListResponseDataItem>
+    'data'?: Array<StickerListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof StickerListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -4012,14 +4397,15 @@ export interface StickerListResponseDataItem {
      * @type {number}
      * @memberof StickerListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Sticker}
      * @memberof StickerListResponseDataItem
      */
-    attributes?: Sticker
+    'attributes'?: Sticker;
 }
+
 /**
  *
  * @export
@@ -4031,8 +4417,9 @@ export interface StickerRequest {
      * @type {StickerRequestData}
      * @memberof StickerRequest
      */
-    data: StickerRequestData
+    'data': StickerRequestData;
 }
+
 /**
  *
  * @export
@@ -4044,50 +4431,51 @@ export interface StickerRequestData {
      * @type {string}
      * @memberof StickerRequestData
      */
-    name: string
+    'name': string;
     /**
      *
      * @type {number}
      * @memberof StickerRequestData
      */
-    price: number
+    'price': number;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof StickerRequestData
      */
-    image: AlbumRequestDataImage
-    /**
-     *
-     * @type {string}
-     * @memberof StickerRequestData
-     */
-    startDate?: string
+    'image': AdvertisementRequestDataMedia;
     /**
      *
      * @type {string}
      * @memberof StickerRequestData
      */
-    endDate?: string
+    'startDate'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof StickerRequestData
+     */
+    'endDate'?: string;
     /**
      *
      * @type {boolean}
      * @memberof StickerRequestData
      */
-    purchasable: boolean
+    'purchasable': boolean;
     /**
      *
      * @type {boolean}
      * @memberof StickerRequestData
      */
-    isFree: boolean
+    'isFree': boolean;
     /**
      *
      * @type {string}
      * @memberof StickerRequestData
      */
-    description?: string
+    'description'?: string;
 }
+
 /**
  *
  * @export
@@ -4099,14 +4487,15 @@ export interface StickerResponse {
      * @type {StickerResponseDataObject}
      * @memberof StickerResponse
      */
-    data?: StickerResponseDataObject
+    'data'?: StickerResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof StickerResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -4118,14 +4507,15 @@ export interface StickerResponseDataObject {
      * @type {number}
      * @memberof StickerResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Sticker}
      * @memberof StickerResponseDataObject
      */
-    attributes?: Sticker
+    'attributes'?: Sticker;
 }
+
 /**
  *
  * @export
@@ -4137,110 +4527,111 @@ export interface Track {
      * @type {number}
      * @memberof Track
      */
-    duration?: number
+    'duration'?: number;
     /**
      *
-     * @type {AlbumImage}
+     * @type {AdvertisementMedia}
      * @memberof Track
      */
-    audioFile?: AlbumImage
+    'audioFile'?: AdvertisementMedia;
     /**
      *
      * @type {TrackAlbum}
      * @memberof Track
      */
-    album?: TrackAlbum
+    'album'?: TrackAlbum;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Track
      */
-    genres?: AlbumImageDataAttributesRelated
+    'genres'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Track
      */
-    playlists?: AlbumImageDataAttributesRelated
+    'playlists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof Track
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof Track
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof Track
-     */
-    name_th: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    name_en?: string
+    'name_th': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Track
+     */
+    'name_en'?: string;
     /**
      *
      * @type {any}
      * @memberof Track
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof Track
      */
-    mvFile?: AlbumTracksDataInnerAttributesAudioFile
+    'mvFile'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {string}
      * @memberof Track
      */
-    publishedAt?: string
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Track
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof Track
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -4252,8 +4643,9 @@ export interface TrackAlbum {
      * @type {TrackAlbumData}
      * @memberof TrackAlbum
      */
-    data?: TrackAlbumData
+    'data'?: TrackAlbumData;
 }
+
 /**
  *
  * @export
@@ -4265,14 +4657,15 @@ export interface TrackAlbumData {
      * @type {number}
      * @memberof TrackAlbumData
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {TrackAlbumDataAttributes}
      * @memberof TrackAlbumData
      */
-    attributes?: TrackAlbumDataAttributes
+    'attributes'?: TrackAlbumDataAttributes;
 }
+
 /**
  *
  * @export
@@ -4284,74 +4677,75 @@ export interface TrackAlbumDataAttributes {
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
      * @type {AlbumTracksDataInnerAttributesAudioFile}
      * @memberof TrackAlbumDataAttributes
      */
-    image?: AlbumTracksDataInnerAttributesAudioFile
+    'image'?: AlbumTracksDataInnerAttributesAudioFile;
     /**
      *
      * @type {ArtistAlbumsDataInnerAttributesTracks}
      * @memberof TrackAlbumDataAttributes
      */
-    tracks?: ArtistAlbumsDataInnerAttributesTracks
+    'tracks'?: ArtistAlbumsDataInnerAttributesTracks;
     /**
      *
-     * @type {AlbumImageDataAttributesRelated}
+     * @type {AdvertisementMediaDataAttributesRelated}
      * @memberof TrackAlbumDataAttributes
      */
-    artists?: AlbumImageDataAttributesRelated
-    /**
-     *
-     * @type {string}
-     * @memberof TrackAlbumDataAttributes
-     */
-    name_th?: string
+    'artists'?: AdvertisementMediaDataAttributesRelated;
     /**
      *
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    name_en?: string
+    'name_th'?: string;
     /**
      *
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    description?: string
+    'name_en'?: string;
     /**
      *
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    createdAt?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    updatedAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    publishedAt?: string
+    'updatedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {string}
      * @memberof TrackAlbumDataAttributes
      */
-    createdBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'publishedAt'?: string;
     /**
      *
-     * @type {AlbumImageDataAttributesFolderDataAttributesParent}
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
      * @memberof TrackAlbumDataAttributes
      */
-    updatedBy?: AlbumImageDataAttributesFolderDataAttributesParent
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof TrackAlbumDataAttributes
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
 }
+
 /**
  *
  * @export
@@ -4363,14 +4757,15 @@ export interface TrackListResponse {
      * @type {Array<TrackListResponseDataItem>}
      * @memberof TrackListResponse
      */
-    data?: Array<TrackListResponseDataItem>
+    'data'?: Array<TrackListResponseDataItem>;
     /**
      *
-     * @type {AlbumListResponseMeta}
+     * @type {AdvertisementListResponseMeta}
      * @memberof TrackListResponse
      */
-    meta?: AlbumListResponseMeta
+    'meta'?: AdvertisementListResponseMeta;
 }
+
 /**
  *
  * @export
@@ -4382,14 +4777,15 @@ export interface TrackListResponseDataItem {
      * @type {number}
      * @memberof TrackListResponseDataItem
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Track}
      * @memberof TrackListResponseDataItem
      */
-    attributes?: Track
+    'attributes'?: Track;
 }
+
 /**
  *
  * @export
@@ -4401,8 +4797,9 @@ export interface TrackRequest {
      * @type {TrackRequestData}
      * @memberof TrackRequest
      */
-    data: TrackRequestData
+    'data': TrackRequestData;
 }
+
 /**
  *
  * @export
@@ -4414,80 +4811,81 @@ export interface TrackRequestData {
      * @type {number}
      * @memberof TrackRequestData
      */
-    duration?: number
+    'duration'?: number;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof TrackRequestData
      */
-    audioFile?: AlbumRequestDataImage
+    'audioFile'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof TrackRequestData
      */
-    album?: AlbumRequestDataImage
+    'album'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof TrackRequestData
      */
-    genres?: Array<AlbumRequestDataImage>
+    'genres'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof TrackRequestData
      */
-    playlists?: Array<AlbumRequestDataImage>
+    'playlists'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof TrackRequestData
      */
-    image?: AlbumRequestDataImage
+    'image'?: AdvertisementRequestDataMedia;
     /**
      *
-     * @type {Array<AlbumRequestDataImage>}
+     * @type {Array<AdvertisementRequestDataMedia>}
      * @memberof TrackRequestData
      */
-    artists?: Array<AlbumRequestDataImage>
-    /**
-     *
-     * @type {string}
-     * @memberof TrackRequestData
-     */
-    name_th: string
+    'artists'?: Array<AdvertisementRequestDataMedia>;
     /**
      *
      * @type {string}
      * @memberof TrackRequestData
      */
-    name_en?: string
+    'name_th': string;
+    /**
+     *
+     * @type {string}
+     * @memberof TrackRequestData
+     */
+    'name_en'?: string;
     /**
      *
      * @type {any}
      * @memberof TrackRequestData
      */
-    aliases?: any
+    'aliases'?: any;
     /**
      *
      * @type {string}
      * @memberof TrackRequestData
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof TrackRequestData
      */
-    releaseDate?: string
+    'releaseDate'?: string;
     /**
      *
-     * @type {AlbumRequestDataImage}
+     * @type {AdvertisementRequestDataMedia}
      * @memberof TrackRequestData
      */
-    mvFile?: AlbumRequestDataImage
+    'mvFile'?: AdvertisementRequestDataMedia;
 }
+
 /**
  *
  * @export
@@ -4499,14 +4897,15 @@ export interface TrackResponse {
      * @type {TrackResponseDataObject}
      * @memberof TrackResponse
      */
-    data?: TrackResponseDataObject
+    'data'?: TrackResponseDataObject;
     /**
      *
      * @type {object}
      * @memberof TrackResponse
      */
-    meta?: object
+    'meta'?: object;
 }
+
 /**
  *
  * @export
@@ -4518,14 +4917,15 @@ export interface TrackResponseDataObject {
      * @type {number}
      * @memberof TrackResponseDataObject
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {Track}
      * @memberof TrackResponseDataObject
      */
-    attributes?: Track
+    'attributes'?: Track;
 }
+
 /**
  *
  * @export
@@ -4537,104 +4937,105 @@ export interface UploadFile {
      * @type {number}
      * @memberof UploadFile
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    alternativeText?: string
+    'alternativeText'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    caption?: string
+    'caption'?: string;
     /**
      *
      * @type {number}
      * @memberof UploadFile
      */
-    width?: number
+    'width'?: number;
     /**
      *
      * @type {number}
      * @memberof UploadFile
      */
-    height?: number
+    'height'?: number;
     /**
      *
      * @type {number}
      * @memberof UploadFile
      */
-    formats?: number
+    'formats'?: number;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    hash?: string
+    'hash'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    ext?: string
+    'ext'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    mime?: string
+    'mime'?: string;
     /**
      *
      * @type {number}
      * @memberof UploadFile
      */
-    size?: number
+    'size'?: number;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    url?: string
+    'url'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    previewUrl?: string
+    'previewUrl'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    provider?: string
+    'provider'?: string;
     /**
      *
      * @type {object}
      * @memberof UploadFile
      */
-    provider_metadata?: object
+    'provider_metadata'?: object;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadFile
      */
-    updatedAt?: string
+    'updatedAt'?: string;
 }
+
 /**
  *
  * @export
@@ -4646,20 +5047,21 @@ export interface UploadIdIdPostRequestFileInfo {
      * @type {string}
      * @memberof UploadIdIdPostRequestFileInfo
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadIdIdPostRequestFileInfo
      */
-    alternativeText?: string
+    'alternativeText'?: string;
     /**
      *
      * @type {string}
      * @memberof UploadIdIdPostRequestFileInfo
      */
-    caption?: string
+    'caption'?: string;
 }
+
 /**
  *
  * @export
@@ -4671,8 +5073,9 @@ export interface UsersPermissionsPermissionsGet200Response {
      * @type {{ [key: string]: UsersPermissionsPermissionsTreeValue; }}
      * @memberof UsersPermissionsPermissionsGet200Response
      */
-    permissions?: { [key: string]: UsersPermissionsPermissionsTreeValue }
+    'permissions'?: { [key: string]: UsersPermissionsPermissionsTreeValue; };
 }
+
 /**
  * every api
  * @export
@@ -4684,8 +5087,9 @@ export interface UsersPermissionsPermissionsTreeValue {
      * @type {{ [key: string]: { [key: string]: UsersPermissionsPermissionsTreeValueControllersValueValue; }; }}
      * @memberof UsersPermissionsPermissionsTreeValue
      */
-    controllers?: { [key: string]: { [key: string]: UsersPermissionsPermissionsTreeValueControllersValueValue } }
+    'controllers'?: { [key: string]: { [key: string]: UsersPermissionsPermissionsTreeValueControllersValueValue; }; };
 }
+
 /**
  * every action of every controller
  * @export
@@ -4697,14 +5101,15 @@ export interface UsersPermissionsPermissionsTreeValueControllersValueValue {
      * @type {boolean}
      * @memberof UsersPermissionsPermissionsTreeValueControllersValueValue
      */
-    enabled?: boolean
+    'enabled'?: boolean;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsPermissionsTreeValueControllersValueValue
      */
-    policy?: string
+    'policy'?: string;
 }
+
 /**
  *
  * @export
@@ -4716,38 +5121,39 @@ export interface UsersPermissionsRole {
      * @type {number}
      * @memberof UsersPermissionsRole
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRole
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRole
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRole
      */
-    type?: string
+    'type'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRole
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRole
      */
-    updatedAt?: string
+    'updatedAt'?: string;
 }
+
 /**
  *
  * @export
@@ -4759,8 +5165,9 @@ export interface UsersPermissionsRolesGet200Response {
      * @type {Array<UsersPermissionsRolesGet200ResponseRolesInner>}
      * @memberof UsersPermissionsRolesGet200Response
      */
-    roles?: Array<UsersPermissionsRolesGet200ResponseRolesInner>
+    'roles'?: Array<UsersPermissionsRolesGet200ResponseRolesInner>;
 }
+
 /**
  *
  * @export
@@ -4772,44 +5179,45 @@ export interface UsersPermissionsRolesGet200ResponseRolesInner {
      * @type {number}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    type?: string
+    'type'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {number}
      * @memberof UsersPermissionsRolesGet200ResponseRolesInner
      */
-    nb_users?: number
+    'nb_users'?: number;
 }
+
 /**
  *
  * @export
@@ -4821,8 +5229,9 @@ export interface UsersPermissionsRolesIdGet200Response {
      * @type {UsersPermissionsRole}
      * @memberof UsersPermissionsRolesIdGet200Response
      */
-    role?: UsersPermissionsRole
+    'role'?: UsersPermissionsRole;
 }
+
 /**
  *
  * @export
@@ -4834,26 +5243,27 @@ export interface UsersPermissionsRolesPostRequest {
      * @type {string}
      * @memberof UsersPermissionsRolesPostRequest
      */
-    name?: string
+    'name'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesPostRequest
      */
-    description?: string
+    'description'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsRolesPostRequest
      */
-    type?: string
+    'type'?: string;
     /**
      *
      * @type {{ [key: string]: UsersPermissionsPermissionsTreeValue; }}
      * @memberof UsersPermissionsRolesPostRequest
      */
-    permissions?: { [key: string]: UsersPermissionsPermissionsTreeValue }
+    'permissions'?: { [key: string]: UsersPermissionsPermissionsTreeValue; };
 }
+
 /**
  *
  * @export
@@ -4865,50 +5275,51 @@ export interface UsersPermissionsUser {
      * @type {number}
      * @memberof UsersPermissionsUser
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsUser
      */
-    username?: string
+    'username'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsUser
      */
-    email?: string
+    'email'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsUser
      */
-    provider?: string
+    'provider'?: string;
     /**
      *
      * @type {boolean}
      * @memberof UsersPermissionsUser
      */
-    confirmed?: boolean
+    'confirmed'?: boolean;
     /**
      *
      * @type {boolean}
      * @memberof UsersPermissionsUser
      */
-    blocked?: boolean
+    'blocked'?: boolean;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsUser
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPermissionsUser
      */
-    updatedAt?: string
+    'updatedAt'?: string;
 }
+
 /**
  *
  * @export
@@ -4920,14 +5331,15 @@ export interface UsersPermissionsUserRegistration {
      * @type {string}
      * @memberof UsersPermissionsUserRegistration
      */
-    jwt?: string
+    'jwt'?: string;
     /**
      *
      * @type {UsersPermissionsUser}
      * @memberof UsersPermissionsUserRegistration
      */
-    user?: UsersPermissionsUser
+    'user'?: UsersPermissionsUser;
 }
+
 /**
  *
  * @export
@@ -4939,56 +5351,57 @@ export interface UsersPost201Response {
      * @type {number}
      * @memberof UsersPost201Response
      */
-    id?: number
+    'id'?: number;
     /**
      *
      * @type {string}
      * @memberof UsersPost201Response
      */
-    username?: string
+    'username'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPost201Response
      */
-    email?: string
+    'email'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPost201Response
      */
-    provider?: string
+    'provider'?: string;
     /**
      *
      * @type {boolean}
      * @memberof UsersPost201Response
      */
-    confirmed?: boolean
+    'confirmed'?: boolean;
     /**
      *
      * @type {boolean}
      * @memberof UsersPost201Response
      */
-    blocked?: boolean
+    'blocked'?: boolean;
     /**
      *
      * @type {string}
      * @memberof UsersPost201Response
      */
-    createdAt?: string
+    'createdAt'?: string;
     /**
      *
      * @type {string}
      * @memberof UsersPost201Response
      */
-    updatedAt?: string
+    'updatedAt'?: string;
     /**
      *
      * @type {UsersPermissionsRole}
      * @memberof UsersPost201Response
      */
-    role?: UsersPermissionsRole
+    'role'?: UsersPermissionsRole;
 }
+
 /**
  *
  * @export
@@ -5000,26 +5413,26 @@ export interface UsersPostRequest {
      * @type {string}
      * @memberof UsersPostRequest
      */
-    email: string
+    'email': string;
     /**
      *
      * @type {string}
      * @memberof UsersPostRequest
      */
-    username: string
+    'username': string;
     /**
      *
      * @type {string}
      * @memberof UsersPostRequest
      */
-    password: string
+    'password': string;
 }
 
 /**
- * AlbumApi - axios parameter creator
+ * AdvertisementApi - axios parameter creator
  * @export
  */
-export const AlbumApiAxiosParamCreator = function (configuration?: Configuration) {
+export const AdvertisementApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -5027,10 +5440,11 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteAlbumsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteAdvertisementsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteAlbumsId', 'id', id)
-            const localVarPath = `/albums/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            assertParamExists('deleteAdvertisementsId', 'id', id)
+            const localVarPath = `/advertisements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5046,13 +5460,10 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5074,19 +5485,479 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAlbums: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getAdvertisements: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/advertisements`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAdvertisementsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getAdvertisementsId', 'id', id)
+            const localVarPath = `/advertisements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postAdvertisements: async (advertisementRequest: AdvertisementRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'advertisementRequest' is not null or undefined
+            assertParamExists('postAdvertisements', 'advertisementRequest', advertisementRequest)
+            const localVarPath = `/advertisements`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(advertisementRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putAdvertisementsId: async (id: number, advertisementRequest: AdvertisementRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putAdvertisementsId', 'id', id)
+            // verify required parameter 'advertisementRequest' is not null or undefined
+            assertParamExists('putAdvertisementsId', 'advertisementRequest', advertisementRequest)
+            const localVarPath = `/advertisements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(advertisementRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+    }
+}
+
+/**
+ * AdvertisementApi - functional programming interface
+ * @export
+ */
+export const AdvertisementApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AdvertisementApiAxiosParamCreator(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteAdvertisementsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteAdvertisementsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AdvertisementApi.deleteAdvertisementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAdvertisements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvertisementListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAdvertisements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AdvertisementApi.getAdvertisements']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAdvertisementsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvertisementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAdvertisementsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AdvertisementApi.getAdvertisementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postAdvertisements(advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvertisementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postAdvertisements(advertisementRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AdvertisementApi.postAdvertisements']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putAdvertisementsId(id: number, advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AdvertisementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putAdvertisementsId(id, advertisementRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AdvertisementApi.putAdvertisementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+    }
+}
+
+/**
+ * AdvertisementApi - factory interface
+ * @export
+ */
+export const AdvertisementApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AdvertisementApiFp(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteAdvertisementsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteAdvertisementsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAdvertisements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<AdvertisementListResponse> {
+            return localVarFp.getAdvertisements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAdvertisementsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<AdvertisementResponse> {
+            return localVarFp.getAdvertisementsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postAdvertisements(advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig): AxiosPromise<AdvertisementResponse> {
+            return localVarFp.postAdvertisements(advertisementRequest, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AdvertisementRequest} advertisementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putAdvertisementsId(id: number, advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig): AxiosPromise<AdvertisementResponse> {
+            return localVarFp.putAdvertisementsId(id, advertisementRequest, options).then((request) => request(axios, basePath))
+        },
+    }
+}
+
+/**
+ * AdvertisementApi - object-oriented interface
+ * @export
+ * @class AdvertisementApi
+ * @extends {BaseAPI}
+ */
+export class AdvertisementApi extends BaseAPI {
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AdvertisementApi
+     */
+    public deleteAdvertisementsId(id: number, options?: RawAxiosRequestConfig) {
+        return AdvertisementApiFp(this.configuration).deleteAdvertisementsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AdvertisementApi
+     */
+    public getAdvertisements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return AdvertisementApiFp(this.configuration).getAdvertisements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AdvertisementApi
+     */
+    public getAdvertisementsId(id: number, options?: RawAxiosRequestConfig) {
+        return AdvertisementApiFp(this.configuration).getAdvertisementsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {AdvertisementRequest} advertisementRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AdvertisementApi
+     */
+    public postAdvertisements(advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig) {
+        return AdvertisementApiFp(this.configuration).postAdvertisements(advertisementRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {AdvertisementRequest} advertisementRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AdvertisementApi
+     */
+    public putAdvertisementsId(id: number, advertisementRequest: AdvertisementRequest, options?: RawAxiosRequestConfig) {
+        return AdvertisementApiFp(this.configuration).putAdvertisementsId(id, advertisementRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+}
+
+
+/**
+ * AlbumApi - axios parameter creator
+ * @export
+ */
+export const AlbumApiAxiosParamCreator = function(configuration?: Configuration) {
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteAlbumsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteAlbumsId', 'id', id)
+            const localVarPath = `/albums/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAlbums: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/albums`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -5143,13 +6014,10 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5165,7 +6033,8 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
         getAlbumsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getAlbumsId', 'id', id)
-            const localVarPath = `/albums/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/albums/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5181,13 +6050,10 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5219,15 +6085,12 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(albumRequest, localVarRequestOptions, configuration)
 
             return {
@@ -5242,16 +6105,13 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putAlbumsId: async (
-            id: number,
-            albumRequest: AlbumRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putAlbumsId: async (id: number, albumRequest: AlbumRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putAlbumsId', 'id', id)
             // verify required parameter 'albumRequest' is not null or undefined
             assertParamExists('putAlbumsId', 'albumRequest', albumRequest)
-            const localVarPath = `/albums/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/albums/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5267,15 +6127,12 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(albumRequest, localVarRequestOptions, configuration)
 
             return {
@@ -5290,7 +6147,7 @@ export const AlbumApiAxiosParamCreator = function (configuration?: Configuration
  * AlbumApi - functional programming interface
  * @export
  */
-export const AlbumApiFp = function (configuration?: Configuration) {
+export const AlbumApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AlbumApiAxiosParamCreator(configuration)
     return {
         /**
@@ -5299,21 +6156,11 @@ export const AlbumApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteAlbumsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteAlbumsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteAlbumsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['AlbumApi.deleteAlbumsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['AlbumApi.deleteAlbumsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -5330,42 +6177,13 @@ export const AlbumApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAlbums(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAlbums(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getAlbums(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAlbums(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['AlbumApi.getAlbums']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['AlbumApi.getAlbums']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -5373,21 +6191,11 @@ export const AlbumApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAlbumsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
+        async getAlbumsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAlbumsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['AlbumApi.getAlbumsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['AlbumApi.getAlbumsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -5395,21 +6203,11 @@ export const AlbumApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postAlbums(
-            albumRequest: AlbumRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
+        async postAlbums(albumRequest: AlbumRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postAlbums(albumRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['AlbumApi.postAlbums']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['AlbumApi.postAlbums']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -5418,22 +6216,11 @@ export const AlbumApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putAlbumsId(
-            id: number,
-            albumRequest: AlbumRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
+        async putAlbumsId(id: number, albumRequest: AlbumRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AlbumResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putAlbumsId(id, albumRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['AlbumApi.putAlbumsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['AlbumApi.putAlbumsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -5442,7 +6229,7 @@ export const AlbumApiFp = function (configuration?: Configuration) {
  * AlbumApi - factory interface
  * @export
  */
-export const AlbumApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const AlbumApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AlbumApiFp(configuration)
     return {
         /**
@@ -5469,34 +6256,10 @@ export const AlbumApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAlbums(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AlbumListResponse> {
-            return localVarFp
-                .getAlbums(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getAlbums(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<AlbumListResponse> {
+            return localVarFp.getAlbums(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -5523,11 +6286,7 @@ export const AlbumApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putAlbumsId(
-            id: number,
-            albumRequest: AlbumRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AlbumResponse> {
+        putAlbumsId(id: number, albumRequest: AlbumRequest, options?: RawAxiosRequestConfig): AxiosPromise<AlbumResponse> {
             return localVarFp.putAlbumsId(id, albumRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -5548,9 +6307,7 @@ export class AlbumApi extends BaseAPI {
      * @memberof AlbumApi
      */
     public deleteAlbumsId(id: number, options?: RawAxiosRequestConfig) {
-        return AlbumApiFp(this.configuration)
-            .deleteAlbumsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return AlbumApiFp(this.configuration).deleteAlbumsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -5569,34 +6326,10 @@ export class AlbumApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AlbumApi
      */
-    public getAlbums(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return AlbumApiFp(this.configuration)
-            .getAlbums(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getAlbums(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return AlbumApiFp(this.configuration).getAlbums(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -5607,9 +6340,7 @@ export class AlbumApi extends BaseAPI {
      * @memberof AlbumApi
      */
     public getAlbumsId(id: number, options?: RawAxiosRequestConfig) {
-        return AlbumApiFp(this.configuration)
-            .getAlbumsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return AlbumApiFp(this.configuration).getAlbumsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -5620,9 +6351,7 @@ export class AlbumApi extends BaseAPI {
      * @memberof AlbumApi
      */
     public postAlbums(albumRequest: AlbumRequest, options?: RawAxiosRequestConfig) {
-        return AlbumApiFp(this.configuration)
-            .postAlbums(albumRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return AlbumApiFp(this.configuration).postAlbums(albumRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -5634,17 +6363,16 @@ export class AlbumApi extends BaseAPI {
      * @memberof AlbumApi
      */
     public putAlbumsId(id: number, albumRequest: AlbumRequest, options?: RawAxiosRequestConfig) {
-        return AlbumApiFp(this.configuration)
-            .putAlbumsId(id, albumRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return AlbumApiFp(this.configuration).putAlbumsId(id, albumRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * ArtistApi - axios parameter creator
  * @export
  */
-export const ArtistApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ArtistApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -5655,7 +6383,8 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
         deleteArtistsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteArtistsId', 'id', id)
-            const localVarPath = `/artists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/artists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5671,13 +6400,10 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5699,19 +6425,9 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getArtists: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getArtists: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/artists`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -5768,13 +6484,10 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5790,7 +6503,8 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
         getArtistsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getArtistsId', 'id', id)
-            const localVarPath = `/artists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/artists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5806,13 +6520,10 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -5825,10 +6536,7 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postArtists: async (
-            artistRequest: ArtistRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        postArtists: async (artistRequest: ArtistRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'artistRequest' is not null or undefined
             assertParamExists('postArtists', 'artistRequest', artistRequest)
             const localVarPath = `/artists`
@@ -5847,15 +6555,12 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(artistRequest, localVarRequestOptions, configuration)
 
             return {
@@ -5870,16 +6575,13 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putArtistsId: async (
-            id: number,
-            artistRequest: ArtistRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putArtistsId: async (id: number, artistRequest: ArtistRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putArtistsId', 'id', id)
             // verify required parameter 'artistRequest' is not null or undefined
             assertParamExists('putArtistsId', 'artistRequest', artistRequest)
-            const localVarPath = `/artists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/artists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -5895,15 +6597,12 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(artistRequest, localVarRequestOptions, configuration)
 
             return {
@@ -5918,7 +6617,7 @@ export const ArtistApiAxiosParamCreator = function (configuration?: Configuratio
  * ArtistApi - functional programming interface
  * @export
  */
-export const ArtistApiFp = function (configuration?: Configuration) {
+export const ArtistApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ArtistApiAxiosParamCreator(configuration)
     return {
         /**
@@ -5927,21 +6626,11 @@ export const ArtistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteArtistsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteArtistsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteArtistsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['ArtistApi.deleteArtistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['ArtistApi.deleteArtistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -5958,42 +6647,13 @@ export const ArtistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getArtists(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getArtists(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getArtists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getArtists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['ArtistApi.getArtists']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['ArtistApi.getArtists']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6001,21 +6661,11 @@ export const ArtistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getArtistsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
+        async getArtistsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getArtistsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['ArtistApi.getArtistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['ArtistApi.getArtistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6023,21 +6673,11 @@ export const ArtistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postArtists(
-            artistRequest: ArtistRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
+        async postArtists(artistRequest: ArtistRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postArtists(artistRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['ArtistApi.postArtists']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['ArtistApi.postArtists']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6046,22 +6686,11 @@ export const ArtistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putArtistsId(
-            id: number,
-            artistRequest: ArtistRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
+        async putArtistsId(id: number, artistRequest: ArtistRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArtistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putArtistsId(id, artistRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['ArtistApi.putArtistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['ArtistApi.putArtistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -6070,7 +6699,7 @@ export const ArtistApiFp = function (configuration?: Configuration) {
  * ArtistApi - factory interface
  * @export
  */
-export const ArtistApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const ArtistApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ArtistApiFp(configuration)
     return {
         /**
@@ -6097,34 +6726,10 @@ export const ArtistApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getArtists(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<ArtistListResponse> {
-            return localVarFp
-                .getArtists(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getArtists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<ArtistListResponse> {
+            return localVarFp.getArtists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -6151,11 +6756,7 @@ export const ArtistApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putArtistsId(
-            id: number,
-            artistRequest: ArtistRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<ArtistResponse> {
+        putArtistsId(id: number, artistRequest: ArtistRequest, options?: RawAxiosRequestConfig): AxiosPromise<ArtistResponse> {
             return localVarFp.putArtistsId(id, artistRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -6176,9 +6777,7 @@ export class ArtistApi extends BaseAPI {
      * @memberof ArtistApi
      */
     public deleteArtistsId(id: number, options?: RawAxiosRequestConfig) {
-        return ArtistApiFp(this.configuration)
-            .deleteArtistsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return ArtistApiFp(this.configuration).deleteArtistsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6197,34 +6796,10 @@ export class ArtistApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ArtistApi
      */
-    public getArtists(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return ArtistApiFp(this.configuration)
-            .getArtists(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getArtists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return ArtistApiFp(this.configuration).getArtists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6235,9 +6810,7 @@ export class ArtistApi extends BaseAPI {
      * @memberof ArtistApi
      */
     public getArtistsId(id: number, options?: RawAxiosRequestConfig) {
-        return ArtistApiFp(this.configuration)
-            .getArtistsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return ArtistApiFp(this.configuration).getArtistsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6248,9 +6821,7 @@ export class ArtistApi extends BaseAPI {
      * @memberof ArtistApi
      */
     public postArtists(artistRequest: ArtistRequest, options?: RawAxiosRequestConfig) {
-        return ArtistApiFp(this.configuration)
-            .postArtists(artistRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return ArtistApiFp(this.configuration).postArtists(artistRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6262,17 +6833,16 @@ export class ArtistApi extends BaseAPI {
      * @memberof ArtistApi
      */
     public putArtistsId(id: number, artistRequest: ArtistRequest, options?: RawAxiosRequestConfig) {
-        return ArtistApiFp(this.configuration)
-            .putArtistsId(id, artistRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return ArtistApiFp(this.configuration).putArtistsId(id, artistRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * CampaignApi - axios parameter creator
  * @export
  */
-export const CampaignApiAxiosParamCreator = function (configuration?: Configuration) {
+export const CampaignApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -6283,7 +6853,8 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
         deleteCampaignsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteCampaignsId', 'id', id)
-            const localVarPath = `/campaigns/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -6299,13 +6870,10 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -6327,19 +6895,9 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCampaigns: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getCampaigns: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/campaigns`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -6396,13 +6954,10 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -6418,7 +6973,8 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
         getCampaignsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getCampaignsId', 'id', id)
-            const localVarPath = `/campaigns/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -6434,13 +6990,10 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -6453,10 +7006,7 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postCampaigns: async (
-            campaignRequest: CampaignRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        postCampaigns: async (campaignRequest: CampaignRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'campaignRequest' is not null or undefined
             assertParamExists('postCampaigns', 'campaignRequest', campaignRequest)
             const localVarPath = `/campaigns`
@@ -6475,15 +7025,12 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(campaignRequest, localVarRequestOptions, configuration)
 
             return {
@@ -6498,16 +7045,13 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putCampaignsId: async (
-            id: number,
-            campaignRequest: CampaignRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putCampaignsId: async (id: number, campaignRequest: CampaignRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putCampaignsId', 'id', id)
             // verify required parameter 'campaignRequest' is not null or undefined
             assertParamExists('putCampaignsId', 'campaignRequest', campaignRequest)
-            const localVarPath = `/campaigns/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/campaigns/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -6523,15 +7067,12 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(campaignRequest, localVarRequestOptions, configuration)
 
             return {
@@ -6546,7 +7087,7 @@ export const CampaignApiAxiosParamCreator = function (configuration?: Configurat
  * CampaignApi - functional programming interface
  * @export
  */
-export const CampaignApiFp = function (configuration?: Configuration) {
+export const CampaignApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CampaignApiAxiosParamCreator(configuration)
     return {
         /**
@@ -6555,21 +7096,11 @@ export const CampaignApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteCampaignsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteCampaignsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCampaignsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CampaignApi.deleteCampaignsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.deleteCampaignsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6586,42 +7117,13 @@ export const CampaignApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCampaigns(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getCampaigns(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CampaignApi.getCampaigns']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.getCampaigns']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6629,21 +7131,11 @@ export const CampaignApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCampaignsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+        async getCampaignsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getCampaignsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CampaignApi.getCampaignsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.getCampaignsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6651,21 +7143,11 @@ export const CampaignApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postCampaigns(
-            campaignRequest: CampaignRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+        async postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postCampaigns(campaignRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CampaignApi.postCampaigns']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.postCampaigns']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -6674,22 +7156,11 @@ export const CampaignApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putCampaignsId(
-            id: number,
-            campaignRequest: CampaignRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
+        async putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CampaignResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putCampaignsId(id, campaignRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CampaignApi.putCampaignsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CampaignApi.putCampaignsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -6698,7 +7169,7 @@ export const CampaignApiFp = function (configuration?: Configuration) {
  * CampaignApi - factory interface
  * @export
  */
-export const CampaignApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const CampaignApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CampaignApiFp(configuration)
     return {
         /**
@@ -6725,34 +7196,10 @@ export const CampaignApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCampaigns(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CampaignListResponse> {
-            return localVarFp
-                .getCampaigns(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<CampaignListResponse> {
+            return localVarFp.getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -6769,10 +7216,7 @@ export const CampaignApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postCampaigns(
-            campaignRequest: CampaignRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CampaignResponse> {
+        postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): AxiosPromise<CampaignResponse> {
             return localVarFp.postCampaigns(campaignRequest, options).then((request) => request(axios, basePath))
         },
         /**
@@ -6782,11 +7226,7 @@ export const CampaignApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putCampaignsId(
-            id: number,
-            campaignRequest: CampaignRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CampaignResponse> {
+        putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig): AxiosPromise<CampaignResponse> {
             return localVarFp.putCampaignsId(id, campaignRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -6807,9 +7247,7 @@ export class CampaignApi extends BaseAPI {
      * @memberof CampaignApi
      */
     public deleteCampaignsId(id: number, options?: RawAxiosRequestConfig) {
-        return CampaignApiFp(this.configuration)
-            .deleteCampaignsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CampaignApiFp(this.configuration).deleteCampaignsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6828,34 +7266,10 @@ export class CampaignApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CampaignApi
      */
-    public getCampaigns(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return CampaignApiFp(this.configuration)
-            .getCampaigns(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getCampaigns(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return CampaignApiFp(this.configuration).getCampaigns(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6866,9 +7280,7 @@ export class CampaignApi extends BaseAPI {
      * @memberof CampaignApi
      */
     public getCampaignsId(id: number, options?: RawAxiosRequestConfig) {
-        return CampaignApiFp(this.configuration)
-            .getCampaignsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CampaignApiFp(this.configuration).getCampaignsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6879,9 +7291,7 @@ export class CampaignApi extends BaseAPI {
      * @memberof CampaignApi
      */
     public postCampaigns(campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig) {
-        return CampaignApiFp(this.configuration)
-            .postCampaigns(campaignRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CampaignApiFp(this.configuration).postCampaigns(campaignRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -6893,17 +7303,16 @@ export class CampaignApi extends BaseAPI {
      * @memberof CampaignApi
      */
     public putCampaignsId(id: number, campaignRequest: CampaignRequest, options?: RawAxiosRequestConfig) {
-        return CampaignApiFp(this.configuration)
-            .putCampaignsId(id, campaignRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CampaignApiFp(this.configuration).putCampaignsId(id, campaignRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * CoinPackageApi - axios parameter creator
  * @export
  */
-export const CoinPackageApiAxiosParamCreator = function (configuration?: Configuration) {
+export const CoinPackageApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -6914,7 +7323,8 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
         deleteCoinPackagesId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteCoinPackagesId', 'id', id)
-            const localVarPath = `/coin-packages/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/coin-packages/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -6930,13 +7340,10 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -6958,19 +7365,9 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCoinPackages: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getCoinPackages: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/coin-packages`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -7027,13 +7424,10 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7049,7 +7443,8 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
         getCoinPackagesId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getCoinPackagesId', 'id', id)
-            const localVarPath = `/coin-packages/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/coin-packages/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -7065,13 +7460,10 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7084,10 +7476,7 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postCoinPackages: async (
-            coinPackageRequest: CoinPackageRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        postCoinPackages: async (coinPackageRequest: CoinPackageRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'coinPackageRequest' is not null or undefined
             assertParamExists('postCoinPackages', 'coinPackageRequest', coinPackageRequest)
             const localVarPath = `/coin-packages`
@@ -7106,20 +7495,13 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                coinPackageRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(coinPackageRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7133,16 +7515,13 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putCoinPackagesId: async (
-            id: number,
-            coinPackageRequest: CoinPackageRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putCoinPackagesId: async (id: number, coinPackageRequest: CoinPackageRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putCoinPackagesId', 'id', id)
             // verify required parameter 'coinPackageRequest' is not null or undefined
             assertParamExists('putCoinPackagesId', 'coinPackageRequest', coinPackageRequest)
-            const localVarPath = `/coin-packages/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/coin-packages/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -7158,20 +7537,13 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                coinPackageRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(coinPackageRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7185,7 +7557,7 @@ export const CoinPackageApiAxiosParamCreator = function (configuration?: Configu
  * CoinPackageApi - functional programming interface
  * @export
  */
-export const CoinPackageApiFp = function (configuration?: Configuration) {
+export const CoinPackageApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CoinPackageApiAxiosParamCreator(configuration)
     return {
         /**
@@ -7194,21 +7566,11 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteCoinPackagesId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteCoinPackagesId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteCoinPackagesId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CoinPackageApi.deleteCoinPackagesId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CoinPackageApi.deleteCoinPackagesId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7225,42 +7587,13 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCoinPackages(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getCoinPackages(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getCoinPackages(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getCoinPackages(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CoinPackageApi.getCoinPackages']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CoinPackageApi.getCoinPackages']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7268,21 +7601,11 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getCoinPackagesId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
+        async getCoinPackagesId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getCoinPackagesId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CoinPackageApi.getCoinPackagesId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CoinPackageApi.getCoinPackagesId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7290,21 +7613,11 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postCoinPackages(
-            coinPackageRequest: CoinPackageRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
+        async postCoinPackages(coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postCoinPackages(coinPackageRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CoinPackageApi.postCoinPackages']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CoinPackageApi.postCoinPackages']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7313,22 +7626,11 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putCoinPackagesId(
-            id: number,
-            coinPackageRequest: CoinPackageRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
+        async putCoinPackagesId(id: number, coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CoinPackageResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putCoinPackagesId(id, coinPackageRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['CoinPackageApi.putCoinPackagesId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['CoinPackageApi.putCoinPackagesId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -7337,11 +7639,7 @@ export const CoinPackageApiFp = function (configuration?: Configuration) {
  * CoinPackageApi - factory interface
  * @export
  */
-export const CoinPackageApiFactory = function (
-    configuration?: Configuration,
-    basePath?: string,
-    axios?: AxiosInstance,
-) {
+export const CoinPackageApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CoinPackageApiFp(configuration)
     return {
         /**
@@ -7368,34 +7666,10 @@ export const CoinPackageApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getCoinPackages(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CoinPackageListResponse> {
-            return localVarFp
-                .getCoinPackages(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getCoinPackages(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<CoinPackageListResponse> {
+            return localVarFp.getCoinPackages(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -7412,10 +7686,7 @@ export const CoinPackageApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postCoinPackages(
-            coinPackageRequest: CoinPackageRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CoinPackageResponse> {
+        postCoinPackages(coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig): AxiosPromise<CoinPackageResponse> {
             return localVarFp.postCoinPackages(coinPackageRequest, options).then((request) => request(axios, basePath))
         },
         /**
@@ -7425,14 +7696,8 @@ export const CoinPackageApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putCoinPackagesId(
-            id: number,
-            coinPackageRequest: CoinPackageRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<CoinPackageResponse> {
-            return localVarFp
-                .putCoinPackagesId(id, coinPackageRequest, options)
-                .then((request) => request(axios, basePath))
+        putCoinPackagesId(id: number, coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig): AxiosPromise<CoinPackageResponse> {
+            return localVarFp.putCoinPackagesId(id, coinPackageRequest, options).then((request) => request(axios, basePath))
         },
     }
 }
@@ -7452,9 +7717,7 @@ export class CoinPackageApi extends BaseAPI {
      * @memberof CoinPackageApi
      */
     public deleteCoinPackagesId(id: number, options?: RawAxiosRequestConfig) {
-        return CoinPackageApiFp(this.configuration)
-            .deleteCoinPackagesId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CoinPackageApiFp(this.configuration).deleteCoinPackagesId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -7473,34 +7736,10 @@ export class CoinPackageApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CoinPackageApi
      */
-    public getCoinPackages(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return CoinPackageApiFp(this.configuration)
-            .getCoinPackages(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getCoinPackages(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return CoinPackageApiFp(this.configuration).getCoinPackages(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -7511,9 +7750,7 @@ export class CoinPackageApi extends BaseAPI {
      * @memberof CoinPackageApi
      */
     public getCoinPackagesId(id: number, options?: RawAxiosRequestConfig) {
-        return CoinPackageApiFp(this.configuration)
-            .getCoinPackagesId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CoinPackageApiFp(this.configuration).getCoinPackagesId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -7524,9 +7761,7 @@ export class CoinPackageApi extends BaseAPI {
      * @memberof CoinPackageApi
      */
     public postCoinPackages(coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig) {
-        return CoinPackageApiFp(this.configuration)
-            .postCoinPackages(coinPackageRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CoinPackageApiFp(this.configuration).postCoinPackages(coinPackageRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -7538,17 +7773,16 @@ export class CoinPackageApi extends BaseAPI {
      * @memberof CoinPackageApi
      */
     public putCoinPackagesId(id: number, coinPackageRequest: CoinPackageRequest, options?: RawAxiosRequestConfig) {
-        return CoinPackageApiFp(this.configuration)
-            .putCoinPackagesId(id, coinPackageRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return CoinPackageApiFp(this.configuration).putCoinPackagesId(id, coinPackageRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * GenreApi - axios parameter creator
  * @export
  */
-export const GenreApiAxiosParamCreator = function (configuration?: Configuration) {
+export const GenreApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -7559,7 +7793,8 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
         deleteGenresId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteGenresId', 'id', id)
-            const localVarPath = `/genres/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/genres/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -7575,13 +7810,10 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7603,19 +7835,9 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGenres: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getGenres: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/genres`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -7672,13 +7894,10 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7694,7 +7913,8 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
         getGenresId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getGenresId', 'id', id)
-            const localVarPath = `/genres/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/genres/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -7710,13 +7930,10 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -7748,15 +7965,12 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(genreRequest, localVarRequestOptions, configuration)
 
             return {
@@ -7771,16 +7985,13 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putGenresId: async (
-            id: number,
-            genreRequest: GenreRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putGenresId: async (id: number, genreRequest: GenreRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putGenresId', 'id', id)
             // verify required parameter 'genreRequest' is not null or undefined
             assertParamExists('putGenresId', 'genreRequest', genreRequest)
-            const localVarPath = `/genres/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/genres/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -7796,15 +8007,12 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(genreRequest, localVarRequestOptions, configuration)
 
             return {
@@ -7819,7 +8027,7 @@ export const GenreApiAxiosParamCreator = function (configuration?: Configuration
  * GenreApi - functional programming interface
  * @export
  */
-export const GenreApiFp = function (configuration?: Configuration) {
+export const GenreApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = GenreApiAxiosParamCreator(configuration)
     return {
         /**
@@ -7828,21 +8036,11 @@ export const GenreApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteGenresId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteGenresId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteGenresId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['GenreApi.deleteGenresId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['GenreApi.deleteGenresId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7859,42 +8057,13 @@ export const GenreApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGenres(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getGenres(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getGenres(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGenres(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['GenreApi.getGenres']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['GenreApi.getGenres']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7902,21 +8071,11 @@ export const GenreApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGenresId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
+        async getGenresId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getGenresId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['GenreApi.getGenresId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['GenreApi.getGenresId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7924,21 +8083,11 @@ export const GenreApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postGenres(
-            genreRequest: GenreRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
+        async postGenres(genreRequest: GenreRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postGenres(genreRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['GenreApi.postGenres']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['GenreApi.postGenres']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -7947,22 +8096,11 @@ export const GenreApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putGenresId(
-            id: number,
-            genreRequest: GenreRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
+        async putGenresId(id: number, genreRequest: GenreRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GenreResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putGenresId(id, genreRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['GenreApi.putGenresId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['GenreApi.putGenresId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -7971,7 +8109,7 @@ export const GenreApiFp = function (configuration?: Configuration) {
  * GenreApi - factory interface
  * @export
  */
-export const GenreApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const GenreApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = GenreApiFp(configuration)
     return {
         /**
@@ -7998,34 +8136,10 @@ export const GenreApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGenres(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<GenreListResponse> {
-            return localVarFp
-                .getGenres(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getGenres(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<GenreListResponse> {
+            return localVarFp.getGenres(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -8052,11 +8166,7 @@ export const GenreApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putGenresId(
-            id: number,
-            genreRequest: GenreRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<GenreResponse> {
+        putGenresId(id: number, genreRequest: GenreRequest, options?: RawAxiosRequestConfig): AxiosPromise<GenreResponse> {
             return localVarFp.putGenresId(id, genreRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -8077,9 +8187,7 @@ export class GenreApi extends BaseAPI {
      * @memberof GenreApi
      */
     public deleteGenresId(id: number, options?: RawAxiosRequestConfig) {
-        return GenreApiFp(this.configuration)
-            .deleteGenresId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return GenreApiFp(this.configuration).deleteGenresId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8098,34 +8206,10 @@ export class GenreApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof GenreApi
      */
-    public getGenres(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return GenreApiFp(this.configuration)
-            .getGenres(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getGenres(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return GenreApiFp(this.configuration).getGenres(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8136,9 +8220,7 @@ export class GenreApi extends BaseAPI {
      * @memberof GenreApi
      */
     public getGenresId(id: number, options?: RawAxiosRequestConfig) {
-        return GenreApiFp(this.configuration)
-            .getGenresId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return GenreApiFp(this.configuration).getGenresId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8149,9 +8231,7 @@ export class GenreApi extends BaseAPI {
      * @memberof GenreApi
      */
     public postGenres(genreRequest: GenreRequest, options?: RawAxiosRequestConfig) {
-        return GenreApiFp(this.configuration)
-            .postGenres(genreRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return GenreApiFp(this.configuration).postGenres(genreRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8163,17 +8243,16 @@ export class GenreApi extends BaseAPI {
      * @memberof GenreApi
      */
     public putGenresId(id: number, genreRequest: GenreRequest, options?: RawAxiosRequestConfig) {
-        return GenreApiFp(this.configuration)
-            .putGenresId(id, genreRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return GenreApiFp(this.configuration).putGenresId(id, genreRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * PlaylistApi - axios parameter creator
  * @export
  */
-export const PlaylistApiAxiosParamCreator = function (configuration?: Configuration) {
+export const PlaylistApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -8184,7 +8263,8 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
         deletePlaylistsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deletePlaylistsId', 'id', id)
-            const localVarPath = `/playlists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/playlists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -8200,13 +8280,10 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8228,19 +8305,9 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getPlaylists: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getPlaylists: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/playlists`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -8297,13 +8364,10 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8319,7 +8383,8 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
         getPlaylistsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getPlaylistsId', 'id', id)
-            const localVarPath = `/playlists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/playlists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -8335,13 +8400,10 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8354,10 +8416,7 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postPlaylists: async (
-            playlistRequest: PlaylistRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        postPlaylists: async (playlistRequest: PlaylistRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'playlistRequest' is not null or undefined
             assertParamExists('postPlaylists', 'playlistRequest', playlistRequest)
             const localVarPath = `/playlists`
@@ -8376,15 +8435,12 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(playlistRequest, localVarRequestOptions, configuration)
 
             return {
@@ -8399,16 +8455,13 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putPlaylistsId: async (
-            id: number,
-            playlistRequest: PlaylistRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putPlaylistsId: async (id: number, playlistRequest: PlaylistRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putPlaylistsId', 'id', id)
             // verify required parameter 'playlistRequest' is not null or undefined
             assertParamExists('putPlaylistsId', 'playlistRequest', playlistRequest)
-            const localVarPath = `/playlists/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/playlists/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -8424,15 +8477,12 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(playlistRequest, localVarRequestOptions, configuration)
 
             return {
@@ -8447,7 +8497,7 @@ export const PlaylistApiAxiosParamCreator = function (configuration?: Configurat
  * PlaylistApi - functional programming interface
  * @export
  */
-export const PlaylistApiFp = function (configuration?: Configuration) {
+export const PlaylistApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = PlaylistApiAxiosParamCreator(configuration)
     return {
         /**
@@ -8456,21 +8506,11 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deletePlaylistsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deletePlaylistsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deletePlaylistsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['PlaylistApi.deletePlaylistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['PlaylistApi.deletePlaylistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -8487,42 +8527,13 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getPlaylists(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getPlaylists(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getPlaylists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPlaylists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['PlaylistApi.getPlaylists']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['PlaylistApi.getPlaylists']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -8530,21 +8541,11 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getPlaylistsId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
+        async getPlaylistsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getPlaylistsId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['PlaylistApi.getPlaylistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['PlaylistApi.getPlaylistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -8552,21 +8553,11 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postPlaylists(
-            playlistRequest: PlaylistRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
+        async postPlaylists(playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postPlaylists(playlistRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['PlaylistApi.postPlaylists']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['PlaylistApi.postPlaylists']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -8575,22 +8566,11 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putPlaylistsId(
-            id: number,
-            playlistRequest: PlaylistRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
+        async putPlaylistsId(id: number, playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PlaylistResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putPlaylistsId(id, playlistRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['PlaylistApi.putPlaylistsId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['PlaylistApi.putPlaylistsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -8599,7 +8579,7 @@ export const PlaylistApiFp = function (configuration?: Configuration) {
  * PlaylistApi - factory interface
  * @export
  */
-export const PlaylistApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const PlaylistApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = PlaylistApiFp(configuration)
     return {
         /**
@@ -8626,34 +8606,10 @@ export const PlaylistApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getPlaylists(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<PlaylistListResponse> {
-            return localVarFp
-                .getPlaylists(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getPlaylists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<PlaylistListResponse> {
+            return localVarFp.getPlaylists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -8670,10 +8626,7 @@ export const PlaylistApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postPlaylists(
-            playlistRequest: PlaylistRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<PlaylistResponse> {
+        postPlaylists(playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig): AxiosPromise<PlaylistResponse> {
             return localVarFp.postPlaylists(playlistRequest, options).then((request) => request(axios, basePath))
         },
         /**
@@ -8683,11 +8636,7 @@ export const PlaylistApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putPlaylistsId(
-            id: number,
-            playlistRequest: PlaylistRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<PlaylistResponse> {
+        putPlaylistsId(id: number, playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig): AxiosPromise<PlaylistResponse> {
             return localVarFp.putPlaylistsId(id, playlistRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -8708,9 +8657,7 @@ export class PlaylistApi extends BaseAPI {
      * @memberof PlaylistApi
      */
     public deletePlaylistsId(id: number, options?: RawAxiosRequestConfig) {
-        return PlaylistApiFp(this.configuration)
-            .deletePlaylistsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return PlaylistApiFp(this.configuration).deletePlaylistsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8729,34 +8676,10 @@ export class PlaylistApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PlaylistApi
      */
-    public getPlaylists(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return PlaylistApiFp(this.configuration)
-            .getPlaylists(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getPlaylists(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return PlaylistApiFp(this.configuration).getPlaylists(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8767,9 +8690,7 @@ export class PlaylistApi extends BaseAPI {
      * @memberof PlaylistApi
      */
     public getPlaylistsId(id: number, options?: RawAxiosRequestConfig) {
-        return PlaylistApiFp(this.configuration)
-            .getPlaylistsId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return PlaylistApiFp(this.configuration).getPlaylistsId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8780,9 +8701,7 @@ export class PlaylistApi extends BaseAPI {
      * @memberof PlaylistApi
      */
     public postPlaylists(playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig) {
-        return PlaylistApiFp(this.configuration)
-            .postPlaylists(playlistRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return PlaylistApiFp(this.configuration).postPlaylists(playlistRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -8794,17 +8713,16 @@ export class PlaylistApi extends BaseAPI {
      * @memberof PlaylistApi
      */
     public putPlaylistsId(id: number, playlistRequest: PlaylistRequest, options?: RawAxiosRequestConfig) {
-        return PlaylistApiFp(this.configuration)
-            .putPlaylistsId(id, playlistRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return PlaylistApiFp(this.configuration).putPlaylistsId(id, playlistRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * StickerApi - axios parameter creator
  * @export
  */
-export const StickerApiAxiosParamCreator = function (configuration?: Configuration) {
+export const StickerApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -8815,7 +8733,8 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
         deleteStickersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteStickersId', 'id', id)
-            const localVarPath = `/stickers/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -8831,13 +8750,10 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8859,19 +8775,9 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getStickers: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getStickers: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/stickers`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -8928,13 +8834,10 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8950,7 +8853,8 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
         getStickersId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getStickersId', 'id', id)
-            const localVarPath = `/stickers/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -8966,13 +8870,10 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -8985,10 +8886,7 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        postStickers: async (
-            stickerRequest: StickerRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        postStickers: async (stickerRequest: StickerRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'stickerRequest' is not null or undefined
             assertParamExists('postStickers', 'stickerRequest', stickerRequest)
             const localVarPath = `/stickers`
@@ -9007,15 +8905,12 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(stickerRequest, localVarRequestOptions, configuration)
 
             return {
@@ -9030,16 +8925,13 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putStickersId: async (
-            id: number,
-            stickerRequest: StickerRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putStickersId: async (id: number, stickerRequest: StickerRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putStickersId', 'id', id)
             // verify required parameter 'stickerRequest' is not null or undefined
             assertParamExists('putStickersId', 'stickerRequest', stickerRequest)
-            const localVarPath = `/stickers/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/stickers/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -9055,15 +8947,12 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(stickerRequest, localVarRequestOptions, configuration)
 
             return {
@@ -9078,7 +8967,7 @@ export const StickerApiAxiosParamCreator = function (configuration?: Configurati
  * StickerApi - functional programming interface
  * @export
  */
-export const StickerApiFp = function (configuration?: Configuration) {
+export const StickerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = StickerApiAxiosParamCreator(configuration)
     return {
         /**
@@ -9087,21 +8976,11 @@ export const StickerApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteStickersId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteStickersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteStickersId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['StickerApi.deleteStickersId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.deleteStickersId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9118,42 +8997,13 @@ export const StickerApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getStickers(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getStickers(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['StickerApi.getStickers']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.getStickers']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9161,21 +9011,11 @@ export const StickerApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getStickersId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+        async getStickersId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getStickersId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['StickerApi.getStickersId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.getStickersId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9183,21 +9023,11 @@ export const StickerApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postStickers(
-            stickerRequest: StickerRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+        async postStickers(stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postStickers(stickerRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['StickerApi.postStickers']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.postStickers']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9206,22 +9036,11 @@ export const StickerApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putStickersId(
-            id: number,
-            stickerRequest: StickerRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
+        async putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StickerResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putStickersId(id, stickerRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['StickerApi.putStickersId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['StickerApi.putStickersId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -9230,7 +9049,7 @@ export const StickerApiFp = function (configuration?: Configuration) {
  * StickerApi - factory interface
  * @export
  */
-export const StickerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const StickerApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = StickerApiFp(configuration)
     return {
         /**
@@ -9257,34 +9076,10 @@ export const StickerApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getStickers(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<StickerListResponse> {
-            return localVarFp
-                .getStickers(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<StickerListResponse> {
+            return localVarFp.getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -9311,11 +9106,7 @@ export const StickerApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putStickersId(
-            id: number,
-            stickerRequest: StickerRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<StickerResponse> {
+        putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig): AxiosPromise<StickerResponse> {
             return localVarFp.putStickersId(id, stickerRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -9336,9 +9127,7 @@ export class StickerApi extends BaseAPI {
      * @memberof StickerApi
      */
     public deleteStickersId(id: number, options?: RawAxiosRequestConfig) {
-        return StickerApiFp(this.configuration)
-            .deleteStickersId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return StickerApiFp(this.configuration).deleteStickersId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -9357,34 +9146,10 @@ export class StickerApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof StickerApi
      */
-    public getStickers(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return StickerApiFp(this.configuration)
-            .getStickers(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getStickers(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return StickerApiFp(this.configuration).getStickers(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -9395,9 +9160,7 @@ export class StickerApi extends BaseAPI {
      * @memberof StickerApi
      */
     public getStickersId(id: number, options?: RawAxiosRequestConfig) {
-        return StickerApiFp(this.configuration)
-            .getStickersId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return StickerApiFp(this.configuration).getStickersId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -9408,9 +9171,7 @@ export class StickerApi extends BaseAPI {
      * @memberof StickerApi
      */
     public postStickers(stickerRequest: StickerRequest, options?: RawAxiosRequestConfig) {
-        return StickerApiFp(this.configuration)
-            .postStickers(stickerRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return StickerApiFp(this.configuration).postStickers(stickerRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -9422,17 +9183,16 @@ export class StickerApi extends BaseAPI {
      * @memberof StickerApi
      */
     public putStickersId(id: number, stickerRequest: StickerRequest, options?: RawAxiosRequestConfig) {
-        return StickerApiFp(this.configuration)
-            .putStickersId(id, stickerRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return StickerApiFp(this.configuration).putStickersId(id, stickerRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * TrackApi - axios parameter creator
  * @export
  */
-export const TrackApiAxiosParamCreator = function (configuration?: Configuration) {
+export const TrackApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -9443,7 +9203,8 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
         deleteTracksId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteTracksId', 'id', id)
-            const localVarPath = `/tracks/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/tracks/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -9459,13 +9220,10 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9487,19 +9245,9 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTracks: async (
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        getTracks: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/tracks`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -9556,13 +9304,10 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['locale'] = locale
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9578,7 +9323,8 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
         getTracksId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getTracksId', 'id', id)
-            const localVarPath = `/tracks/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/tracks/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -9594,13 +9340,10 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -9632,15 +9375,12 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(trackRequest, localVarRequestOptions, configuration)
 
             return {
@@ -9655,16 +9395,13 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putTracksId: async (
-            id: number,
-            trackRequest: TrackRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        putTracksId: async (id: number, trackRequest: TrackRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('putTracksId', 'id', id)
             // verify required parameter 'trackRequest' is not null or undefined
             assertParamExists('putTracksId', 'trackRequest', trackRequest)
-            const localVarPath = `/tracks/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/tracks/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -9680,15 +9417,12 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(trackRequest, localVarRequestOptions, configuration)
 
             return {
@@ -9703,7 +9437,7 @@ export const TrackApiAxiosParamCreator = function (configuration?: Configuration
  * TrackApi - functional programming interface
  * @export
  */
-export const TrackApiFp = function (configuration?: Configuration) {
+export const TrackApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TrackApiAxiosParamCreator(configuration)
     return {
         /**
@@ -9712,21 +9446,11 @@ export const TrackApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteTracksId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async deleteTracksId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTracksId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['TrackApi.deleteTracksId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['TrackApi.deleteTracksId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9743,42 +9467,13 @@ export const TrackApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTracks(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackListResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTracks(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
+        async getTracks(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTracks(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['TrackApi.getTracks']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['TrackApi.getTracks']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9786,21 +9481,11 @@ export const TrackApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTracksId(
-            id: number,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
+        async getTracksId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getTracksId(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['TrackApi.getTracksId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['TrackApi.getTracksId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9808,21 +9493,11 @@ export const TrackApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async postTracks(
-            trackRequest: TrackRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
+        async postTracks(trackRequest: TrackRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.postTracks(trackRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['TrackApi.postTracks']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['TrackApi.postTracks']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -9831,22 +9506,11 @@ export const TrackApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async putTracksId(
-            id: number,
-            trackRequest: TrackRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
+        async putTracksId(id: number, trackRequest: TrackRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.putTracksId(id, trackRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['TrackApi.putTracksId']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['TrackApi.putTracksId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -9855,7 +9519,7 @@ export const TrackApiFp = function (configuration?: Configuration) {
  * TrackApi - factory interface
  * @export
  */
-export const TrackApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const TrackApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TrackApiFp(configuration)
     return {
         /**
@@ -9882,34 +9546,10 @@ export const TrackApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTracks(
-            sort?: string,
-            paginationWithCount?: boolean,
-            paginationPage?: number,
-            paginationPageSize?: number,
-            paginationStart?: number,
-            paginationLimit?: number,
-            fields?: string,
-            populate?: string,
-            filters?: { [key: string]: any },
-            locale?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<TrackListResponse> {
-            return localVarFp
-                .getTracks(
-                    sort,
-                    paginationWithCount,
-                    paginationPage,
-                    paginationPageSize,
-                    paginationStart,
-                    paginationLimit,
-                    fields,
-                    populate,
-                    filters,
-                    locale,
-                    options,
-                )
-                .then((request) => request(axios, basePath))
+        getTracks(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<TrackListResponse> {
+            return localVarFp.getTracks(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -9936,11 +9576,7 @@ export const TrackApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        putTracksId(
-            id: number,
-            trackRequest: TrackRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<TrackResponse> {
+        putTracksId(id: number, trackRequest: TrackRequest, options?: RawAxiosRequestConfig): AxiosPromise<TrackResponse> {
             return localVarFp.putTracksId(id, trackRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -9961,9 +9597,7 @@ export class TrackApi extends BaseAPI {
      * @memberof TrackApi
      */
     public deleteTracksId(id: number, options?: RawAxiosRequestConfig) {
-        return TrackApiFp(this.configuration)
-            .deleteTracksId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return TrackApiFp(this.configuration).deleteTracksId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -9982,34 +9616,10 @@ export class TrackApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackApi
      */
-    public getTracks(
-        sort?: string,
-        paginationWithCount?: boolean,
-        paginationPage?: number,
-        paginationPageSize?: number,
-        paginationStart?: number,
-        paginationLimit?: number,
-        fields?: string,
-        populate?: string,
-        filters?: { [key: string]: any },
-        locale?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return TrackApiFp(this.configuration)
-            .getTracks(
-                sort,
-                paginationWithCount,
-                paginationPage,
-                paginationPageSize,
-                paginationStart,
-                paginationLimit,
-                fields,
-                populate,
-                filters,
-                locale,
-                options,
-            )
-            .then((request) => request(this.axios, this.basePath))
+    public getTracks(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return TrackApiFp(this.configuration).getTracks(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10020,9 +9630,7 @@ export class TrackApi extends BaseAPI {
      * @memberof TrackApi
      */
     public getTracksId(id: number, options?: RawAxiosRequestConfig) {
-        return TrackApiFp(this.configuration)
-            .getTracksId(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return TrackApiFp(this.configuration).getTracksId(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10033,9 +9641,7 @@ export class TrackApi extends BaseAPI {
      * @memberof TrackApi
      */
     public postTracks(trackRequest: TrackRequest, options?: RawAxiosRequestConfig) {
-        return TrackApiFp(this.configuration)
-            .postTracks(trackRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return TrackApiFp(this.configuration).postTracks(trackRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10047,17 +9653,16 @@ export class TrackApi extends BaseAPI {
      * @memberof TrackApi
      */
     public putTracksId(id: number, trackRequest: TrackRequest, options?: RawAxiosRequestConfig) {
-        return TrackApiFp(this.configuration)
-            .putTracksId(id, trackRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return TrackApiFp(this.configuration).putTracksId(id, trackRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * UploadFileApi - axios parameter creator
  * @export
  */
-export const UploadFileApiAxiosParamCreator = function (configuration?: Configuration) {
+export const UploadFileApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -10081,13 +9686,10 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10103,7 +9705,8 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
         uploadFilesIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('uploadFilesIdDelete', 'id', id)
-            const localVarPath = `/upload/files/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/upload/files/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -10119,13 +9722,10 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10141,7 +9741,8 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
         uploadFilesIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('uploadFilesIdGet', 'id', id)
-            const localVarPath = `/upload/files/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/upload/files/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -10157,13 +9758,10 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10181,14 +9779,7 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadPost: async (
-            files: Array<File>,
-            path?: string,
-            refId?: string,
-            ref?: string,
-            field?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        uploadPost: async (files: Array<File>, path?: string, refId?: string, ref?: string, field?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'files' is not null or undefined
             assertParamExists('uploadPost', 'files', files)
             const localVarPath = `/upload`
@@ -10207,6 +9798,7 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
             // authentication bearerAuth required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
             if (path !== undefined) {
                 localVarFormParams.append('path', path as any)
@@ -10229,15 +9821,12 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
                 })
             }
 
+
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = localVarFormParams
 
             return {
@@ -10254,12 +9843,7 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadididPost: async (
-            id: string,
-            fileInfo?: UploadIdIdPostRequestFileInfo,
-            files?: File,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        uploadididPost: async (id: string, fileInfo?: UploadIdIdPostRequestFileInfo, files?: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('uploadididPost', 'id', id)
             const localVarPath = `/upload?id={id}`
@@ -10283,31 +9867,21 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
                 localVarQueryParameter['id'] = id
             }
 
+
             if (fileInfo !== undefined) {
-                localVarFormParams.append(
-                    'fileInfo',
-                    new Blob(
-                        [
-                            JSON.stringify(fileInfo),
-                        ],
-                        { type: 'application/json' },
-                    ),
-                )
+                localVarFormParams.append('fileInfo', new Blob([JSON.stringify(fileInfo)], { type: 'application/json' }))
             }
 
             if (files !== undefined) {
                 localVarFormParams.append('files', files as any)
             }
 
+
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = localVarFormParams
 
             return {
@@ -10322,7 +9896,7 @@ export const UploadFileApiAxiosParamCreator = function (configuration?: Configur
  * UploadFileApi - functional programming interface
  * @export
  */
-export const UploadFileApiFp = function (configuration?: Configuration) {
+export const UploadFileApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = UploadFileApiAxiosParamCreator(configuration)
     return {
         /**
@@ -10330,20 +9904,11 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadFilesGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
+        async uploadFilesGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFilesGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UploadFileApi.uploadFilesGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UploadFileApi.uploadFilesGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -10351,21 +9916,11 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadFilesIdDelete(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadFile>> {
+        async uploadFilesIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadFile>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFilesIdDelete(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UploadFileApi.uploadFilesIdDelete']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UploadFileApi.uploadFilesIdDelete']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -10373,21 +9928,11 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadFilesIdGet(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadFile>> {
+        async uploadFilesIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UploadFile>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.uploadFilesIdGet(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UploadFileApi.uploadFilesIdGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UploadFileApi.uploadFilesIdGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          * Upload files
@@ -10400,32 +9945,11 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadPost(
-            files: Array<File>,
-            path?: string,
-            refId?: string,
-            ref?: string,
-            field?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadPost(
-                files,
-                path,
-                refId,
-                ref,
-                field,
-                options,
-            )
+        async uploadPost(files: Array<File>, path?: string, refId?: string, ref?: string, field?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.uploadPost(files, path, refId, ref, field, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UploadFileApi.uploadPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UploadFileApi.uploadPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          * Upload file information
@@ -10436,23 +9960,11 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async uploadididPost(
-            id: string,
-            fileInfo?: UploadIdIdPostRequestFileInfo,
-            files?: File,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
+        async uploadididPost(id: string, fileInfo?: UploadIdIdPostRequestFileInfo, files?: File, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UploadFile>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.uploadididPost(id, fileInfo, files, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UploadFileApi.uploadididPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UploadFileApi.uploadididPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -10461,7 +9973,7 @@ export const UploadFileApiFp = function (configuration?: Configuration) {
  * UploadFileApi - factory interface
  * @export
  */
-export const UploadFileApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const UploadFileApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = UploadFileApiFp(configuration)
     return {
         /**
@@ -10501,17 +10013,8 @@ export const UploadFileApiFactory = function (configuration?: Configuration, bas
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadPost(
-            files: Array<File>,
-            path?: string,
-            refId?: string,
-            ref?: string,
-            field?: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<Array<UploadFile>> {
-            return localVarFp
-                .uploadPost(files, path, refId, ref, field, options)
-                .then((request) => request(axios, basePath))
+        uploadPost(files: Array<File>, path?: string, refId?: string, ref?: string, field?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<UploadFile>> {
+            return localVarFp.uploadPost(files, path, refId, ref, field, options).then((request) => request(axios, basePath))
         },
         /**
          * Upload file information
@@ -10522,12 +10025,7 @@ export const UploadFileApiFactory = function (configuration?: Configuration, bas
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        uploadididPost(
-            id: string,
-            fileInfo?: UploadIdIdPostRequestFileInfo,
-            files?: File,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<Array<UploadFile>> {
+        uploadididPost(id: string, fileInfo?: UploadIdIdPostRequestFileInfo, files?: File, options?: RawAxiosRequestConfig): AxiosPromise<Array<UploadFile>> {
             return localVarFp.uploadididPost(id, fileInfo, files, options).then((request) => request(axios, basePath))
         },
     }
@@ -10547,9 +10045,7 @@ export class UploadFileApi extends BaseAPI {
      * @memberof UploadFileApi
      */
     public uploadFilesGet(options?: RawAxiosRequestConfig) {
-        return UploadFileApiFp(this.configuration)
-            .uploadFilesGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UploadFileApiFp(this.configuration).uploadFilesGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10560,9 +10056,7 @@ export class UploadFileApi extends BaseAPI {
      * @memberof UploadFileApi
      */
     public uploadFilesIdDelete(id: string, options?: RawAxiosRequestConfig) {
-        return UploadFileApiFp(this.configuration)
-            .uploadFilesIdDelete(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UploadFileApiFp(this.configuration).uploadFilesIdDelete(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10573,9 +10067,7 @@ export class UploadFileApi extends BaseAPI {
      * @memberof UploadFileApi
      */
     public uploadFilesIdGet(id: string, options?: RawAxiosRequestConfig) {
-        return UploadFileApiFp(this.configuration)
-            .uploadFilesIdGet(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UploadFileApiFp(this.configuration).uploadFilesIdGet(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10590,17 +10082,8 @@ export class UploadFileApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UploadFileApi
      */
-    public uploadPost(
-        files: Array<File>,
-        path?: string,
-        refId?: string,
-        ref?: string,
-        field?: string,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UploadFileApiFp(this.configuration)
-            .uploadPost(files, path, refId, ref, field, options)
-            .then((request) => request(this.axios, this.basePath))
+    public uploadPost(files: Array<File>, path?: string, refId?: string, ref?: string, field?: string, options?: RawAxiosRequestConfig) {
+        return UploadFileApiFp(this.configuration).uploadPost(files, path, refId, ref, field, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -10613,23 +10096,17 @@ export class UploadFileApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UploadFileApi
      */
-    public uploadididPost(
-        id: string,
-        fileInfo?: UploadIdIdPostRequestFileInfo,
-        files?: File,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UploadFileApiFp(this.configuration)
-            .uploadididPost(id, fileInfo, files, options)
-            .then((request) => request(this.axios, this.basePath))
+    public uploadididPost(id: string, fileInfo?: UploadIdIdPostRequestFileInfo, files?: File, options?: RawAxiosRequestConfig) {
+        return UploadFileApiFp(this.configuration).uploadididPost(id, fileInfo, files, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * UsersPermissionsAuthApi - axios parameter creator
  * @export
  */
-export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?: Configuration) {
+export const UsersPermissionsAuthApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -10638,10 +10115,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authChangePasswordPost: async (
-            authChangePasswordPostRequest: AuthChangePasswordPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authChangePasswordPost: async (authChangePasswordPostRequest: AuthChangePasswordPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authChangePasswordPostRequest' is not null or undefined
             assertParamExists('authChangePasswordPost', 'authChangePasswordPostRequest', authChangePasswordPostRequest)
             const localVarPath = `/auth/change-password`
@@ -10660,20 +10134,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authChangePasswordPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authChangePasswordPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10687,10 +10154,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authEmailConfirmationGet: async (
-            confirmation?: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authEmailConfirmationGet: async (confirmation?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/auth/email-confirmation`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -10711,13 +10175,10 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
                 localVarQueryParameter['confirmation'] = confirmation
             }
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10731,10 +10192,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authForgotPasswordPost: async (
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authForgotPasswordPost: async (authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authForgotPasswordPostRequest' is not null or undefined
             assertParamExists('authForgotPasswordPost', 'authForgotPasswordPostRequest', authForgotPasswordPostRequest)
             const localVarPath = `/auth/forgot-password`
@@ -10753,20 +10211,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authForgotPasswordPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authForgotPasswordPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10780,10 +10231,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLocalPost: async (
-            authLocalPostRequest: AuthLocalPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authLocalPost: async (authLocalPostRequest: AuthLocalPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authLocalPostRequest' is not null or undefined
             assertParamExists('authLocalPost', 'authLocalPostRequest', authLocalPostRequest)
             const localVarPath = `/auth/local`
@@ -10802,20 +10250,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authLocalPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authLocalPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10829,10 +10270,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLocalRegisterPost: async (
-            authLocalRegisterPostRequest: AuthLocalRegisterPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authLocalRegisterPost: async (authLocalRegisterPostRequest: AuthLocalRegisterPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authLocalRegisterPostRequest' is not null or undefined
             assertParamExists('authLocalRegisterPost', 'authLocalRegisterPostRequest', authLocalRegisterPostRequest)
             const localVarPath = `/auth/local/register`
@@ -10851,20 +10289,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authLocalRegisterPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authLocalRegisterPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10878,16 +10309,11 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authProviderCallbackGet: async (
-            provider: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authProviderCallbackGet: async (provider: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'provider' is not null or undefined
             assertParamExists('authProviderCallbackGet', 'provider', provider)
-            const localVarPath = `/auth/{provider}/callback`.replace(
-                `{${'provider'}}`,
-                encodeURIComponent(String(provider)),
-            )
+            const localVarPath = `/auth/{provider}/callback`
+                .replace(`{${'provider'}}`, encodeURIComponent(String(provider)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -10903,13 +10329,10 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10923,10 +10346,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authResetPasswordPost: async (
-            authResetPasswordPostRequest: AuthResetPasswordPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authResetPasswordPost: async (authResetPasswordPostRequest: AuthResetPasswordPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authResetPasswordPostRequest' is not null or undefined
             assertParamExists('authResetPasswordPost', 'authResetPasswordPostRequest', authResetPasswordPostRequest)
             const localVarPath = `/auth/reset-password`
@@ -10945,20 +10365,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authResetPasswordPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authResetPasswordPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10972,16 +10385,9 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authSendEmailConfirmationPost: async (
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        authSendEmailConfirmationPost: async (authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'authForgotPasswordPostRequest' is not null or undefined
-            assertParamExists(
-                'authSendEmailConfirmationPost',
-                'authForgotPasswordPostRequest',
-                authForgotPasswordPostRequest,
-            )
+            assertParamExists('authSendEmailConfirmationPost', 'authForgotPasswordPostRequest', authForgotPasswordPostRequest)
             const localVarPath = `/auth/send-email-confirmation`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -10998,20 +10404,13 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                authForgotPasswordPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(authForgotPasswordPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11028,7 +10427,8 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
         connectProviderGet: async (provider: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'provider' is not null or undefined
             assertParamExists('connectProviderGet', 'provider', provider)
-            const localVarPath = `/connect/{provider}`.replace(`{${'provider'}}`, encodeURIComponent(String(provider)))
+            const localVarPath = `/connect/{provider}`
+                .replace(`{${'provider'}}`, encodeURIComponent(String(provider)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -11044,13 +10444,10 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11064,7 +10461,7 @@ export const UsersPermissionsAuthApiAxiosParamCreator = function (configuration?
  * UsersPermissionsAuthApi - functional programming interface
  * @export
  */
-export const UsersPermissionsAuthApiFp = function (configuration?: Configuration) {
+export const UsersPermissionsAuthApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = UsersPermissionsAuthApiAxiosParamCreator(configuration)
     return {
         /**
@@ -11074,25 +10471,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authChangePasswordPost(
-            authChangePasswordPostRequest: AuthChangePasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authChangePasswordPost(
-                authChangePasswordPostRequest,
-                options,
-            )
+        async authChangePasswordPost(authChangePasswordPostRequest: AuthChangePasswordPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authChangePasswordPost(authChangePasswordPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authChangePasswordPost']?.[localVarOperationServerIndex]
-                    ?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authChangePasswordPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -11101,22 +10484,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authEmailConfirmationGet(
-            confirmation?: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+        async authEmailConfirmationGet(confirmation?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authEmailConfirmationGet(confirmation, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authEmailConfirmationGet']?.[localVarOperationServerIndex]
-                    ?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authEmailConfirmationGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -11125,25 +10497,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authForgotPasswordPost(
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authForgotPasswordPost(
-                authForgotPasswordPostRequest,
-                options,
-            )
+        async authForgotPasswordPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authForgotPasswordPost(authForgotPasswordPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authForgotPasswordPost']?.[localVarOperationServerIndex]
-                    ?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authForgotPasswordPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          * Returns a jwt token and user info
@@ -11152,21 +10510,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authLocalPost(
-            authLocalPostRequest: AuthLocalPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
+        async authLocalPost(authLocalPostRequest: AuthLocalPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authLocalPost(authLocalPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authLocalPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authLocalPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          * Returns a jwt token and user info
@@ -11175,24 +10523,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authLocalRegisterPost(
-            authLocalRegisterPostRequest: AuthLocalRegisterPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authLocalRegisterPost(
-                authLocalRegisterPostRequest,
-                options,
-            )
+        async authLocalRegisterPost(authLocalRegisterPostRequest: AuthLocalRegisterPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authLocalRegisterPost(authLocalRegisterPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authLocalRegisterPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authLocalRegisterPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -11201,22 +10536,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authProviderCallbackGet(
-            provider: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
+        async authProviderCallbackGet(provider: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authProviderCallbackGet(provider, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authProviderCallbackGet']?.[localVarOperationServerIndex]
-                    ?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authProviderCallbackGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -11225,24 +10549,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authResetPasswordPost(
-            authResetPasswordPostRequest: AuthResetPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authResetPasswordPost(
-                authResetPasswordPostRequest,
-                options,
-            )
+        async authResetPasswordPost(authResetPasswordPostRequest: AuthResetPasswordPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUserRegistration>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authResetPasswordPost(authResetPasswordPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authResetPasswordPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authResetPasswordPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -11251,28 +10562,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authSendEmailConfirmationPost(
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<
-            (axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthSendEmailConfirmationPost200Response>
-        > {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authSendEmailConfirmationPost(
-                authForgotPasswordPostRequest,
-                options,
-            )
+        async authSendEmailConfirmationPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthSendEmailConfirmationPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authSendEmailConfirmationPost(authForgotPasswordPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.authSendEmailConfirmationPost']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.authSendEmailConfirmationPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          * Redirects to provider login before being redirect to /auth/{provider}/callback
@@ -11281,21 +10575,11 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async connectProviderGet(
-            provider: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+        async connectProviderGet(provider: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.connectProviderGet(provider, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsAuthApi.connectProviderGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsAuthApi.connectProviderGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -11304,11 +10588,7 @@ export const UsersPermissionsAuthApiFp = function (configuration?: Configuration
  * UsersPermissionsAuthApi - factory interface
  * @export
  */
-export const UsersPermissionsAuthApiFactory = function (
-    configuration?: Configuration,
-    basePath?: string,
-    axios?: AxiosInstance,
-) {
+export const UsersPermissionsAuthApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = UsersPermissionsAuthApiFp(configuration)
     return {
         /**
@@ -11318,13 +10598,8 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authChangePasswordPost(
-            authChangePasswordPostRequest: AuthChangePasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsUserRegistration> {
-            return localVarFp
-                .authChangePasswordPost(authChangePasswordPostRequest, options)
-                .then((request) => request(axios, basePath))
+        authChangePasswordPost(authChangePasswordPostRequest: AuthChangePasswordPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsUserRegistration> {
+            return localVarFp.authChangePasswordPost(authChangePasswordPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -11334,9 +10609,7 @@ export const UsersPermissionsAuthApiFactory = function (
          * @throws {RequiredError}
          */
         authEmailConfirmationGet(confirmation?: string, options?: RawAxiosRequestConfig): AxiosPromise<Error> {
-            return localVarFp
-                .authEmailConfirmationGet(confirmation, options)
-                .then((request) => request(axios, basePath))
+            return localVarFp.authEmailConfirmationGet(confirmation, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -11345,13 +10618,8 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authForgotPasswordPost(
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AuthForgotPasswordPost200Response> {
-            return localVarFp
-                .authForgotPasswordPost(authForgotPasswordPostRequest, options)
-                .then((request) => request(axios, basePath))
+        authForgotPasswordPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AuthForgotPasswordPost200Response> {
+            return localVarFp.authForgotPasswordPost(authForgotPasswordPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          * Returns a jwt token and user info
@@ -11360,10 +10628,7 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLocalPost(
-            authLocalPostRequest: AuthLocalPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsUserRegistration> {
+        authLocalPost(authLocalPostRequest: AuthLocalPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsUserRegistration> {
             return localVarFp.authLocalPost(authLocalPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
@@ -11373,13 +10638,8 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authLocalRegisterPost(
-            authLocalRegisterPostRequest: AuthLocalRegisterPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsUserRegistration> {
-            return localVarFp
-                .authLocalRegisterPost(authLocalRegisterPostRequest, options)
-                .then((request) => request(axios, basePath))
+        authLocalRegisterPost(authLocalRegisterPostRequest: AuthLocalRegisterPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsUserRegistration> {
+            return localVarFp.authLocalRegisterPost(authLocalRegisterPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -11388,10 +10648,7 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authProviderCallbackGet(
-            provider: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsUserRegistration> {
+        authProviderCallbackGet(provider: string, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsUserRegistration> {
             return localVarFp.authProviderCallbackGet(provider, options).then((request) => request(axios, basePath))
         },
         /**
@@ -11401,13 +10658,8 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authResetPasswordPost(
-            authResetPasswordPostRequest: AuthResetPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsUserRegistration> {
-            return localVarFp
-                .authResetPasswordPost(authResetPasswordPostRequest, options)
-                .then((request) => request(axios, basePath))
+        authResetPasswordPost(authResetPasswordPostRequest: AuthResetPasswordPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsUserRegistration> {
+            return localVarFp.authResetPasswordPost(authResetPasswordPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -11416,13 +10668,8 @@ export const UsersPermissionsAuthApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authSendEmailConfirmationPost(
-            authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AuthSendEmailConfirmationPost200Response> {
-            return localVarFp
-                .authSendEmailConfirmationPost(authForgotPasswordPostRequest, options)
-                .then((request) => request(axios, basePath))
+        authSendEmailConfirmationPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AuthSendEmailConfirmationPost200Response> {
+            return localVarFp.authSendEmailConfirmationPost(authForgotPasswordPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          * Redirects to provider login before being redirect to /auth/{provider}/callback
@@ -11452,13 +10699,8 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsAuthApi
      */
-    public authChangePasswordPost(
-        authChangePasswordPostRequest: AuthChangePasswordPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authChangePasswordPost(authChangePasswordPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public authChangePasswordPost(authChangePasswordPostRequest: AuthChangePasswordPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsAuthApiFp(this.configuration).authChangePasswordPost(authChangePasswordPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11470,9 +10712,7 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @memberof UsersPermissionsAuthApi
      */
     public authEmailConfirmationGet(confirmation?: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authEmailConfirmationGet(confirmation, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsAuthApiFp(this.configuration).authEmailConfirmationGet(confirmation, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11483,13 +10723,8 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsAuthApi
      */
-    public authForgotPasswordPost(
-        authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authForgotPasswordPost(authForgotPasswordPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public authForgotPasswordPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsAuthApiFp(this.configuration).authForgotPasswordPost(authForgotPasswordPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11501,9 +10736,7 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @memberof UsersPermissionsAuthApi
      */
     public authLocalPost(authLocalPostRequest: AuthLocalPostRequest, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authLocalPost(authLocalPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsAuthApiFp(this.configuration).authLocalPost(authLocalPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11514,13 +10747,8 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsAuthApi
      */
-    public authLocalRegisterPost(
-        authLocalRegisterPostRequest: AuthLocalRegisterPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authLocalRegisterPost(authLocalRegisterPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public authLocalRegisterPost(authLocalRegisterPostRequest: AuthLocalRegisterPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsAuthApiFp(this.configuration).authLocalRegisterPost(authLocalRegisterPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11532,9 +10760,7 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @memberof UsersPermissionsAuthApi
      */
     public authProviderCallbackGet(provider: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authProviderCallbackGet(provider, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsAuthApiFp(this.configuration).authProviderCallbackGet(provider, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11545,13 +10771,8 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsAuthApi
      */
-    public authResetPasswordPost(
-        authResetPasswordPostRequest: AuthResetPasswordPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authResetPasswordPost(authResetPasswordPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public authResetPasswordPost(authResetPasswordPostRequest: AuthResetPasswordPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsAuthApiFp(this.configuration).authResetPasswordPost(authResetPasswordPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11562,13 +10783,8 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsAuthApi
      */
-    public authSendEmailConfirmationPost(
-        authForgotPasswordPostRequest: AuthForgotPasswordPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .authSendEmailConfirmationPost(authForgotPasswordPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public authSendEmailConfirmationPost(authForgotPasswordPostRequest: AuthForgotPasswordPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsAuthApiFp(this.configuration).authSendEmailConfirmationPost(authForgotPasswordPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -11580,17 +10796,16 @@ export class UsersPermissionsAuthApi extends BaseAPI {
      * @memberof UsersPermissionsAuthApi
      */
     public connectProviderGet(provider: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsAuthApiFp(this.configuration)
-            .connectProviderGet(provider, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsAuthApiFp(this.configuration).connectProviderGet(provider, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
 
 /**
  * UsersPermissionsUsersRolesApi - axios parameter creator
  * @export
  */
-export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configuration?: Configuration) {
+export const UsersPermissionsUsersRolesApiAxiosParamCreator = function(configuration?: Configuration) {
     return {
         /**
          *
@@ -11615,13 +10830,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11651,13 +10863,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11674,7 +10883,8 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
         usersIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('usersIdDelete', 'id', id)
-            const localVarPath = `/users/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/users/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -11690,13 +10900,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11713,7 +10920,8 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
         usersIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('usersIdGet', 'id', id)
-            const localVarPath = `/users/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/users/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -11729,13 +10937,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11750,16 +10955,13 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdPut: async (
-            id: string,
-            usersPostRequest: UsersPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        usersIdPut: async (id: string, usersPostRequest: UsersPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('usersIdPut', 'id', id)
             // verify required parameter 'usersPostRequest' is not null or undefined
             assertParamExists('usersIdPut', 'usersPostRequest', usersPostRequest)
-            const localVarPath = `/users/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/users/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -11775,15 +10977,12 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(usersPostRequest, localVarRequestOptions, configuration)
 
             return {
@@ -11814,13 +11013,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11850,13 +11046,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11886,13 +11079,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11909,7 +11099,8 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
         usersPermissionsRolesIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('usersPermissionsRolesIdGet', 'id', id)
-            const localVarPath = `/users-permissions/roles/{id}`.replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            const localVarPath = `/users-permissions/roles/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -11925,13 +11116,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11945,16 +11133,9 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesPost: async (
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        usersPermissionsRolesPost: async (usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'usersPermissionsRolesPostRequest' is not null or undefined
-            assertParamExists(
-                'usersPermissionsRolesPost',
-                'usersPermissionsRolesPostRequest',
-                usersPermissionsRolesPostRequest,
-            )
+            assertParamExists('usersPermissionsRolesPost', 'usersPermissionsRolesPostRequest', usersPermissionsRolesPostRequest)
             const localVarPath = `/users-permissions/roles`
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -11971,20 +11152,13 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                usersPermissionsRolesPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(usersPermissionsRolesPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11998,16 +11172,11 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesRoleDelete: async (
-            role: string,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        usersPermissionsRolesRoleDelete: async (role: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'role' is not null or undefined
             assertParamExists('usersPermissionsRolesRoleDelete', 'role', role)
-            const localVarPath = `/users-permissions/roles/{role}`.replace(
-                `{${'role'}}`,
-                encodeURIComponent(String(role)),
-            )
+            const localVarPath = `/users-permissions/roles/{role}`
+                .replace(`{${'role'}}`, encodeURIComponent(String(role)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -12023,13 +11192,10 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12044,23 +11210,13 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesRolePut: async (
-            role: string,
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        usersPermissionsRolesRolePut: async (role: string, usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'role' is not null or undefined
             assertParamExists('usersPermissionsRolesRolePut', 'role', role)
             // verify required parameter 'usersPermissionsRolesPostRequest' is not null or undefined
-            assertParamExists(
-                'usersPermissionsRolesRolePut',
-                'usersPermissionsRolesPostRequest',
-                usersPermissionsRolesPostRequest,
-            )
-            const localVarPath = `/users-permissions/roles/{role}`.replace(
-                `{${'role'}}`,
-                encodeURIComponent(String(role)),
-            )
+            assertParamExists('usersPermissionsRolesRolePut', 'usersPermissionsRolesPostRequest', usersPermissionsRolesPostRequest)
+            const localVarPath = `/users-permissions/roles/{role}`
+                .replace(`{${'role'}}`, encodeURIComponent(String(role)))
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
             let baseOptions
@@ -12076,20 +11232,13 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
-            localVarRequestOptions.data = serializeDataIfNeeded(
-                usersPermissionsRolesPostRequest,
-                localVarRequestOptions,
-                configuration,
-            )
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(usersPermissionsRolesPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12103,10 +11252,7 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPost: async (
-            usersPostRequest: UsersPostRequest,
-            options: RawAxiosRequestConfig = {},
-        ): Promise<RequestArgs> => {
+        usersPost: async (usersPostRequest: UsersPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'usersPostRequest' is not null or undefined
             assertParamExists('usersPost', 'usersPostRequest', usersPostRequest)
             const localVarPath = `/users`
@@ -12125,15 +11271,12 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+
             localVarHeaderParameter['Content-Type'] = 'application/json'
 
             setSearchParams(localVarUrlObj, localVarQueryParameter)
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-            localVarRequestOptions.headers = {
-                ...localVarHeaderParameter,
-                ...headersFromBaseOptions,
-                ...options.headers,
-            }
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
             localVarRequestOptions.data = serializeDataIfNeeded(usersPostRequest, localVarRequestOptions, configuration)
 
             return {
@@ -12148,7 +11291,7 @@ export const UsersPermissionsUsersRolesApiAxiosParamCreator = function (configur
  * UsersPermissionsUsersRolesApi - functional programming interface
  * @export
  */
-export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configuration) {
+export const UsersPermissionsUsersRolesApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = UsersPermissionsUsersRolesApiAxiosParamCreator(configuration)
     return {
         /**
@@ -12157,20 +11300,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersCountGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+        async usersCountGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersCountGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersCountGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersCountGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12178,20 +11312,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UsersPermissionsUser>>> {
+        async usersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UsersPermissionsUser>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12200,21 +11325,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersIdDelete(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
+        async usersIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdDelete(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersIdDelete']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersIdDelete']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12223,21 +11338,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersIdGet(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
+        async usersIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdGet(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersIdGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersIdGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12247,22 +11352,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersIdPut(
-            id: string,
-            usersPostRequest: UsersPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPost201Response>> {
+        async usersIdPut(id: string, usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPost201Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdPut(id, usersPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersIdPut']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersIdPut']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12270,20 +11364,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersMeGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
+        async usersMeGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsUser>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersMeGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersMeGet']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersMeGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12291,24 +11376,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsPermissionsGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<
-            (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsPermissionsGet200Response>
-        > {
+        async usersPermissionsPermissionsGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsPermissionsGet200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsPermissionsGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsPermissionsGet']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsPermissionsGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12316,22 +11388,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsRolesGet(
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsRolesGet200Response>> {
+        async usersPermissionsRolesGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsRolesGet200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesGet(options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesGet']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12340,23 +11401,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsRolesIdGet(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsRolesIdGet200Response>> {
+        async usersPermissionsRolesIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPermissionsRolesIdGet200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesIdGet(id, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesIdGet']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesIdGet']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12365,26 +11414,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsRolesPost(
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesPost(
-                usersPermissionsRolesPostRequest,
-                options,
-            )
+        async usersPermissionsRolesPost(usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesPost(usersPermissionsRolesPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesPost']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12393,23 +11427,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsRolesRoleDelete(
-            role: string,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
+        async usersPermissionsRolesRoleDelete(role: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesRoleDelete(role, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesRoleDelete']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesRoleDelete']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12419,28 +11441,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPermissionsRolesRolePut(
-            role: string,
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesRolePut(
-                role,
-                usersPermissionsRolesPostRequest,
-                options,
-            )
+        async usersPermissionsRolesRolePut(role: string, usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthForgotPasswordPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersPermissionsRolesRolePut(role, usersPermissionsRolesPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesRolePut']?.[
-                    localVarOperationServerIndex
-                ]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPermissionsRolesRolePut']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
         /**
          *
@@ -12449,21 +11454,11 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersPost(
-            usersPostRequest: UsersPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPost201Response>> {
+        async usersPost(usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsersPost201Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usersPost(usersPostRequest, options)
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-            const localVarOperationServerBasePath =
-                operationServerMap['UsersPermissionsUsersRolesApi.usersPost']?.[localVarOperationServerIndex]?.url
-            return (axios, basePath) =>
-                createRequestFunction(
-                    localVarAxiosArgs,
-                    globalAxios,
-                    BASE_PATH,
-                    configuration,
-                )(axios, localVarOperationServerBasePath || basePath)
+            const localVarOperationServerBasePath = operationServerMap['UsersPermissionsUsersRolesApi.usersPost']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
         },
     }
 }
@@ -12472,11 +11467,7 @@ export const UsersPermissionsUsersRolesApiFp = function (configuration?: Configu
  * UsersPermissionsUsersRolesApi - factory interface
  * @export
  */
-export const UsersPermissionsUsersRolesApiFactory = function (
-    configuration?: Configuration,
-    basePath?: string,
-    axios?: AxiosInstance,
-) {
+export const UsersPermissionsUsersRolesApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = UsersPermissionsUsersRolesApiFp(configuration)
     return {
         /**
@@ -12525,11 +11516,7 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdPut(
-            id: string,
-            usersPostRequest: UsersPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPost201Response> {
+        usersIdPut(id: string, usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPost201Response> {
             return localVarFp.usersIdPut(id, usersPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
@@ -12547,9 +11534,7 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsPermissionsGet(
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsPermissionsGet200Response> {
+        usersPermissionsPermissionsGet(options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsPermissionsGet200Response> {
             return localVarFp.usersPermissionsPermissionsGet(options).then((request) => request(axios, basePath))
         },
         /**
@@ -12568,10 +11553,7 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesIdGet(
-            id: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPermissionsRolesIdGet200Response> {
+        usersPermissionsRolesIdGet(id: string, options?: RawAxiosRequestConfig): AxiosPromise<UsersPermissionsRolesIdGet200Response> {
             return localVarFp.usersPermissionsRolesIdGet(id, options).then((request) => request(axios, basePath))
         },
         /**
@@ -12581,13 +11563,8 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesPost(
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AuthForgotPasswordPost200Response> {
-            return localVarFp
-                .usersPermissionsRolesPost(usersPermissionsRolesPostRequest, options)
-                .then((request) => request(axios, basePath))
+        usersPermissionsRolesPost(usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AuthForgotPasswordPost200Response> {
+            return localVarFp.usersPermissionsRolesPost(usersPermissionsRolesPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -12596,10 +11573,7 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesRoleDelete(
-            role: string,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AuthForgotPasswordPost200Response> {
+        usersPermissionsRolesRoleDelete(role: string, options?: RawAxiosRequestConfig): AxiosPromise<AuthForgotPasswordPost200Response> {
             return localVarFp.usersPermissionsRolesRoleDelete(role, options).then((request) => request(axios, basePath))
         },
         /**
@@ -12610,14 +11584,8 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPermissionsRolesRolePut(
-            role: string,
-            usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<AuthForgotPasswordPost200Response> {
-            return localVarFp
-                .usersPermissionsRolesRolePut(role, usersPermissionsRolesPostRequest, options)
-                .then((request) => request(axios, basePath))
+        usersPermissionsRolesRolePut(role: string, usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AuthForgotPasswordPost200Response> {
+            return localVarFp.usersPermissionsRolesRolePut(role, usersPermissionsRolesPostRequest, options).then((request) => request(axios, basePath))
         },
         /**
          *
@@ -12626,10 +11594,7 @@ export const UsersPermissionsUsersRolesApiFactory = function (
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersPost(
-            usersPostRequest: UsersPostRequest,
-            options?: RawAxiosRequestConfig,
-        ): AxiosPromise<UsersPost201Response> {
+        usersPost(usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<UsersPost201Response> {
             return localVarFp.usersPost(usersPostRequest, options).then((request) => request(axios, basePath))
         },
     }
@@ -12650,9 +11615,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersCountGet(options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersCountGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersCountGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12663,9 +11626,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersGet(options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12677,9 +11638,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersIdDelete(id: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersIdDelete(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersIdDelete(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12691,9 +11650,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersIdGet(id: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersIdGet(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersIdGet(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12706,9 +11663,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersIdPut(id: string, usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersIdPut(id, usersPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersIdPut(id, usersPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12719,9 +11674,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersMeGet(options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersMeGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersMeGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12732,9 +11685,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersPermissionsPermissionsGet(options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsPermissionsGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsPermissionsGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12745,9 +11696,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersPermissionsRolesGet(options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsRolesGet(options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsRolesGet(options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12759,9 +11708,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersPermissionsRolesIdGet(id: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsRolesIdGet(id, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsRolesIdGet(id, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12772,13 +11719,8 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsUsersRolesApi
      */
-    public usersPermissionsRolesPost(
-        usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsRolesPost(usersPermissionsRolesPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public usersPermissionsRolesPost(usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsRolesPost(usersPermissionsRolesPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12790,9 +11732,7 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersPermissionsRolesRoleDelete(role: string, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsRolesRoleDelete(role, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsRolesRoleDelete(role, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12804,14 +11744,8 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersPermissionsUsersRolesApi
      */
-    public usersPermissionsRolesRolePut(
-        role: string,
-        usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest,
-        options?: RawAxiosRequestConfig,
-    ) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPermissionsRolesRolePut(role, usersPermissionsRolesPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+    public usersPermissionsRolesRolePut(role: string, usersPermissionsRolesPostRequest: UsersPermissionsRolesPostRequest, options?: RawAxiosRequestConfig) {
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPermissionsRolesRolePut(role, usersPermissionsRolesPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 
     /**
@@ -12823,8 +11757,9 @@ export class UsersPermissionsUsersRolesApi extends BaseAPI {
      * @memberof UsersPermissionsUsersRolesApi
      */
     public usersPost(usersPostRequest: UsersPostRequest, options?: RawAxiosRequestConfig) {
-        return UsersPermissionsUsersRolesApiFp(this.configuration)
-            .usersPost(usersPostRequest, options)
-            .then((request) => request(this.axios, this.basePath))
+        return UsersPermissionsUsersRolesApiFp(this.configuration).usersPost(usersPostRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
+
+
+

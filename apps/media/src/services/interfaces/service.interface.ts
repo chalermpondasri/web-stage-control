@@ -9,7 +9,12 @@ import {
     MediaPlayRequest,
 } from '@libs/common/models/media/media-play.request'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
-
+import { AdvertisementListResponseDataItem } from '@libs/repositories/strapi-api'
+import { ProgressUpdateRequest } from '@libs/common/models/community/progress-update.request'
+import { SuccessDto } from '@libs/common/models/common/success.dto'
+export interface IAdFilter {
+    communityId?: string
+}
 export interface IPlaylistService {
     getPlaylist(communityId: string): Observable<PlaylistDto>
     getNowPlaying(communityId: string): Observable<PlayingTrackDto>
@@ -26,8 +31,14 @@ export interface IStageService {
     pause(communityId: string, mediaId: string,request: MediaPauseRequest): Observable<any>
     freeze(communityId: string): void
     unfreeze(communityId: string): void
+    progressUpdate(communityId: string, progressUpdateRequest: ProgressUpdateRequest): Observable<SuccessDto>
 }
 
 export interface IMediaService {
     getMediaDetail(mediaId: string): Observable<any>
+}
+
+export interface IAdsService {
+    getAdsDetail(adsId: number): Observable<any>
+    getAds(adsFilter?: IAdFilter):Observable<AdvertisementListResponseDataItem[]>
 }

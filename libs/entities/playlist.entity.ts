@@ -59,6 +59,12 @@ export class Playlist {
     @Column({type: 'varchar'})
     public queueState: QueueState
 
+    @Column({default: 0})
+    public trackProgress: number
+
+    @Column({nullable: true, type: 'timestamptz'})
+    public progressUpdatedAt: Date
+
     @CreateDateColumn()
     public createdAt: Date
 

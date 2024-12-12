@@ -37,4 +37,12 @@ export class PlaybackPlaySse {
     @ApiProperty()
     @Expose()
     public playedAt: Date
+
+    @ApiProperty()
+    @Expose()
+    public trackProgress: number
+
+    @ApiProperty()
+    @Expose()
+    public progressUpdatedAt: Date
 }

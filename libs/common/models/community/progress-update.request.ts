@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
-    IsDateString,
+    IsDate,
     IsUUID,
     Min,
 } from 'class-validator'
@@ -16,7 +16,8 @@ export class ProgressUpdateRequest {
     public trackProgress: number
 
     @ApiProperty()
-    @IsDateString()
+    @IsDate()
+    @ApiProperty()
     @Transform(({value}) => new Date(value))
     public timestamp: Date
 }

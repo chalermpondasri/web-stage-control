@@ -103,7 +103,7 @@ export class StageService implements IStageService {
         this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {})
     }
 
-    public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<any> {
+    public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<SuccessDto> {
         const targetTrackOpts: FindOptionsWhere<Playlist> = {
             communityId,
             id: request.transactionId,
@@ -117,43 +117,8 @@ export class StageService implements IStageService {
 
         const cacheKey = `${StageService.name}_play_${communityId}`
 
-        return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
-            mergeMap(playingTrack => {
 
-                if (!!playingTrack && playingTrack.id === request.transactionId) {
-                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
-                }
-                return of(playingTrack)
-            }),
-            mergeMap(playingTrack => {
-                return this._cacheService.getAndSet( cacheKey, () => {
-                    return of({
-                        trackRemainsToPlayAds: 0,
-                        adsPlayed: 0,
-                        lastPlayed: new Date().toISOString(),
-                        lastPlayedTransaction: playingTrack?.id
-                    })
-                }).pipe(
-                    mergeMap(cacheData => {
-                        // TODO - push ads to play
-                        // if(cacheData.trackRemainsToPlayAds <= 0) {
-                        //     return this._adsService.getAds({communityId}).pipe(
-                        //         map(ads => {
-                        //
-                        //         })
-                        //     )
-                        //     return throwError(() => new BadRequestException({
-                        //         message: ErrorEnum.PLAYLIST_ADS_REQUIRED,
-                        //         statusCode: HttpStatusCode.BadRequest,
-                        //         error: 'Ads Required',
-                        //         data: {},
-                        //     }))
-                        // }
-
-                        return of(playingTrack)
-                    })
-                )
-            }),
+        const updatePlayingTrackObs$ = (track: Playlist | void) => of(track).pipe(
             tap((playingTrack) => {
                 if (!!playingTrack) {
                     playingTrack.queueState = QueueState.PLAYED
@@ -199,6 +164,64 @@ export class StageService implements IStageService {
                     this.unfreeze(communityId)
                 }),
             )),
+            map(() => ({success: true}))
+        )
+
+        return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
+            mergeMap(playingTrack => {
+
+                if (!!playingTrack && playingTrack.id === request.transactionId) {
+                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_TRACK_ALREADY_PLAYING))
+                }
+                return of(playingTrack)
+            }),
+            mergeMap(playingTrack => {
+                return this._cacheService.getAndSet( cacheKey, () => {
+                    return of({
+                        trackRemainsToPlayAds: 0,
+                        adsPlayed: 0,
+                        lastPlayed: new Date().toISOString(),
+                        lastPlayedTransaction: playingTrack?.id
+                    })
+                }).pipe(
+                    mergeMap(cacheData => {
+                        cacheData.lastPlayedTransaction = playingTrack?.id
+
+                        if(cacheData.trackRemainsToPlayAds > 0) {
+
+                            cacheData.trackRemainsToPlayAds--
+                            cacheData.lastPlayed = new Date().toISOString()
+
+                            return this._cacheService.set(cacheKey, cacheData).pipe(
+                                mergeMap(() => updatePlayingTrackObs$(playingTrack))
+                            )
+                        }
+
+                        return this._adsService.getAds({communityId}).pipe(
+                            mergeMap(ads => {
+                                const adsToPlay = ads[cacheData.adsPlayed % ads.length]
+                                cacheData.adsPlayed++
+                                cacheData.trackRemainsToPlayAds = 2
+
+                                return this._cacheService.set(cacheKey, cacheData).pipe(
+                                    map(() => {
+                                        return plainToInstance(SuccessDto, {
+                                            success: false,
+                                            data: {
+                                                id: adsToPlay.id,
+                                                ...adsToPlay.attributes,
+                                                media: adsToPlay?.attributes?.media?.data?.attributes
+                                            }
+                                        })
+                                    })
+                                )
+                            })
+                        )
+
+                    }),
+                )
+            }),
+
         )
 
     }

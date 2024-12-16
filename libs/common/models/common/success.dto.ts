@@ -5,4 +5,7 @@ export class SuccessDto {
     @ApiProperty()
     @Expose()
     public success: boolean
+
+    @ApiProperty({})
+    public data?: any
 }

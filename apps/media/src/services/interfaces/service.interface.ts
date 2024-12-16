@@ -29,7 +29,7 @@ export interface IBoostService {
 
 export interface IStageService {
     registerStage(request: StageRegisterRequest): Observable<AccessTokenDto>
-    play(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<any>
+    play(communityId: string, mediaId: string,request: MediaPlayRequest): Observable<SuccessDto>
     pause(communityId: string, mediaId: string,request: MediaPauseRequest): Observable<any>
     freeze(communityId: string): void
     unfreeze(communityId: string): void

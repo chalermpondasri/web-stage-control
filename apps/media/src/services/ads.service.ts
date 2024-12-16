@@ -53,10 +53,14 @@ export class AdsService implements IAdsService {
                 null,
                 null,
                 '*',
-                filters,
+                null,
+                null,
+                {
+                    params: { filters }
+                }
+
             )).pipe(
                 map(response => {
-                    console.log(response.request)
                     return <AdvertisementListResponse> response.data
                 }),
                 concatMap(({ meta, data }) => {

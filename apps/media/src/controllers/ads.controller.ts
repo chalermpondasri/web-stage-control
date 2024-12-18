@@ -3,9 +3,19 @@ import {
     Get,
     Inject,
     Param,
+    Query,
+    UseGuards,
 } from '@nestjs/common'
 import { ProviderName } from '@libs/common/constants'
 import { IAdsService } from '../services/interfaces/service.interface'
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiQuery,
+    ApiResponse,
+} from '@nestjs/swagger'
+import { AdvertisementDto } from '@libs/common/models/media/advertisement.dto'
+import { StageGuard } from '@libs/guards/stage.guard'
 
 @Controller('/ads')
 export class AdsController {
@@ -15,10 +25,16 @@ export class AdsController {
     ) {
     }
 
-
-    @Get('/x')
-    public getAds() {
-        return this._adsService.getAds({communityId: '0193aa64322d7d17991ccf6a0eaa13df'})
+    @ApiBearerAuth()
+    @ApiOperation({description: 'get ads configuration'})
+    @ApiQuery({name: 'communityId', type: 'uuid', description: 'community uuid'})
+    @ApiResponse({type: [AdvertisementDto]})
+    @UseGuards(StageGuard)
+    @Get('/')
+    public getAds(
+        @Query('communityId') communityId: string,
+    ) {
+        return this._adsService.getAds({communityId})
     }
 
     @Get('/:id')

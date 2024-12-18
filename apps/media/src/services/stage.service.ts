@@ -207,11 +207,7 @@ export class StageService implements IStageService {
                                     map(() => {
                                         return plainToInstance(SuccessDto, {
                                             success: false,
-                                            data: {
-                                                id: adsToPlay.id,
-                                                ...adsToPlay.attributes,
-                                                media: adsToPlay?.attributes?.media?.data?.attributes
-                                            }
+                                            data: adsToPlay,
                                         })
                                     })
                                 )

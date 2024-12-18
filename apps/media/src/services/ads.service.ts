@@ -16,6 +16,8 @@ import {
     AdvertisementListResponse,
     AdvertisementListResponseDataItem,
 } from '@libs/repositories/strapi-api'
+import { AdvertisementDto } from '@libs/common/models/media/advertisement.dto'
+import { plainToInstance } from 'class-transformer'
 
 export class AdsService implements IAdsService {
     public constructor(
@@ -32,7 +34,8 @@ export class AdsService implements IAdsService {
             }),
         )
     }
-    public getAds(adsFilter?:IAdFilter): Observable<AdvertisementListResponseDataItem[]> {
+
+    public getAds(adsFilter?:IAdFilter): Observable<AdvertisementDto[]> {
         let filters = null
         if(adsFilter) {
             filters = {
@@ -43,7 +46,7 @@ export class AdsService implements IAdsService {
                 }
             }
         }
-        const requestObs$ = (accumulator = [], page = 1) => {
+        const requestObs$ = (accumulator:  AdvertisementListResponseDataItem[] = [], page = 1): Observable<AdvertisementListResponseDataItem[]> => {
             return from(this._strapiClient.adsApi.getAdvertisements(
                 null,
                 true,
@@ -73,7 +76,17 @@ export class AdsService implements IAdsService {
             )
         }
 
-        return requestObs$()
+        return requestObs$().pipe(
+            map(data => {
+                return data.map(record => {
+                    return plainToInstance(AdvertisementDto, {
+                        id: record.id,
+                        ...record.attributes,
+                        media: record?.attributes?.media?.data?.attributes
+                    })
+                })
+            })
+        )
 
     }
 

@@ -215,6 +215,12 @@ export class StageService implements IStageService {
                                         })
                                     })
                                 )
+                            }),
+                            catchError(() => {
+                                return of(plainToInstance(SuccessDto, {
+                                    success: true,
+                                    message: 'no ads to play'
+                                }))
                             })
                         )
 

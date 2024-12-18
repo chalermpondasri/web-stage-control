@@ -23,6 +23,7 @@ import { AdsService } from '../services/ads.service'
 import { ICacheService } from '@libs/providers/redis'
 import { IAdsService } from '../services/interfaces/service.interface'
 import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
+import { BackdropService } from '../services/backdrop.service'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -129,5 +130,16 @@ export const adsServiceProvider: Provider = {
     ],
     useFactory: (strapiClient: StrapiClient) =>  {
         return new AdsService(strapiClient)
+    }
+}
+export const backdropServiceProvider: Provider = {
+    provide: ProviderName.BACKDROP_SERVICE,
+    inject: [
+        ProviderName.STRAPI_CLIENT,
+    ],
+    useFactory: (
+      client: StrapiClient,
+    )=> {
+        return new BackdropService(client)
     }
 }

@@ -69,7 +69,7 @@ export class PlaylistController {
     @ApiBearerAuth()
     @UseGuards(StageGuard)
     @ApiOperation({ description: 'update track progress, this method produce `TRACK_PROGRESS_UPDATE` with PlaybackPlaySse model' })
-    @ApiResponse({type: SuccessDto})
+    @ApiResponse({ type: SuccessDto })
     @ApiExtraModels(PlaybackPlaySse)
     @Put('/:communityId/progress')
     public progressUpdate(

@@ -7,6 +7,7 @@ import {
 import { CommunityController } from '../controllers/community.controller'
 import {
     adsServiceProvider,
+    backdropServiceProvider,
     boostServiceProvider,
     mediaServiceProvider,
     playlistServiceProvider,
@@ -22,6 +23,7 @@ import { RootController } from '../controllers/root.controller'
 import { AdsController } from '../controllers/ads.controller'
 import { CacheModule } from '@libs/modules/cache.module'
 import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider'
+import { BackdropController } from '../controllers/backdrop.controller'
 
 @Module({
     imports: [
@@ -33,8 +35,9 @@ import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider
         CommunityController,
         BoostController,
         PlaylistController,
-        RootController,
         AdsController,
+        BackdropController,
+        RootController, // stay at the bottom
     ],
     providers: [
         playlistServiceProvider,
@@ -43,6 +46,7 @@ import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider
         mediaServiceProvider,
         loggingDiscordProvider,
         adsServiceProvider,
+        backdropServiceProvider,
     ],
 })
 export class MainModule implements NestModule {
@@ -53,18 +57,21 @@ export class MainModule implements NestModule {
                 method: RequestMethod.ALL,
             },
             {
-
                 path: '/playlist/(.*)',
                 method: RequestMethod.ALL,
+            },
+            {
+                path: '/backdrops(.*)',
+                method: RequestMethod.ALL,
+            },
+            {
+                path: '/communities/(.*)/logging',
+                method: RequestMethod.POST,
             },
             {
                 path: '/(.*)',
                 method: RequestMethod.GET,
             },
-            {
-                path: '/communities/(.*)/logging',
-                method: RequestMethod.POST,
-            }
 
         ]
         consumer.apply(RequestContextMiddleware)

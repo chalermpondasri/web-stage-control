@@ -11,6 +11,8 @@ import {
     StickerApi,
     TrackApi,
     AdvertisementApi,
+    BackdropApi,
+    AnnouncementApi,
 } from '@libs/repositories/strapi-api'
 import { Provider } from '@nestjs/common'
 
@@ -23,6 +25,8 @@ export interface StrapiClient {
     stickerApi: StickerApi
     campaignApi: CampaignApi
     adsApi: AdvertisementApi
+    backdropApi: BackdropApi,
+    announcementApi: AnnouncementApi,
 }
 
 export const strapiClientProvider: Provider = {
@@ -47,6 +51,8 @@ export const strapiClientProvider: Provider = {
             campaignApi: new CampaignApi(apiConfig),
             stickerApi: new StickerApi(apiConfig),
             adsApi: new AdvertisementApi(apiConfig),
+            backdropApi: new BackdropApi(apiConfig),
+            announcementApi: new AnnouncementApi(apiConfig),
         }
 
         return apiClient

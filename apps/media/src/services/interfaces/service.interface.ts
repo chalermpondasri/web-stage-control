@@ -9,10 +9,13 @@ import {
     MediaPlayRequest,
 } from '@libs/common/models/media/media-play.request'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
-import { AdvertisementListResponseDataItem } from '@libs/repositories/strapi-api'
+import {
+    AdvertisementListResponseDataItem,
+} from '@libs/repositories/strapi-api'
 import { ProgressUpdateRequest } from '@libs/common/models/community/progress-update.request'
 import { SuccessDto } from '@libs/common/models/common/success.dto'
 import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
+import { BackdropDto } from '@libs/common/models/media/backdrop.dto'
 export interface IAdFilter {
     communityId?: string
 }
@@ -44,4 +47,8 @@ export interface IMediaService {
 export interface IAdsService {
     getAdsDetail(adsId: number): Observable<any>
     getAds(adsFilter?: IAdFilter):Observable<AdvertisementListResponseDataItem[]>
+}
+
+export interface IBackdropService {
+    getByCommunityId(communityId: string): Observable<BackdropDto[]>
 }

@@ -15,33 +15,33 @@
 
 import type { Configuration } from './configuration'
 import type {
-    AxiosInstance,
     AxiosPromise,
+    AxiosInstance,
     RawAxiosRequestConfig,
 } from 'axios'
 import globalAxios from 'axios'
 // Some imports not used depending on template conditions
 // @ts-ignore
 import {
-    assertParamExists,
-    createRequestFunction,
     DUMMY_BASE_URL,
-    serializeDataIfNeeded,
+    assertParamExists,
     setApiKeyToObject,
     setBasicAuthToObject,
     setBearerAuthToObject,
     setOAuthToObject,
     setSearchParams,
+    serializeDataIfNeeded,
     toPathString,
+    createRequestFunction,
 } from './common'
 import type { RequestArgs } from './base'
 // @ts-ignore
 import {
     BASE_PATH,
-    BaseAPI,
     COLLECTION_FORMATS,
-    operationServerMap,
+    BaseAPI,
     RequiredError,
+    operationServerMap,
 } from './base'
 
 /**
@@ -2129,6 +2129,206 @@ export interface AlbumTracksDataInnerAttributesGenresDataInnerAttributes {
 /**
  *
  * @export
+ * @interface Announcement
+ */
+export interface Announcement {
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'name': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'startTime': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'endTime'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'message': string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof Announcement
+     */
+    'communities'?: Array<ListListTextComponent>;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'publishedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy}
+     * @memberof Announcement
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesFilesDataInnerAttributesCreatedBy;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Announcement
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementListResponse
+ */
+export interface AnnouncementListResponse {
+    /**
+     *
+     * @type {Array<AnnouncementListResponseDataItem>}
+     * @memberof AnnouncementListResponse
+     */
+    'data'?: Array<AnnouncementListResponseDataItem>;
+    /**
+     *
+     * @type {AdvertisementListResponseMeta}
+     * @memberof AnnouncementListResponse
+     */
+    'meta'?: AdvertisementListResponseMeta;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementListResponseDataItem
+ */
+export interface AnnouncementListResponseDataItem {
+    /**
+     *
+     * @type {number}
+     * @memberof AnnouncementListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Announcement}
+     * @memberof AnnouncementListResponseDataItem
+     */
+    'attributes'?: Announcement;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementRequest
+ */
+export interface AnnouncementRequest {
+    /**
+     *
+     * @type {AnnouncementRequestData}
+     * @memberof AnnouncementRequest
+     */
+    'data': AnnouncementRequestData;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementRequestData
+ */
+export interface AnnouncementRequestData {
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'name': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'startTime': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'endTime'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'message': string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof AnnouncementRequestData
+     */
+    'communities'?: Array<ListListTextComponent>;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementResponse
+ */
+export interface AnnouncementResponse {
+    /**
+     *
+     * @type {AnnouncementResponseDataObject}
+     * @memberof AnnouncementResponse
+     */
+    'data'?: AnnouncementResponseDataObject;
+    /**
+     *
+     * @type {object}
+     * @memberof AnnouncementResponse
+     */
+    'meta'?: object;
+}
+
+/**
+ *
+ * @export
+ * @interface AnnouncementResponseDataObject
+ */
+export interface AnnouncementResponseDataObject {
+    /**
+     *
+     * @type {number}
+     * @memberof AnnouncementResponseDataObject
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Announcement}
+     * @memberof AnnouncementResponseDataObject
+     */
+    'attributes'?: Announcement;
+}
+
+/**
+ *
+ * @export
  * @interface Artist
  */
 export interface Artist {
@@ -3023,6 +3223,244 @@ export const AuthSendEmailConfirmationPost200ResponseSentEnum = {
 } as const
 
 export type AuthSendEmailConfirmationPost200ResponseSentEnum = typeof AuthSendEmailConfirmationPost200ResponseSentEnum[keyof typeof AuthSendEmailConfirmationPost200ResponseSentEnum];
+
+/**
+ *
+ * @export
+ * @interface Backdrop
+ */
+export interface Backdrop {
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'name': string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof Backdrop
+     */
+    'communities'?: Array<ListListTextComponent>;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'type': BackdropTypeEnum;
+    /**
+     *
+     * @type {AdvertisementMedia}
+     * @memberof Backdrop
+     */
+    'media': AdvertisementMedia;
+    /**
+     *
+     * @type {number}
+     * @memberof Backdrop
+     */
+    'duration'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'startTime': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'endTime'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'createdAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'updatedAt'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Backdrop
+     */
+    'publishedAt'?: string;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Backdrop
+     */
+    'createdBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+    /**
+     *
+     * @type {AdvertisementMediaDataAttributesFolderDataAttributesParent}
+     * @memberof Backdrop
+     */
+    'updatedBy'?: AdvertisementMediaDataAttributesFolderDataAttributesParent;
+}
+
+export const BackdropTypeEnum = {
+    Video: 'video',
+    Image: 'image',
+} as const
+
+export type BackdropTypeEnum = typeof BackdropTypeEnum[keyof typeof BackdropTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface BackdropListResponse
+ */
+export interface BackdropListResponse {
+    /**
+     *
+     * @type {Array<BackdropListResponseDataItem>}
+     * @memberof BackdropListResponse
+     */
+    'data'?: Array<BackdropListResponseDataItem>;
+    /**
+     *
+     * @type {AdvertisementListResponseMeta}
+     * @memberof BackdropListResponse
+     */
+    'meta'?: AdvertisementListResponseMeta;
+}
+
+/**
+ *
+ * @export
+ * @interface BackdropListResponseDataItem
+ */
+export interface BackdropListResponseDataItem {
+    /**
+     *
+     * @type {number}
+     * @memberof BackdropListResponseDataItem
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Backdrop}
+     * @memberof BackdropListResponseDataItem
+     */
+    'attributes'?: Backdrop;
+}
+
+/**
+ *
+ * @export
+ * @interface BackdropRequest
+ */
+export interface BackdropRequest {
+    /**
+     *
+     * @type {BackdropRequestData}
+     * @memberof BackdropRequest
+     */
+    'data': BackdropRequestData;
+}
+
+/**
+ *
+ * @export
+ * @interface BackdropRequestData
+ */
+export interface BackdropRequestData {
+    /**
+     *
+     * @type {string}
+     * @memberof BackdropRequestData
+     */
+    'name': string;
+    /**
+     *
+     * @type {Array<ListListTextComponent>}
+     * @memberof BackdropRequestData
+     */
+    'communities'?: Array<ListListTextComponent>;
+    /**
+     *
+     * @type {string}
+     * @memberof BackdropRequestData
+     */
+    'type': BackdropRequestDataTypeEnum;
+    /**
+     *
+     * @type {AdvertisementRequestDataMedia}
+     * @memberof BackdropRequestData
+     */
+    'media': AdvertisementRequestDataMedia;
+    /**
+     *
+     * @type {number}
+     * @memberof BackdropRequestData
+     */
+    'duration'?: number;
+    /**
+     *
+     * @type {string}
+     * @memberof BackdropRequestData
+     */
+    'startTime': string;
+    /**
+     *
+     * @type {string}
+     * @memberof BackdropRequestData
+     */
+    'endTime'?: string;
+}
+
+export const BackdropRequestDataTypeEnum = {
+    Video: 'video',
+    Image: 'image',
+} as const
+
+export type BackdropRequestDataTypeEnum = typeof BackdropRequestDataTypeEnum[keyof typeof BackdropRequestDataTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface BackdropResponse
+ */
+export interface BackdropResponse {
+    /**
+     *
+     * @type {BackdropResponseDataObject}
+     * @memberof BackdropResponse
+     */
+    'data'?: BackdropResponseDataObject;
+    /**
+     *
+     * @type {object}
+     * @memberof BackdropResponse
+     */
+    'meta'?: object;
+}
+
+/**
+ *
+ * @export
+ * @interface BackdropResponseDataObject
+ */
+export interface BackdropResponseDataObject {
+    /**
+     *
+     * @type {number}
+     * @memberof BackdropResponseDataObject
+     */
+    'id'?: number;
+    /**
+     *
+     * @type {Backdrop}
+     * @memberof BackdropResponseDataObject
+     */
+    'attributes'?: Backdrop;
+}
 
 /**
  *
@@ -6369,6 +6807,476 @@ export class AlbumApi extends BaseAPI {
 
 
 /**
+ * AnnouncementApi - axios parameter creator
+ * @export
+ */
+export const AnnouncementApiAxiosParamCreator = function(configuration?: Configuration) {
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteAnnouncementsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteAnnouncementsId', 'id', id)
+            const localVarPath = `/announcements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAnnouncements: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/announcements`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAnnouncementsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getAnnouncementsId', 'id', id)
+            const localVarPath = `/announcements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postAnnouncements: async (announcementRequest: AnnouncementRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'announcementRequest' is not null or undefined
+            assertParamExists('postAnnouncements', 'announcementRequest', announcementRequest)
+            const localVarPath = `/announcements`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(announcementRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putAnnouncementsId: async (id: number, announcementRequest: AnnouncementRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putAnnouncementsId', 'id', id)
+            // verify required parameter 'announcementRequest' is not null or undefined
+            assertParamExists('putAnnouncementsId', 'announcementRequest', announcementRequest)
+            const localVarPath = `/announcements/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(announcementRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+    }
+}
+
+/**
+ * AnnouncementApi - functional programming interface
+ * @export
+ */
+export const AnnouncementApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AnnouncementApiAxiosParamCreator(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteAnnouncementsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteAnnouncementsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AnnouncementApi.deleteAnnouncementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAnnouncements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AnnouncementListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAnnouncements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AnnouncementApi.getAnnouncements']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAnnouncementsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AnnouncementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAnnouncementsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AnnouncementApi.getAnnouncementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postAnnouncements(announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AnnouncementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postAnnouncements(announcementRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AnnouncementApi.postAnnouncements']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putAnnouncementsId(id: number, announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AnnouncementResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putAnnouncementsId(id, announcementRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['AnnouncementApi.putAnnouncementsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+    }
+}
+
+/**
+ * AnnouncementApi - factory interface
+ * @export
+ */
+export const AnnouncementApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AnnouncementApiFp(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteAnnouncementsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteAnnouncementsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAnnouncements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<AnnouncementListResponse> {
+            return localVarFp.getAnnouncements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAnnouncementsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<AnnouncementResponse> {
+            return localVarFp.getAnnouncementsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postAnnouncements(announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig): AxiosPromise<AnnouncementResponse> {
+            return localVarFp.postAnnouncements(announcementRequest, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {AnnouncementRequest} announcementRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putAnnouncementsId(id: number, announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig): AxiosPromise<AnnouncementResponse> {
+            return localVarFp.putAnnouncementsId(id, announcementRequest, options).then((request) => request(axios, basePath))
+        },
+    }
+}
+
+/**
+ * AnnouncementApi - object-oriented interface
+ * @export
+ * @class AnnouncementApi
+ * @extends {BaseAPI}
+ */
+export class AnnouncementApi extends BaseAPI {
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AnnouncementApi
+     */
+    public deleteAnnouncementsId(id: number, options?: RawAxiosRequestConfig) {
+        return AnnouncementApiFp(this.configuration).deleteAnnouncementsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AnnouncementApi
+     */
+    public getAnnouncements(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return AnnouncementApiFp(this.configuration).getAnnouncements(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AnnouncementApi
+     */
+    public getAnnouncementsId(id: number, options?: RawAxiosRequestConfig) {
+        return AnnouncementApiFp(this.configuration).getAnnouncementsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {AnnouncementRequest} announcementRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AnnouncementApi
+     */
+    public postAnnouncements(announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig) {
+        return AnnouncementApiFp(this.configuration).postAnnouncements(announcementRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {AnnouncementRequest} announcementRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AnnouncementApi
+     */
+    public putAnnouncementsId(id: number, announcementRequest: AnnouncementRequest, options?: RawAxiosRequestConfig) {
+        return AnnouncementApiFp(this.configuration).putAnnouncementsId(id, announcementRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+}
+
+
+/**
  * ArtistApi - axios parameter creator
  * @export
  */
@@ -6834,6 +7742,476 @@ export class ArtistApi extends BaseAPI {
      */
     public putArtistsId(id: number, artistRequest: ArtistRequest, options?: RawAxiosRequestConfig) {
         return ArtistApiFp(this.configuration).putArtistsId(id, artistRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+}
+
+
+/**
+ * BackdropApi - axios parameter creator
+ * @export
+ */
+export const BackdropApiAxiosParamCreator = function(configuration?: Configuration) {
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteBackdropsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteBackdropsId', 'id', id)
+            const localVarPath = `/backdrops/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBackdrops: async (sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/backdrops`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort
+            }
+
+            if (paginationWithCount !== undefined) {
+                localVarQueryParameter['pagination[withCount]'] = paginationWithCount
+            }
+
+            if (paginationPage !== undefined) {
+                localVarQueryParameter['pagination[page]'] = paginationPage
+            }
+
+            if (paginationPageSize !== undefined) {
+                localVarQueryParameter['pagination[pageSize]'] = paginationPageSize
+            }
+
+            if (paginationStart !== undefined) {
+                localVarQueryParameter['pagination[start]'] = paginationStart
+            }
+
+            if (paginationLimit !== undefined) {
+                localVarQueryParameter['pagination[limit]'] = paginationLimit
+            }
+
+            if (fields !== undefined) {
+                localVarQueryParameter['fields'] = fields
+            }
+
+            if (populate !== undefined) {
+                localVarQueryParameter['populate'] = populate
+            }
+
+            if (filters !== undefined) {
+                localVarQueryParameter['filters'] = filters
+            }
+
+            if (locale !== undefined) {
+                localVarQueryParameter['locale'] = locale
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBackdropsId: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getBackdropsId', 'id', id)
+            const localVarPath = `/backdrops/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBackdrops: async (backdropRequest: BackdropRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'backdropRequest' is not null or undefined
+            assertParamExists('postBackdrops', 'backdropRequest', backdropRequest)
+            const localVarPath = `/backdrops`
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(backdropRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putBackdropsId: async (id: number, backdropRequest: BackdropRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('putBackdropsId', 'id', id)
+            // verify required parameter 'backdropRequest' is not null or undefined
+            assertParamExists('putBackdropsId', 'backdropRequest', backdropRequest)
+            const localVarPath = `/backdrops/{id}`
+                .replace(`{${'id'}}`, encodeURIComponent(String(id)))
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+            let baseOptions
+            if (configuration) {
+                baseOptions = configuration.baseOptions
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options }
+            const localVarHeaderParameter = {} as any
+            const localVarQueryParameter = {} as any
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json'
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter)
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers }
+            localVarRequestOptions.data = serializeDataIfNeeded(backdropRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            }
+        },
+    }
+}
+
+/**
+ * BackdropApi - functional programming interface
+ * @export
+ */
+export const BackdropApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = BackdropApiAxiosParamCreator(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteBackdropsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteBackdropsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['BackdropApi.deleteBackdropsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBackdrops(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BackdropListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBackdrops(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['BackdropApi.getBackdrops']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getBackdropsId(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BackdropResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBackdropsId(id, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['BackdropApi.getBackdropsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postBackdrops(backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BackdropResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postBackdrops(backdropRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['BackdropApi.postBackdrops']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async putBackdropsId(id: number, backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BackdropResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.putBackdropsId(id, backdropRequest, options)
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+            const localVarOperationServerBasePath = operationServerMap['BackdropApi.putBackdropsId']?.[localVarOperationServerIndex]?.url
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath)
+        },
+    }
+}
+
+/**
+ * BackdropApi - factory interface
+ * @export
+ */
+export const BackdropApiFactory = function(configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = BackdropApiFp(configuration)
+    return {
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteBackdropsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<number> {
+            return localVarFp.deleteBackdropsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+         * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+         * @param {number} [paginationPage] Page number (default: 0)
+         * @param {number} [paginationPageSize] Page size (default: 25)
+         * @param {number} [paginationStart] Offset value (default: 0)
+         * @param {number} [paginationLimit] Number of entities to return (default: 25)
+         * @param {string} [fields] Fields to return (ex: title,author)
+         * @param {string} [populate] Relations to return
+         * @param {{ [key: string]: any; }} [filters] Filters to apply
+         * @param {string} [locale] Locale to apply
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBackdrops(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+            [key: string]: any;
+        }, locale?: string, options?: RawAxiosRequestConfig): AxiosPromise<BackdropListResponse> {
+            return localVarFp.getBackdrops(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getBackdropsId(id: number, options?: RawAxiosRequestConfig): AxiosPromise<BackdropResponse> {
+            return localVarFp.getBackdropsId(id, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postBackdrops(backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig): AxiosPromise<BackdropResponse> {
+            return localVarFp.postBackdrops(backdropRequest, options).then((request) => request(axios, basePath))
+        },
+        /**
+         *
+         * @param {number} id
+         * @param {BackdropRequest} backdropRequest
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        putBackdropsId(id: number, backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig): AxiosPromise<BackdropResponse> {
+            return localVarFp.putBackdropsId(id, backdropRequest, options).then((request) => request(axios, basePath))
+        },
+    }
+}
+
+/**
+ * BackdropApi - object-oriented interface
+ * @export
+ * @class BackdropApi
+ * @extends {BaseAPI}
+ */
+export class BackdropApi extends BaseAPI {
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BackdropApi
+     */
+    public deleteBackdropsId(id: number, options?: RawAxiosRequestConfig) {
+        return BackdropApiFp(this.configuration).deleteBackdropsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {string} [sort] Sort by attributes ascending (asc) or descending (desc)
+     * @param {boolean} [paginationWithCount] Return page/pageSize (default: true)
+     * @param {number} [paginationPage] Page number (default: 0)
+     * @param {number} [paginationPageSize] Page size (default: 25)
+     * @param {number} [paginationStart] Offset value (default: 0)
+     * @param {number} [paginationLimit] Number of entities to return (default: 25)
+     * @param {string} [fields] Fields to return (ex: title,author)
+     * @param {string} [populate] Relations to return
+     * @param {{ [key: string]: any; }} [filters] Filters to apply
+     * @param {string} [locale] Locale to apply
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BackdropApi
+     */
+    public getBackdrops(sort?: string, paginationWithCount?: boolean, paginationPage?: number, paginationPageSize?: number, paginationStart?: number, paginationLimit?: number, fields?: string, populate?: string, filters?: {
+        [key: string]: any;
+    }, locale?: string, options?: RawAxiosRequestConfig) {
+        return BackdropApiFp(this.configuration).getBackdrops(sort, paginationWithCount, paginationPage, paginationPageSize, paginationStart, paginationLimit, fields, populate, filters, locale, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BackdropApi
+     */
+    public getBackdropsId(id: number, options?: RawAxiosRequestConfig) {
+        return BackdropApiFp(this.configuration).getBackdropsId(id, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {BackdropRequest} backdropRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BackdropApi
+     */
+    public postBackdrops(backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig) {
+        return BackdropApiFp(this.configuration).postBackdrops(backdropRequest, options).then((request) => request(this.axios, this.basePath))
+    }
+
+    /**
+     *
+     * @param {number} id
+     * @param {BackdropRequest} backdropRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof BackdropApi
+     */
+    public putBackdropsId(id: number, backdropRequest: BackdropRequest, options?: RawAxiosRequestConfig) {
+        return BackdropApiFp(this.configuration).putBackdropsId(id, backdropRequest, options).then((request) => request(this.axios, this.basePath))
     }
 }
 

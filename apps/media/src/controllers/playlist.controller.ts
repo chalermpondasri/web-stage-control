@@ -62,7 +62,7 @@ export class PlaylistController {
     public unfreezePlaylist(
         @Param('communityId') communityId: string,
     ) {
-        return this._stageService.freeze(communityId)
+        return this._stageService.unfreeze(communityId)
     }
 
     @ApiTags(...['stage control'])

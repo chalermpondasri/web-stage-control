@@ -2143,18 +2143,6 @@ export interface Announcement {
      * @type {string}
      * @memberof Announcement
      */
-    'startTime': string;
-    /**
-     *
-     * @type {string}
-     * @memberof Announcement
-     */
-    'endTime'?: string;
-    /**
-     *
-     * @type {string}
-     * @memberof Announcement
-     */
     'message': string;
     /**
      *
@@ -2162,6 +2150,30 @@ export interface Announcement {
      * @memberof Announcement
      */
     'communities'?: Array<ListListTextComponent>;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'startDate': string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'endDate'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'startTime'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof Announcement
+     */
+    'endTime'?: string;
     /**
      *
      * @type {string}
@@ -2265,18 +2277,6 @@ export interface AnnouncementRequestData {
      * @type {string}
      * @memberof AnnouncementRequestData
      */
-    'startTime': string;
-    /**
-     *
-     * @type {string}
-     * @memberof AnnouncementRequestData
-     */
-    'endTime'?: string;
-    /**
-     *
-     * @type {string}
-     * @memberof AnnouncementRequestData
-     */
     'message': string;
     /**
      *
@@ -2284,6 +2284,30 @@ export interface AnnouncementRequestData {
      * @memberof AnnouncementRequestData
      */
     'communities'?: Array<ListListTextComponent>;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'startDate': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'endDate'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'startTime'?: string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnnouncementRequestData
+     */
+    'endTime'?: string;
 }
 
 /**

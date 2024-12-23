@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Inject,
     Injectable,
     Logger,
@@ -22,7 +21,6 @@ import {
     mergeMap,
     of,
     tap,
-    throwError,
 } from 'rxjs'
 import { get } from 'lodash'
 import { IResult } from 'ua-parser-js'
@@ -32,7 +30,6 @@ import { Repository } from 'typeorm'
 import { UaParserUtil } from '@libs/utilities/ua-parser/ua-parser.util'
 import { extractTokenFromHeader } from '@libs/utilities/token.util'
 import { isNil } from '@nestjs/common/utils/shared.utils'
-import { ErrorEnum } from '@libs/common/constants/error.enum'
 import { ProviderName } from '@libs/common/constants/providerName'
 import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
 
@@ -116,7 +113,7 @@ export class RequestContextMiddleware implements NestMiddleware {
                     }
                     const userId = get(data.payload, 'id', null)
                     if(isNil(userId)) {
-                        return throwError(() => new BadRequestException(ErrorEnum.JWT_PROFILE_INVALID))
+                        return of(true)
                     }
                     return from(this._userRepository.findOneByOrFail({ id: userId })).pipe(
                         tap(result => {

@@ -25,7 +25,7 @@ export class AnnouncementController {
     @ApiOperation({
         description: 'Get announcement configuration',
     })
-    @ApiQuery({name: 'communityId', type: 'uuid', description: 'community uuid'})
+    @ApiQuery({name: 'communityId', type: 'uuid',required: false, description: 'community uuid'})
     @ApiResponse({type: [AnnouncementDto]})
     @Get('/')
     public getAnnouncements(

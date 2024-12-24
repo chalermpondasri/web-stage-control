@@ -50,7 +50,7 @@ export class PlaylistService implements IPlaylistService {
                     where: { communityId: communityId, queueState: QueueState.QUEUED },
                     order: {
                         totalBoost: 'desc',
-                        updatedAt: 'desc',
+                        updatedAt: 'asc',
                     },
                 }
                 return from(this._playlistRepository.findAndCount(opts))

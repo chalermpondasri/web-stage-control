@@ -46,7 +46,7 @@ export class RankingService implements IRankingService {
             .cache(ONE_HOUR_IN_MS)
             .select('cd.userId')
             .addSelect('SUM(cd.deductedCoin)', 'sum')
-            .leftJoinAndSelect('cd.user', 'user')
+            .innerJoinAndSelect('cd.user', 'user')
             .where({
                 communityId,
                 createdAt: Between(startOfWeek.toDate(), yesterday.toDate()),

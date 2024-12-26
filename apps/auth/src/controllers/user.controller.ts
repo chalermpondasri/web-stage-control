@@ -110,6 +110,9 @@ export class UserController {
     @ApiBearerAuth(UpdateConsentRequest.name)
     @Post('/consent')
     @UseGuards(UnacceptedConsentGuard)
+    @ApiBody({
+        type: UpdateConsentRequest,
+    })
     public updateConsent(
         @Body() body: UpdateConsentRequest,
     ) {

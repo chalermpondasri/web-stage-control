@@ -22,6 +22,7 @@ import {
 import { Stage } from '@libs/entities/stage.entity'
 import {
     BadRequestException,
+    Logger,
     UnauthorizedException,
 } from '@nestjs/common'
 import { ITokenizationService } from '@libs/providers/tokenization/tokenization-service.interface'
@@ -43,6 +44,7 @@ import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.inter
 import { StageLoggingRequest } from '@libs/common/models/media/stage-logging.request'
 
 export class StageService implements IStageService {
+    private readonly _logger = new Logger(StageService.name)
     public constructor(
         private readonly _stageRepository: Repository<Stage>,
         private readonly _tokenizationService: ITokenizationService,
@@ -86,6 +88,7 @@ export class StageService implements IStageService {
                     trackProgress: track.trackProgress,
                 }
                 this._playlistSubject.push(communityId, 'TRACK_PROGRESS_UPDATE', plainToInstance(PlaybackPlaySse, playedItem))
+                this._logger.log(`event: TRACK_PROGRESS_UPDATE, txn: ${playedItem.transactionId}, progress: ${playedItem.trackProgress}`)
             }),
             map(() => ({success: true})),
             catchError(err => {

@@ -16,6 +16,7 @@ import {
 import { ConsumeMessage } from 'amqplib'
 import { EnvironmentConfig } from '@libs/common/models'
 import { BroadcastSseService } from '@libs/sse/broadcast.sse'
+import { AnnouncementSseDto } from '@libs/common/models/announcement/announcement.dto'
 
 const rabbitSubscribeConfig = getRabbitSubscribeConfig(
     QUEUES.ANNOUNCEMENT_UPDATE,
@@ -46,10 +47,11 @@ export class AnnouncementUpdateConsumer {
 
         const communities = payload.communities
 
+        const data = AnnouncementSseDto.toDto(payload)
         for (const { communityId } of communities) {
             this._broadcastSse.sendEvent(communityId, {
                 type: 'announcement',
-                data: payload,
+                data,
             })
         }
 

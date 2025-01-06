@@ -16,6 +16,7 @@ import { CampaignUpdateConsumer } from '../domains/cms/campaign/update.consumer'
 import { TrackCreateConsumer } from '../domains/cms/track/create.consumer'
 import { TrackDeleteConsumer } from '../domains/cms/track/delete.consumer'
 import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
+import { AnnouncementUpdateConsumer } from '../domains/cms/announcement/announcement.update.consumer'
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { TrackUpdateConsumer } from '../domains/cms/track/update.consumer'
         ArtistUpdateConsumer,
         ArtistDeleteConsumer,
         CampaignUpdateConsumer,
+        AnnouncementUpdateConsumer,
     ],
 })
 export class MqConsumerModule {}

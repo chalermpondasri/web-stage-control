@@ -2,6 +2,7 @@ export enum EXCHANGES {
     EVENT_BUS = 'event_bus',
     TRACK_DL = 'track_dead_letter_exchange',
     ALBUM_DL = 'album_dead_letter_exchange',
+    ANNOUNCEMENT_DL = 'announcement_dead_letter_exchange',
     ARTIST_DL = 'artist_dead_letter_exchange',
     CAMPAIGN_DL = 'campaign_dead_letter_exchange',
 }
@@ -21,4 +22,5 @@ export enum QUEUES {
     ARTIST_DL = 'artist_dead_letter_queue',
     CAMPAIGN_UPDATE = 'campaign_update_queue',
     CAMPAIGN_DL = 'campaign_dead_letter_queue',
+    ANNOUNCEMENT_UPDATE = 'announcement_update_queue'
 }

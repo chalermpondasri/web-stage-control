@@ -1,6 +1,7 @@
 import { EXCHANGES, QUEUES } from '@libs/common/constants'
 import { Logger } from '@nestjs/common'
-
+import { config } from 'dotenv'
+config()
 export function getRabbitSubscribeConfig(
     queue: QUEUES,
     routingKey: string,

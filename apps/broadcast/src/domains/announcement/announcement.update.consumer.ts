@@ -1,4 +1,4 @@
-import { getRabbitSubscribeConfig } from '../../../utils/consumer.util'
+import { getRabbitSubscribeConfig } from '../../../../mq-consumer/src/utils/consumer.util'
 import {
     EXCHANGES,
     ProviderName,
@@ -49,10 +49,13 @@ export class AnnouncementUpdateConsumer {
 
         const data = AnnouncementSseDto.toDto(payload)
         for (const { communityId } of communities) {
+
             this._broadcastSse.sendEvent(communityId, {
                 type: 'announcement',
                 data,
             })
+
+            this._logger.log(`Announcement update sent to: ${communityId}`)
         }
 
 

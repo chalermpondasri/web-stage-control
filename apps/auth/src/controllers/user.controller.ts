@@ -29,6 +29,7 @@ import { UnacceptedConsentGuard } from '@libs/guards/unaccepted-consent.guard'
 import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
 import { createReadStream } from 'fs'
 import path from 'path'
+import { AppleLoginRequest } from '@libs/common/models/user/apple-login.request'
 
 @ApiTags('user')
 @Controller('/users')
@@ -71,6 +72,17 @@ export class UserController {
         }
 
         return this._authenticationService.doLineMobileLogin(body.authorizationCode)
+    }
+
+    @ApiOperation({
+        description: 'handle Apple login call back'
+    })
+    @ApiTags(...['authentication'])
+    @Post('/login/callback/apple')
+    public handleAppleLoginCallback(
+        @Body() body: AppleLoginRequest
+    ) {
+        return this._authenticationService.doAppleIdLogin(body)
 
     }
 

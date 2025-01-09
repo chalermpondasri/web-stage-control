@@ -22,6 +22,7 @@ import { RankingController } from '../controllers/ranking.controller'
 import { CommunityController } from '../controllers/community.controller'
 import { MailerModule } from '@libs/modules/mailer.module'
 import { badWordProvider } from '@libs/providers/bad-word.provider'
+import { appleIntegrationProvider } from '@libs/providers/apple-integration.provider'
 
 @Module({
     imports: [
@@ -37,7 +38,8 @@ import { badWordProvider } from '@libs/providers/bad-word.provider'
         rankingServiceProvider,
         communityServiceProvider,
         notifierServiceProvider,
-        badWordProvider
+        badWordProvider,
+        appleIntegrationProvider,
     ],
     controllers: [
         AdminController,

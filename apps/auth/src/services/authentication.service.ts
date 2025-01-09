@@ -44,6 +44,8 @@ import fs from 'node:fs'
 import path from 'path'
 import { RefreshTokenRequest } from '@libs/common/models/user/refresh-token.request'
 import { Stage } from '@libs/entities/stage.entity'
+import { AppleLoginRequest } from '@libs/common/models/user/apple-login.request'
+import { IAppleIntegration } from '@libs/repositories/interfaces/apple-integration.interface'
 
 export class AuthenticationService implements IAuthenticationService {
     private readonly _logger: LoggerService
@@ -57,6 +59,7 @@ export class AuthenticationService implements IAuthenticationService {
         private readonly _userRepository: Repository<User>,
         private readonly _communityRepository: Repository<Community>,
         private readonly _stageRepository: Repository<Stage>,
+        private readonly _appleIntegration: IAppleIntegration,
     ) {
         this._logger = new Logger(AuthenticationService.name)
     }
@@ -135,6 +138,22 @@ export class AuthenticationService implements IAuthenticationService {
         })
     }
 
+    public doAppleIdLogin(request: AppleLoginRequest): Observable<TokenDto> {
+
+        return from(this._appleIntegration.validate(request.id_token)).pipe(
+            mergeMap(data => {
+                return this._createUserIfNotfound({
+                    appleId: data.sub,
+                    name: `${request.user?.name?.firstName||''} ${request.user?.name?.lastName||''}` || 'Anonymous',
+                    picture: null,
+                    lineId: null,
+                })
+            })
+        )
+
+
+    }
+
     public doLineMobileLogin(accessToken: string): Observable<TokenDto> {
         return from(this._lineRepository.getUserProfile(accessToken)).pipe(
             mergeMap(response => {
@@ -147,12 +166,13 @@ export class AuthenticationService implements IAuthenticationService {
         )
     }
 
-    private _createUserIfNotfound({lineId, name, picture}:{lineId: string, name: string, picture: string}): Observable<TokenDto> {
-        return from(this._userRepository.findOneBy({ lineId})).pipe(
+    private _createUserIfNotfound({appleId, lineId, name, picture}:{lineId?: string, name: string, picture?: string, appleId?: string}): Observable<TokenDto> {
+        return from(this._userRepository.findOneBy(lineId ? { lineId } : { appleId })).pipe(
             mergeMap(user => {
                 if(!user) {
                     const entity  = this._userRepository.create({
                         lineId,
+                        appleId,
                         name,
                         picture: null,
                         isConsentAccepted: false,
@@ -162,6 +182,10 @@ export class AuthenticationService implements IAuthenticationService {
 
                     return fromPromise(this._userRepository.save(entity)).pipe(
                         mergeMap(user => {
+                            if(!picture) {
+                                return of( user )
+                            }
+
                             return fromPromise(this._downloadImage(user.id, picture)).pipe(
                                 mergeMap(() => {
                                     user.picture = `/static/${user.id}`
@@ -176,7 +200,7 @@ export class AuthenticationService implements IAuthenticationService {
                     user.remainCoins = 9999
                 }
 
-                if(!!user && user.picture === null) {
+                if(!!user && user.picture === null && !!picture) {
                     return fromPromise(this._downloadImage(user.id, picture)).pipe(
                         mergeMap(() => {
                             user.picture = `/static/${user.id}`

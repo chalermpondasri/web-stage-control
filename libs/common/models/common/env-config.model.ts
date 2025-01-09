@@ -122,4 +122,18 @@ export class EnvironmentConfig {
 
     @IsNotEmpty()
     public DISCORD_LOGGING_STAGE: string
+
+    @IsNotEmpty()
+    public APPLE_TEAM_ID: string
+    @IsNotEmpty()
+    public APPLE_CLIENT_ID: string
+    @IsNotEmpty()
+    public APPLE_KEY_ID: string
+    @IsOptional()
+    public APPLE_BASE64_PRIVATE_KEY: string
+
+    public OPEN_BANKING_ENDPOINT: string
+    public OPEN_BANKING_RESOURCE_OWNER_ID: string
+    public OPEN_BANKING_APPLICATION_KEY: string
+    public OPEN_BANKING_SECRET_KEY: string
 }

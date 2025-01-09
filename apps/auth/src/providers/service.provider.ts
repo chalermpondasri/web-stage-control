@@ -23,6 +23,7 @@ import { CommunityService } from '../services/community.service'
 import { NotificationService } from '../services/notification.service'
 import { IMailer } from '@libs/providers/mailer/interfaces/mailer.interface'
 import { IBadWordService } from '@libs/providers/bad-word.provider'
+import { IAppleIntegration } from '@libs/repositories/interfaces/apple-integration.interface'
 
 export const authenticationServiceProvider: Provider = {
     provide: ProviderName.AUTHENTICATION_SERVICE,
@@ -35,6 +36,7 @@ export const authenticationServiceProvider: Provider = {
         ProviderName.USER_REPOSITORY,
         ProviderName.COMMUNITY_REPOSITORY,
         ProviderName.STAGE_REPOSITORY,
+        ProviderName.APPLE_INTEGRATION,
     ],
     useFactory: (
         sseSubject: Subject<MessageEvent>,
@@ -45,6 +47,7 @@ export const authenticationServiceProvider: Provider = {
         userRepository: Repository<User>,
         communityRepository: Repository<Community>,
         stageRepository: Repository<Stage>,
+        appleIntegration: IAppleIntegration,
     ) => {
         return new AuthenticationService(
             sseSubject,
@@ -55,6 +58,7 @@ export const authenticationServiceProvider: Provider = {
             userRepository,
             communityRepository,
             stageRepository,
+            appleIntegration,
         )
     },
 }

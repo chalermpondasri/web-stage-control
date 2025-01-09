@@ -23,6 +23,9 @@ export class User {
     @Column({ nullable: true })
     public lineId: string
 
+    @Column({ nullable: true, type: 'text' })
+    public appleId: string
+
     @Column({ default: false, type: 'boolean'})
     public isConsentAccepted: boolean
 

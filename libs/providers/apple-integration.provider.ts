@@ -11,6 +11,7 @@ export const appleIntegrationProvider: Provider = {
     ],
     useFactory: async (config: EnvironmentConfig) => {
         const response = await axios.get(`https://appleid.apple.com/auth/keys`)
+
         // const secret = Buffer.from(config.APPLE_BASE64_PRIVATE_KEY, 'base64')
         return new AppleIntegrationRepository(
             config.APPLE_TEAM_ID,

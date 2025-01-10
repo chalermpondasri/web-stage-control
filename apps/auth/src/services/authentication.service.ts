@@ -140,6 +140,8 @@ export class AuthenticationService implements IAuthenticationService {
 
     public doAppleIdLogin(request: AppleLoginRequest): Observable<TokenDto> {
 
+        this._logger.log(request)
+
         return from(this._appleIntegration.validate(request.id_token)).pipe(
             mergeMap(data => {
                 return this._createUserIfNotfound({

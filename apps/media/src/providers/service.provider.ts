@@ -24,6 +24,7 @@ import { ICacheService } from '@libs/providers/redis'
 import { IAdsService } from '../services/interfaces/service.interface'
 import { IDiscordAdapter } from '@libs/utilities/adapter/interface/adapter.interface'
 import { BackdropService } from '../services/backdrop.service'
+import { IAmqpPublisher } from '@libs/providers/amqp/amqp-publisher.interface'
 
 export const playlistServiceProvider = {
     provide: ProviderName.PLAYLIST_SERVICE,
@@ -51,27 +52,27 @@ export const boostServiceProvider: Provider = {
         ProviderName.USER_REPOSITORY,
         ProviderName.PLAYLIST_REPOSITORY,
         ProviderName.TRACK_REPOSITORY,
-        ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
         ProviderName.ALBUM_REPOSITORY,
         ProviderName.COIN_DEDUCTION_REPOSITORY,
+        ProviderName.AMQP_PUBLISHER,
     ],
     useFactory: (
         requestContext: RequestContext,
         userRepository: Repository<User>,
         playlistRepository: Repository<Playlist>,
         trackElasticRepository: TrackElasticRepository,
-        eventSubject: EventSubjectFactory,
         albumElasticRepository: AlbumElasticRepository,
         coinDeductionRepository: Repository<CoinDeduction>,
+        publisher: IAmqpPublisher,
     ) => {
         return new BoostService(
             requestContext,
             userRepository,
             playlistRepository,
             trackElasticRepository,
-            eventSubject,
             albumElasticRepository,
             coinDeductionRepository,
+            publisher,
         )
     },
 }

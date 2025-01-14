@@ -1,5 +1,4 @@
 import {
-    Logger,
     Provider,
     Scope,
 } from '@nestjs/common'
@@ -12,15 +11,8 @@ export const httpClientProvider: Provider = {
     scope: Scope.TRANSIENT,
     useFactory: (): AxiosInstance => {
         const agent = new http.Agent({family: 4})
-        const client =  axios.create({
+        return axios.create({
             httpAgent: agent,
         })
-
-        client.interceptors.request.use( (conf) => {
-            Logger.log(conf, ProviderName.HTTP_CLIENT)
-            return conf
-        })
-
-        return client
     }
 }

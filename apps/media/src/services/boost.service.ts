@@ -7,7 +7,6 @@ import {
     mergeMap,
     Observable,
     of,
-    tap,
     throwError,
 } from 'rxjs'
 import { IBoostService } from './interfaces/service.interface'
@@ -24,8 +23,6 @@ import { Playlist } from '@libs/entities/playlist.entity'
 import { QueueState } from '@libs/common/models/media/queue-state.enum'
 import { TrackElasticRepository } from '@libs/repositories/elasticsearch/track.elastic.repository'
 import { TrackES } from '@libs/repositories/interfaces/search/track.interface'
-import { TrackBoostedSse } from '@libs/common/models/media/sse/track-boosted.sse'
-import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 import { AlbumElasticRepository } from '@libs/repositories/elasticsearch/album.elastic.repository'
 import {
     CoinDeduction,
@@ -33,6 +30,8 @@ import {
 } from '@libs/entities/coin-deduction.entity'
 import { isUUID } from 'class-validator'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
+import { IAmqpPublisher } from '@libs/providers/amqp/amqp-publisher.interface'
+import { MediaBoostEventPayload } from './boost.consumer'
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
@@ -42,9 +41,9 @@ export class BoostService implements IBoostService {
         private readonly _userRepository: Repository<User>,
         private readonly _playlistRepository: Repository<Playlist>,
         private readonly _trackElasticRepository: TrackElasticRepository,
-        private readonly _playlistSubjectEvent: EventSubjectFactory,
         private readonly _albumElasticRepository: AlbumElasticRepository,
         private readonly _coinDeductionRepository: Repository<CoinDeduction>,
+        private readonly _publisher: IAmqpPublisher,
     ) {
         this._logger = new Logger(BoostService.name)
 
@@ -112,52 +111,17 @@ export class BoostService implements IBoostService {
                 )
             }),
             mergeMap(({user, track}) => {
-                const model = this._playlistRepository.create({
-                    communityId,
-                    coverImage:  track.image?.url,
+                const payload: MediaBoostEventPayload = {
+                    user,
                     trackId: track.id,
-                    title: track.name_th ?? track.name_en,
-                    artist: !!track.artists ? track.artists.map(t => t.name_th).join(',') : '',
-                    totalBoost: request.boostCoin,
-                    duration: track.duration,
-                    queueState: QueueState.QUEUED,
-                    albumId: track?.album_id,
-                    albumName: { en: track?.album?.name_en, th: track?.album?.name_th, cn: null },
-                    albumImageUrl: track?.album?.image?.url
-                })
-                return this._playlistRepository.save(model)
+                    boostCoin: request.boostCoin,
+                    communityId,
+                }
+                return this._publisher.publish(payload, 'media.boost')
             }),
-            tap((list => {
-                this._propagateTrackBoostSSE(communityId, list)
-            })),
-            map(() => ({success: true}))
-
+            map((success) => ({success}))
         )
 
-    }
-    public _propagateTrackBoostSSE( communityId: string,list: Playlist) {
-        const data: TrackBoostedSse = {
-            transactionId: list.id,
-            trackId: list.trackId,
-            timestamp: (new Date()).toISOString(),
-            totalCoins: list.totalBoost,
-            boostedBy: list.totalBoost,
-            track: {
-                trackId: list.trackId,
-                coverImage: list.coverImage,
-                title: {
-                    th: list.title,
-                    en: list.title,
-                    cn: null,
-                },
-                artists: list.artist.split(','),
-                totalCoins: list.totalBoost,
-                album: {
-                    albumName: list.albumName,
-                },
-            },
-        }
-        this._playlistSubjectEvent.push(communityId, 'ITEM_UPDATE', data)
     }
 
     public boostMedia(communityId: string, request: BoostRequest): Observable<{ success: boolean }> {
@@ -203,12 +167,13 @@ export class BoostService implements IBoostService {
                 )
             }),
             mergeMap(({ user, playlist }) => {
-                return from(this._playlistRepository.increment({ id: playlist.id }, 'totalBoost', request.boostCoin)).pipe(
-                    mergeMap(() => this._playlistRepository.findOneBy({id: playlist.id})),
-                    tap((list => {
-                        this._propagateTrackBoostSSE(communityId, list)
-                    })),
-                )
+                const payload: MediaBoostEventPayload = {
+                    user,
+                    trackId: playlist.trackId,
+                    boostCoin: request.boostCoin,
+                    communityId,
+                }
+                return this._publisher.publish(payload, 'media.boost')
             }),
             map(() => ({ success: true })),
         )

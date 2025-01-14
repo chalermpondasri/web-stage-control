@@ -24,11 +24,14 @@ import { AdsController } from '../controllers/ads.controller'
 import { CacheModule } from '@libs/modules/cache.module'
 import { loggingDiscordProvider } from '@libs/providers/logging-discord.provider'
 import { BackdropController } from '../controllers/backdrop.controller'
+import { AmqpModule } from '@libs/modules/amqp.module'
+import { BoostConsumer } from '../services/boost.consumer'
 
 @Module({
     imports: [
         OrmModule,
         GlobalModule,
+        AmqpModule,
         CacheModule,
     ],
     controllers: [
@@ -47,6 +50,7 @@ import { BackdropController } from '../controllers/backdrop.controller'
         loggingDiscordProvider,
         adsServiceProvider,
         backdropServiceProvider,
+        BoostConsumer,
     ],
 })
 export class MainModule implements NestModule {

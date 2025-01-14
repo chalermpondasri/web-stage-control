@@ -55,6 +55,7 @@ export const boostServiceProvider: Provider = {
         ProviderName.ALBUM_REPOSITORY,
         ProviderName.COIN_DEDUCTION_REPOSITORY,
         ProviderName.AMQP_PUBLISHER,
+        ProviderName.CACHE_SERVICE,
     ],
     useFactory: (
         requestContext: RequestContext,
@@ -64,6 +65,7 @@ export const boostServiceProvider: Provider = {
         albumElasticRepository: AlbumElasticRepository,
         coinDeductionRepository: Repository<CoinDeduction>,
         publisher: IAmqpPublisher,
+        cacheService: ICacheService,
     ) => {
         return new BoostService(
             requestContext,
@@ -73,6 +75,7 @@ export const boostServiceProvider: Provider = {
             albumElasticRepository,
             coinDeductionRepository,
             publisher,
+            cacheService,
         )
     },
 }

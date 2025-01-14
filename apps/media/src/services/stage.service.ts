@@ -90,20 +90,32 @@ export class StageService implements IStageService {
                 this._playlistSubject.push(communityId, 'TRACK_PROGRESS_UPDATE', plainToInstance(PlaybackPlaySse, playedItem))
                 this._logger.log(`event: TRACK_PROGRESS_UPDATE, txn: ${playedItem.transactionId}, progress: ${playedItem.trackProgress}`)
             }),
-            map(() => ({success: true})),
+            map(() => ({ success: true })),
             catchError(err => {
                 console.error(err)
                 rethrow(new BadRequestException(ErrorEnum.PLAYLIST_TRACK_NOT_FOUND))
-            })
+            }),
         )
     }
 
     public freeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {})
+        return this._cacheService.getAndSet(
+            `freeze_${communityId}`,
+            () => of({ ts: Date.now() }),
+            {
+                EX: 5
+            }
+        ).pipe(
+            tap(() => this._playlistSubject.push(communityId, 'PLAYLIST_FREEZE', {})),
+        )
+
     }
 
     public unfreeze(communityId: string) {
-        this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {})
+        return this._cacheService.delete(`freeze_${communityId}`).pipe(
+            tap(() => this._playlistSubject.push(communityId, 'PLAYLIST_UNFREEZE', {}))
+        )
+
     }
 
     public play(communityId: string, mediaId: string, request: MediaPlayRequest): Observable<SuccessDto> {
@@ -119,7 +131,6 @@ export class StageService implements IStageService {
         }
 
         const cacheKey = `${StageService.name}_play_${communityId}`
-
 
         const updatePlayingTrackObs$ = (track: Playlist | void) => of(track).pipe(
             tap((playingTrack) => {
@@ -167,7 +178,7 @@ export class StageService implements IStageService {
                     this.unfreeze(communityId)
                 }),
             )),
-            map(() => ({success: true}))
+            map(() => ({ success: true })),
         )
 
         return from(this._playlistRepository.findOneBy(playingTrackOpts)).pipe(
@@ -179,28 +190,28 @@ export class StageService implements IStageService {
                 return of(playingTrack)
             }),
             mergeMap(playingTrack => {
-                return this._cacheService.getAndSet( cacheKey, () => {
+                return this._cacheService.getAndSet(cacheKey, () => {
                     return of({
                         trackRemainsToPlayAds: 0,
                         adsPlayed: 0,
                         lastPlayed: new Date().toISOString(),
-                        lastPlayedTransaction: playingTrack?.id
+                        lastPlayedTransaction: playingTrack?.id,
                     })
                 }).pipe(
                     mergeMap(cacheData => {
                         cacheData.lastPlayedTransaction = playingTrack?.id
 
-                        if(cacheData.trackRemainsToPlayAds > 0) {
+                        if (cacheData.trackRemainsToPlayAds > 0) {
 
                             cacheData.trackRemainsToPlayAds--
                             cacheData.lastPlayed = new Date().toISOString()
 
                             return this._cacheService.set(cacheKey, cacheData).pipe(
-                                mergeMap(() => updatePlayingTrackObs$(playingTrack))
+                                mergeMap(() => updatePlayingTrackObs$(playingTrack)),
                             )
                         }
 
-                        return this._adsService.getAds({communityId}).pipe(
+                        return this._adsService.getAds({ communityId }).pipe(
                             mergeMap(ads => {
                                 const adsToPlay = ads[cacheData.adsPlayed % ads.length]
                                 cacheData.adsPlayed++
@@ -212,21 +223,20 @@ export class StageService implements IStageService {
                                             success: false,
                                             data: adsToPlay,
                                         })
-                                    })
+                                    }),
                                 )
                             }),
                             catchError(() => {
                                 return of(plainToInstance(SuccessDto, {
                                     success: true,
-                                    message: 'no ads to play'
+                                    message: 'no ads to play',
                                 }))
-                            })
+                            }),
                         )
 
                     }),
                 )
             }),
-
         )
 
     }

@@ -32,6 +32,7 @@ import { isUUID } from 'class-validator'
 import { AddToQueueRequest } from '@libs/common/models/media/add-to-queue.request'
 import { IAmqpPublisher } from '@libs/providers/amqp/amqp-publisher.interface'
 import { MediaBoostEventPayload } from './boost.consumer'
+import { ICacheService } from '@libs/providers/redis'
 
 export class BoostService implements IBoostService {
     private readonly _logger: LoggerService
@@ -44,6 +45,7 @@ export class BoostService implements IBoostService {
         private readonly _albumElasticRepository: AlbumElasticRepository,
         private readonly _coinDeductionRepository: Repository<CoinDeduction>,
         private readonly _publisher: IAmqpPublisher,
+        private readonly _cacheService: ICacheService,
     ) {
         this._logger = new Logger(BoostService.name)
 
@@ -144,10 +146,17 @@ export class BoostService implements IBoostService {
             }),
         )
 
-        return forkJoin([
-            this._checkUserRemainCoin(this._requestContext.identityInfo.userId, request.boostCoin),
-            checkPlaylistAvailabilities(),
-        ]).pipe(
+        return this._cacheService.get( `freeze_${communityId}`).pipe(
+            mergeMap(result => {
+                if(!!result) {
+                    return throwError(() => new BadRequestException(ErrorEnum.PLAYLIST_FREEZE))
+                }
+
+                return forkJoin([
+                    this._checkUserRemainCoin(this._requestContext.identityInfo.userId, request.boostCoin),
+                    checkPlaylistAvailabilities(),
+                ])
+            }),
             mergeMap(([user, playlist]) => {
                 const promise = this._userRepository.decrement({ id: user.id }, 'remainCoins', request.boostCoin)
 

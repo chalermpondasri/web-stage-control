@@ -2,6 +2,7 @@ import { AccessTokenDto } from '@libs/common/models/common/token.dto'
 import { StageRegisterRequest } from '@libs/common/models/community/stage-register.request'
 import {
     catchError,
+    concatMap,
     forkJoin,
     from,
     map,
@@ -156,7 +157,7 @@ export class StageService implements IStageService {
                     return from(this._playlistRepository.save(track))
 
                 }),
-                tap(newTrack => {
+                concatMap(newTrack => {
 
                     const playedItem: PlaybackPlaySse = {
                         transactionId: newTrack.id,
@@ -175,7 +176,7 @@ export class StageService implements IStageService {
                         trackProgress: newTrack.trackProgress,
                     }
                     this._playlistSubject.push(communityId, 'ITEM_PLAYING', plainToInstance(PlaybackPlaySse, playedItem))
-                    this.unfreeze(communityId)
+                    return this.unfreeze(communityId)
                 }),
             )),
             map(() => ({ success: true })),

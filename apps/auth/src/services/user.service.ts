@@ -27,6 +27,7 @@ import { RequestContext } from '@libs/providers/request-context.provider'
 import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 import { UpdateProfileRequest } from '@libs/common/models/user/update-profile.request'
 import { IBadWordService } from '@libs/providers/bad-word.provider'
+import { isNil } from 'lodash'
 
 export class UserService implements IUserService {
     private readonly _logger = new Logger(UserService.name)
@@ -89,6 +90,7 @@ export class UserService implements IUserService {
                         user.phoneNumber = request.phoneNumber ? request.phoneNumber : user.phoneNumber
                         user.setting.showProfile = request.enableShowProfileImage
                         user.setting.showName = request.enableShowProfileName
+                        user.isDarkMode = isNil(request.isDarkMode) ? user.isDarkMode : request.isDarkMode
                         return fromPromise(this._userRepository.save(user))
                     }),
                     mergeMap(() => this.getUserProfile()),

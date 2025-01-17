@@ -48,11 +48,4 @@ export class UpdateProfileRequest {
         type: Boolean
     })
     public enableShowProfileName: boolean
-
-    @IsBoolean()
-    @IsOptional()
-    @ApiProperty({
-        type: Boolean
-    })
-    public isDarkMode: boolean
 }

@@ -193,7 +193,7 @@ export class PaymentService implements IPaymentService {
                 return plainToInstance(CheckoutPackageResponse,
                     {
                         transactionId: payment.transactionId,
-                        expireAt: payment.expiredAt,
+                        expiredAt: payment.expiredAt,
                         packageId: payment.coinPackageId,
                         total: payment.total.toNumber(),
                         coinGain: payment.coinGain,

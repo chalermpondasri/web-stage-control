@@ -7,7 +7,7 @@ export class CheckoutPackageResponse {
     @ApiProperty()
     public transactionId: number
     @ApiProperty()
-    public expireAt: Date
+    public expiredAt: Date
     @ApiProperty()
     public total: number
     @ApiProperty()

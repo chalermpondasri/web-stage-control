@@ -13,6 +13,7 @@ import { IOpenBanking } from '@libs/repositories/interfaces/openbanking/open-ban
 import { EnvironmentConfig } from '@libs/common/models'
 import { PaymentTransaction } from '@libs/entities/payment-transaction.entity'
 import { IAmqpPublisher } from '@libs/providers/amqp/amqp-publisher.interface'
+import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 export const packageServiceProvider: Provider = {
     provide: ProviderName.PACKAGE_SERVICE,
     inject: [
@@ -33,6 +34,7 @@ export const paymentServiceProvider: Provider = {
         ProviderName.ENV_CONFIG,
         ProviderName.PAYMENT_TRANSACTION_REPOSITORY,
         ProviderName.AMQP_PUBLISHER,
+        ProviderName.SSE_PAYMENT_SUBJECT,
     ],
     useFactory: (
         paymentRepository: Repository<Payment>,
@@ -42,6 +44,9 @@ export const paymentServiceProvider: Provider = {
         config: EnvironmentConfig,
         paymentTransactionRepository: Repository<PaymentTransaction>,
         publisher: IAmqpPublisher,
+        subjectFactory: EventSubjectFactory,
+
+
     ) => {
         const vat = Number(config.VAT_PERCENTAGE)
         return new PaymentService(
@@ -52,6 +57,7 @@ export const paymentServiceProvider: Provider = {
             vat,
             paymentTransactionRepository,
             publisher,
+            subjectFactory,
             )
     },
 }

@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     Inject,
@@ -28,6 +29,7 @@ import { PaymentHistoryDto } from '../services/dto/payment-history.dto'
 import { ApiOkListResponse } from '@libs/utilities/decorators/api-ok-list-response.decorator'
 import { PaymentPayload } from '../services/dto/qr30-confirm.request'
 import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
+import { CheckoutCancelRequest } from '../services/dto/checkout-cancel.request'
 @Controller('/')
 export class RootController {
 
@@ -53,6 +55,17 @@ export class RootController {
         @Body() body: CheckoutPackageRequest,
     ) {
         return this._paymentService.checkoutPackage(body)
+    }
+
+    @ApiOperation({description: 'delete checkout'})
+    @ApiBody({type: CheckoutCancelRequest})
+    @ApiResponse({type: CheckoutPackageResponse})
+    @Delete('/checkout')
+    @UseGuards(GenericUserGuard)
+    public cancelCheckout(
+        @Body() body: CheckoutCancelRequest,
+    ) {
+        return this._paymentService.cancelCheckout(body)
     }
 
     @ApiOperation({ description: 'get checkout  detail by id' })
@@ -105,5 +118,6 @@ export class RootController {
         return this._paymentService.qr30PaymentConfirm(body)
 
     }
+
 
 }

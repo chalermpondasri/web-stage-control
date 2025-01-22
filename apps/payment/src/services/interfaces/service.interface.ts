@@ -9,6 +9,7 @@ import {
 import { PaymentHistoryDto } from '../dto/payment-history.dto'
 import { PaymentPayload } from '../dto/qr30-confirm.request'
 import { IQr30ConfirmResponse } from '../dto/qr30-confirm.response'
+import { CheckoutCancelRequest } from '../dto/checkout-cancel.request'
 
 export interface IPaymentService {
     checkoutPackage(request: CheckoutPackageRequest): Observable<CheckoutPackageResponse>
@@ -18,6 +19,8 @@ export interface IPaymentService {
     getPaymentHistories(pagination: Pagination): Observable<ListResponse<PaymentHistoryDto>>
 
     qr30PaymentConfirm(body: PaymentPayload): Observable<IQr30ConfirmResponse>
+
+    cancelCheckout(request: CheckoutCancelRequest):Observable<CheckoutPackageResponse>
 }
 
 export interface IPackageService {

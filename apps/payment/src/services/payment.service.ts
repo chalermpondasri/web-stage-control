@@ -43,6 +43,8 @@ import { PaymentPayload } from './dto/qr30-confirm.request'
 import { PaymentTransaction } from '@libs/entities/payment-transaction.entity'
 import { IQr30ConfirmResponse } from './dto/qr30-confirm.response'
 import { IAmqpPublisher } from '@libs/providers/amqp/amqp-publisher.interface'
+import { CheckoutCancelRequest } from './dto/checkout-cancel.request'
+import { EventSubjectFactory } from '@libs/providers/event-subject.provider'
 
 export class PaymentService implements IPaymentService {
     private readonly _logger: LoggerService
@@ -55,6 +57,7 @@ export class PaymentService implements IPaymentService {
         private readonly _vatPercentage: number,
         private readonly _paymentTransactionRepository: Repository<PaymentTransaction>,
         private readonly _publisher: IAmqpPublisher,
+        private readonly _eventSubjectFactory: EventSubjectFactory
     ) {
         this._logger = new Logger(PaymentService.name)
     }
@@ -221,6 +224,51 @@ export class PaymentService implements IPaymentService {
             })
         )
 
+    }
+
+    public cancelCheckout(request: CheckoutCancelRequest): Observable<CheckoutPackageResponse> {
+        const userId = this._requestContext.identityInfo.userId
+
+        return from(this._paymentRepository.findOneBy({
+            userId,
+            transactionId: request.transactionId,
+        })).pipe(
+            mergeMap(result => {
+                if (!result) {
+                    return throwError(() => new BadRequestException(ErrorEnum.CHECKOUT_NOT_FOUND))
+                }
+
+                return of(result)
+            }),
+            tap(data => {
+                if (data.paymentStatus !== PaymentStatus.PENDING) {
+                    throw new BadRequestException(ErrorEnum.CHECKOUT_ALREADY_PAID)
+                }
+            }),
+            mergeMap(data => {
+                data.paymentStatus = PaymentStatus.CANCELLED
+                return from(this._paymentRepository.save(data))
+            }),
+            map(data => {
+                this._eventSubjectFactory.push(data.transactionId, 'PAYMENT_UPDATE', {
+                    transactionId: data.transactionId,
+                    status: data.paymentStatus,
+                    total: data.total.toNumber(),
+                }, {delete: true})
+
+                return plainToInstance(CheckoutPackageResponse,
+                    {
+                        transactionId: data.transactionId,
+                        expireAt: data.expiredAt,
+                        packageId: data.coinPackageId,
+                        total: data.total.toNumber(),
+                        coinGain: data.coinGain,
+                        coinBonus: data.coinBonus,
+                        qrData: data.qrData,
+                        paymentStatus: data.paymentStatus,
+                    })
+            }),
+        )
     }
 
 }

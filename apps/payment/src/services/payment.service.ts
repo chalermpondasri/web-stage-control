@@ -123,7 +123,7 @@ export class PaymentService implements IPaymentService {
 
     }
 
-    public checkoutPackage(body: CheckoutPackageRequest): Observable<any> {
+    public checkoutPackage(body: CheckoutPackageRequest): Observable<CheckoutPackageResponse> {
         const { packageId } = body
 
         const ts = dayjs()
@@ -227,11 +227,14 @@ export class PaymentService implements IPaymentService {
     }
 
     public cancelCheckout(request: CheckoutCancelRequest): Observable<CheckoutPackageResponse> {
-        const userId = this._requestContext.identityInfo.userId
 
         return from(this._paymentRepository.findOneBy({
-            userId,
             transactionId: request.transactionId,
+            coinPackageId: request.packageId,
+            total: new Decimal(request.total),
+            coinGain: request.coinGain,
+            coinBonus: request.coinBonus,
+            expiredAt: new Date(request.expiredAt),
         })).pipe(
             mergeMap(result => {
                 if (!result) {

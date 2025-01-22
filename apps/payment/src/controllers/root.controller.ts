@@ -61,7 +61,6 @@ export class RootController {
     @ApiBody({type: CheckoutCancelRequest})
     @ApiResponse({type: CheckoutPackageResponse})
     @Delete('/checkout')
-    @UseGuards(GenericUserGuard)
     public cancelCheckout(
         @Body() body: CheckoutCancelRequest,
     ) {

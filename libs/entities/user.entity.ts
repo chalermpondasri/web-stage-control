@@ -53,4 +53,7 @@ export class User {
     @DeleteDateColumn()
     public deletedAt: Date
 
+    @Column({ default: false, type: 'boolean'})
+    public isDarkMode: boolean
+
 }

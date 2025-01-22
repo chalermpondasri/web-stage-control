@@ -23,6 +23,7 @@ import { GenericUserGuard } from '@libs/guards/generic-user.guard'
 import { UserProfileDto } from '@libs/common/models/user/user-profile.dto'
 import { UpdateProfileRequest } from '@libs/common/models/user/update-profile.request'
 import { SuggestionRequest } from '@libs/common/models/user/suggestion.request'
+import { UpdateProfileDarkModeRequest } from '@libs/common/models/user/update-profile-dark-mode.request'
 
 @ApiTags(...['user', 'me'])
 @Controller('/users/me')
@@ -59,6 +60,16 @@ export class MeController {
         @Body() request: UpdateProfileRequest,
     ) {
         return this._userService.updateUserProfile(request)
+    }
+
+    @ApiOperation({ description: 'update user them dark mode' })
+    @ApiBearerAuth()
+    @Patch('/dark-mode')
+    @UseGuards(GenericUserGuard)
+    public updateDarkMode(
+        @Body() request: UpdateProfileDarkModeRequest
+    ) {
+        return this._userService.updateDarkMode(request)
     }
 
     @ApiOperation({ description: 'send a suggestion' })

@@ -41,4 +41,8 @@ export class UserProfileDto {
     @ApiProperty()
     @Expose()
     public setting: {showProfile: boolean, showName: boolean}
+
+    @ApiProperty()
+    @Expose()
+    public isDarkMode: boolean
 }

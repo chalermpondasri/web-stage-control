@@ -18,10 +18,25 @@ export class Payment {
     public userId: string
 
     /**
-     * Total paid after deduction
+     * Total paid after deduction, vat included
      */
     @Column({ type: 'decimal', transformer: new DecimalValueTransformer(), nullable: true })
     public total: Decimal
+
+    @Column({type: 'decimal', nullable: true, transformer: new DecimalValueTransformer()})
+    public vat: Decimal
+
+    @Column({type: 'varchar', nullable: true})
+    public ref1: string
+
+    @Column({type: 'varchar', nullable: true})
+    public ref2: string
+
+    @Column({type: 'varchar', nullable: true})
+    public ref3: string
+
+    @Column({type: 'varchar', nullable: true})
+    public qrData: string
 
     @Column({ nullable: true })
     public coinPackageId: number

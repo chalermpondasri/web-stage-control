@@ -6,6 +6,7 @@ export enum EXCHANGES {
     ARTIST_DL = 'artist_dead_letter_exchange',
     CAMPAIGN_DL = 'campaign_dead_letter_exchange',
     BOOST_DL ='boost_dead_letter_exchange',
+    PAYMENT_DL = 'payment_dead_letter_exchange',
 }
 
 export enum QUEUES {
@@ -24,5 +25,6 @@ export enum QUEUES {
     CAMPAIGN_UPDATE = 'campaign_update_queue',
     CAMPAIGN_DL = 'campaign_dead_letter_queue',
     ANNOUNCEMENT_UPDATE = 'announcement_update_queue',
-    MEDIA_BOOST ='media_boost_queue'
+    MEDIA_BOOST ='media_boost_queue',
+    PAYMENT_PAID = 'payment_paid_queue',
 }

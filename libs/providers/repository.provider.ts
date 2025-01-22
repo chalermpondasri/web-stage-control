@@ -21,6 +21,8 @@ import { Payment } from '@libs/entities/payment.entity'
 import { Stage } from '@libs/entities/stage.entity'
 import { Transaction } from '@libs/entities/transaction.entity'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
+import { ScbOpenBankingRepository } from '@libs/repositories/scb-openbanking.repository'
+import { PaymentTransaction } from '@libs/entities/payment-transaction.entity'
 
 export const ormRepositoryProviders: Provider[] = [
     {
@@ -99,6 +101,13 @@ export const ormRepositoryProviders: Provider[] = [
             ProviderName.ORM_DATASOURCE,
         ],
         useFactory: (ds: DataSource) => ds.getRepository(CoinDeduction),
+    },
+    {
+        provide: ProviderName.PAYMENT_TRANSACTION_REPOSITORY,
+        inject: [
+            ProviderName.ORM_DATASOURCE,
+        ],
+        useFactory: (ds: DataSource) => ds.getRepository(PaymentTransaction),
     }
 ]
 
@@ -142,3 +151,20 @@ export const elasticRepositoryProviders: Provider[] = [
         },
     },
 ]
+
+export const openBankingRepository: Provider = {
+    provide: ProviderName.OPEN_BANKING_REPOSITORY,
+    inject: [
+        ProviderName.ENV_CONFIG,
+        ProviderName.HTTP_CLIENT,
+    ],
+    useFactory: (
+        config: EnvironmentConfig,
+        httpClient: AxiosInstance,
+    ) => {
+        return new ScbOpenBankingRepository(
+            config,
+            httpClient,
+        )
+    },
+}

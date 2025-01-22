@@ -15,6 +15,7 @@ import { Payment } from '@libs/entities/payment.entity'
 import { Stage } from '@libs/entities/stage.entity'
 import { Transaction } from '@libs/entities/transaction.entity'
 import { CoinDeduction } from '@libs/entities/coin-deduction.entity'
+import { PaymentTransaction } from '@libs/entities/payment-transaction.entity'
 
 export const ormEntityProvider: Provider = {
     provide: ProviderName.ORM_ENTITY,
@@ -30,6 +31,7 @@ export const ormEntityProvider: Provider = {
         PlayedMedia,
         Transaction,
         CoinDeduction,
+        PaymentTransaction,
     ],
 }
 export const ormDatasourceProvider: Provider = {
@@ -49,7 +51,7 @@ export const ormDatasourceProvider: Provider = {
             migrationsTableName: 'migration_billboard',
             applicationName: 'billboard',
             database: config.RDB_DBNAME,
-            logging: config.NODE_ENV !== 'production' && !!CoinDeduction ? 'all' : false,
+            logging: config.NODE_ENV !== 'production' && !!config.RDB_LOG ? 'all' : false,
             synchronize: config.NODE_ENV !== 'production',
         }).initialize()
     },

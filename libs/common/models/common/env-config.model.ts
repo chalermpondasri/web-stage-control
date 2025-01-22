@@ -136,4 +136,12 @@ export class EnvironmentConfig {
     public OPEN_BANKING_RESOURCE_OWNER_ID: string
     public OPEN_BANKING_APPLICATION_KEY: string
     public OPEN_BANKING_SECRET_KEY: string
+    public OPEN_BANKING_BILLER_ID: string
+    public OPEN_BANKING_REF_PREFIX: string
+
+    @IsNotEmpty()
+    public OPEN_BANKING_UNIQUE_URL: string
+
+    @IsNotEmpty()
+    public VAT_PERCENTAGE: number
 }

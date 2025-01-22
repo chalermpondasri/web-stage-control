@@ -16,6 +16,14 @@ export const playlistSubjectFactoryProvider: Provider = {
     provide: ProviderName.SSE_PLAYLIST_SUBJECT_FACTORY,
     useFactory: () => new EventSubjectFactory()
 }
+export const paymentSubjectFactoryProvider: Provider = {
+    provide: ProviderName.SSE_PAYMENT_SUBJECT,
+    useFactory: () => new EventSubjectFactory()
+}
+
+interface IPushOptions {
+    delete: boolean
+}
 
 export class EventSubjectFactory {
     private readonly _subjects: Map<string, Subject<MessageEvent>>
@@ -36,7 +44,19 @@ export class EventSubjectFactory {
 
     }
 
-    public push(key: string,type: string,  data: any) {
-        this.getSubject(key).next({ type, data })
+    private _delete(key: string) {
+        this._subjects.delete(key)
+    }
+
+    public push(key: string,type: string,  data: any, opts?: IPushOptions) {
+        const subject = this.getSubject(key)
+
+        subject.next({ type, data })
+
+        if(opts?.delete) {
+            subject.complete()
+            this._delete(key)
+        }
+
     }
 }

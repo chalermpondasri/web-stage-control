@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 
-export type PaymentType = 'QR_PAYMENT'
+export type PaymentType = 'QR_PAYMENT' | 'VOUCHER'
 export type TransactionType = 'TOPUP' | 'RETURN'
 
 @Expose()

@@ -1,4 +1,7 @@
-import { Payment } from '@libs/entities/payment.entity'
+import {
+    Payment,
+    PaymentType,
+} from '@libs/entities/payment.entity'
 import {
     BadRequestException,
     Logger,
@@ -80,11 +83,11 @@ export class PaymentService implements IPaymentService {
                 dto.limit = pagination.limit
                 dto.data = result.map(v => {
                     const data: PaymentHistoryDto = {
-                        paymentType: 'QR_PAYMENT',
+                        paymentType: v.type === PaymentType.COIN_PACKAGE ? 'QR_PAYMENT' : 'VOUCHER',
                         transactionType: 'TOPUP',
                         transactionId: v.transactionId,
                         coinGain: v.coinGain,
-                        price: v.total.toNumber(),
+                        price: v.type === PaymentType.VOUCHER ? 0 : v.total.toNumber(),
                         timestamp: v.updatedAt,
                     }
                     return plainToInstance(PaymentHistoryDto, data)
